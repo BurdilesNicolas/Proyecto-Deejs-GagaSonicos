@@ -1,7 +1,7 @@
 function Login(){
     return(
         <div>
-            <h1>Inicio de seción</h1>
+            <h1>Inicio de sesión</h1>
             <form>
                 <label>Usuario</label>
                 <input type="text" placeholder="Username" />
@@ -12,4 +12,4 @@ function Login(){
         </div>
     );
 }
-export default Login;
+export default Login
