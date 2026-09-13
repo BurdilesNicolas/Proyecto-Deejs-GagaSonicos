@@ -2,7 +2,7 @@
 function Inicio() {
   return (
       <div>
-        <h1></h1>
+        <h1>Peldon</h1>
         <p></p>
         <button><a href=""></a></button>
         <button><a href=""></a></button>

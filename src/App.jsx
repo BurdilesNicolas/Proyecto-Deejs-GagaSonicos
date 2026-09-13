@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Inicio from "./paginas/inicio.jsx";
-import Login from "./paginas/login.jsx";
+import Inicio from "./paginas/Inicio.jsx";
+import Login from "./paginas/Login.jsx";
 
 function App() {
   return (
