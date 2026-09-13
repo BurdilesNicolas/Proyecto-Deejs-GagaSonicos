@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Inicio from "./paginas/Inicio.jsx";
-import Login from "./paginas/Login.jsx";
+import Inicio from "./paginas/Inicio";
+import Login from "./paginas/Login";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Inicio />} />
-        <Route path="/paginas/inicio" element={<Inicio />} />
-        <Route path="/paginas/login" element={<Login />} />
+        <Route path="/paginas/Inicio" element={<Inicio />} />
+        <Route path="/paginas/Login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
