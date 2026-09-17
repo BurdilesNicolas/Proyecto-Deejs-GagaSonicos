@@ -1,4 +1,4 @@
-function Inicio() {
+function Productos() {
   return (
       <div>
         <h1>Em vez de voce ficar pensando nele</h1>
@@ -16,4 +16,4 @@ function Inicio() {
 
   )
 }
-export default Inicio
+export default Productos
