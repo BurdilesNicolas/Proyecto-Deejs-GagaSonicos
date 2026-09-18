@@ -1,11 +1,13 @@
-
+import '../estilos/Inicio.css'
 function Inicio() {
   return (
       <div>
+        <div className="hero">
         <h1>DEEJ`S</h1>
         <p></p>
         <button><a href=""></a></button>
         <button><a href=""></a></button>
+        </div>
         <h2>Novedades</h2>
         <div className="card" style={{ width: '18rem' }}>
           <p>Tema 1</p>
