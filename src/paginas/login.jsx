@@ -3,27 +3,13 @@ function Login() {
     <div className="container mt-5">
     <form>
       {/* Email input */}
-      <div className="form-outline mb-4">
-        <input
-          type="email"
-          id="form2Example1"
-          className="form-control"
-        />
-        <label className="form-label" htmlFor="form2Example1">
-          Email address
-        </label>
+      <div className="form-outline mb-4">      
+        <input type="email" id="form2Example1" className="form-control" placeholder="Dirección de correo"/>
       </div>
 
       {/* Password input */}
       <div className="form-outline mb-4">
-        <input
-          type="password"
-          id="form2Example2"
-          className="form-control"
-        />
-        <label className="form-label" htmlFor="form2Example2">
-          Password
-        </label>
+        <input type="password" id="form2Example2" className="form-control" placeholder="Contraseña"/>
       </div>
 
       {/* 2 column grid layout */}
@@ -38,64 +24,30 @@ function Login() {
               id="form2Example31"
               defaultChecked
             />
-            <label
-              className="form-check-label"
-              htmlFor="form2Example31"
-            >
-              Remember me
-            </label>
+            <label className="form-check-label" htmlFor="form2Example31">Recordar datos </label>
           </div>
         </div>
 
         <div className="col">
           {/* Simple link */}
-          <a href="#!">Forgot password?</a>
+          <a href="#!">¿Olvidaste tu contraseña?</a>
         </div>
       </div>
 
       {/* Submit button */}
-      <button
-        type="button"
-        className="btn btn-primary btn-block mb-4"
-      >
-        Sign in
-      </button>
+      <button type="button" className="btn btn-primary btn-block mb-4">Iniciar sesión</button>
 
       {/* Register buttons */}
       <div className="text-center">
         <p>
-          Not a member? <a href="#!">Register</a>
+          ¿No tienes una cuenta? <a href="#!">Registrarse</a>
         </p>
 
-        <p>or sign up with:</p>
-
-        <button
-          type="button"
-          className="btn btn-link btn-floating mx-1"
-        >
-          Facebook
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-link btn-floating mx-1"
-        >
-          Google
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-link btn-floating mx-1"
-        >
-          Twitter
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-link btn-floating mx-1"
-        >
-          GitHub
-        </button>
+        <p>Iniciar sesión con:</p>
+        <button type="button" className="btn btn-link btn-floating mx-1">Facebook</button>
+        <button type="button" className="btn btn-link btn-floating mx-1">Google </button>
+        <button type="button" className="btn btn-link btn-floating mx-1">Twitter</button>
+        <button type="button" className="btn btn-link btn-floating mx-1">GitHub</button>
       </div>
     </form>
     </div>
