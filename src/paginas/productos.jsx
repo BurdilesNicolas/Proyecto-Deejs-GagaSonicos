@@ -26,7 +26,34 @@ function Productos() {
         </nav>
       </header>
 
-</div>
+      {/* SECCIÓN DE PRODUCTOS */}
+      <main className="contenedor">
+        <h2 className="titulo-seccion">Novedades</h2>
+
+        <div className="grilla">
+          {productos.map((producto) => (
+            <article className="card" key={producto.id}>
+              <button className="btn-wishlist" title="Agregar a la wishlist">♡</button>
+
+              <div className="card-img">
+                {producto.imagen && (
+                  <img src={producto.imagen} alt={producto.nombre} />
+                )}
+              </div>
+
+              <h3 className="card-titulo">{producto.nombre}</h3>
+              <p className="card-precio">{producto.precio}</p>
+
+              <div className="card-acciones">
+                <button className="btn-comprar">Comprar</button>
+                <button className="btn-carrito">Carrito</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </main>
+    </div>
   )
 }
+
 export default Productos
