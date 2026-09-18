@@ -1,4 +1,3 @@
-
 import '../estilos/productos.css'
 
 // Editá esta lista para agregar, sacar o cambiar productos.

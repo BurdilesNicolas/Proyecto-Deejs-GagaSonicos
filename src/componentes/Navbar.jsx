@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../estilos/Navbar.css';
 
 function Navbar() {
@@ -20,6 +20,7 @@ function Navbar() {
                 </li>
             </ul>
             </div>
+        </div>
         </nav>
     );
 }
