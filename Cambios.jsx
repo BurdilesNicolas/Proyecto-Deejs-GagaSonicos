@@ -60,66 +60,8 @@ export default function Comunidad() {
             <p style={{ textAlign: 'center', marginBottom: '2rem', color: '#ccc' }}>
                 Comparte tus opiniones, reseñas y recomendaciones de tus álbumes, vinilos y cassettes favoritos con otros melómanos.
             </p>
-
-            {/* Formulario para publicar reseña */}
-            <section className="glass-card" style={styles.card}>
-                <h2 style={{ marginBottom: '1rem', fontSize: '1.3rem' }}>Dejar una Reseña / Comentario</h2>
-                <form onSubmit={handleSubmit} style={styles.form}>
-                    <div style={styles.inputGroup}>
-                        <label>Tu nombre / usuario:</label>
-                        <input
-                            type="text"
-                            value={nuevoUsuario}
-                            onChange={(e) => setNuevoUsuario(e.target.value)}
-                            placeholder="Ej. JuanPerez"
-                            style={styles.input}
-                        />
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <label>Álbum / Artista / Producto:</label>
-                        <input
-                            type="text"
-                            value={nuevoAlbum}
-                            onChange={(e) => setNuevoAlbum(e.target.value)}
-                            placeholder="Ej. Blonde - Frank Ocean"
-                            style={styles.input}
-                        />
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <label>Calificación:</label>
-                        <select
-                            value={nuevaCalificacion}
-                            onChange={(e) => setNuevaCalificacion(e.target.value)}
-                            style={styles.input}
-                        >
-                            <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
-                            <option value={4}>⭐⭐⭐⭐ (4/5)</option>
-                            <option value={3}>⭐⭐⭐ (3/5)</option>
-                            <option value={2}>⭐⭐ (2/5)</option>
-                            <option value={1}>⭐ (1/5)</option>
-                        </select>
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <label>Tu comentario:</label>
-                        <textarea
-                            rows="3"
-                            value={nuevoComentario}
-                            onChange={(e) => setNuevoComentario(e.target.value)}
-                            placeholder="Escribe tu opinión sobre el sonido, la edición o la experiencia..."
-                            style={styles.input}
-                        />
-                    </div>
-
-                    <button type="submit" style={styles.button}>
-                        Publicar en la comunidad
-                    </button>
-                </form>
-            </section>
-
-            {/* Lista de reseñas */}
+            /*---*/
+            {/*lista reseña*/}
             <section style={{ marginTop: '2.5rem' }}>
                 <h2 style={{ marginBottom: '1rem', fontSize: '1.4rem' }}>Reseñas recientes</h2>
                 {resenas.map((item) => (
@@ -138,8 +80,7 @@ export default function Comunidad() {
         </div>
     );
 }
-
-// Estilos rápidos en objeto JS para mantener la estética oscura/glassmorphism de DEEJ's
+//estilos rapidos en objeto js
 const styles = {
     card: {
         backgroundColor: 'rgba(255, 255, 255, 0.08)',
