@@ -80,7 +80,6 @@ export default function Comunidad() {
         </div>
     );
 }
-
 //estilos rapidos en objeto js
 const styles = {
     card: {
