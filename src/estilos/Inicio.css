@@ -1,5 +1,44 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .hero{
-    background-image: url('../img/hero.jpg');
+    padding: 100px;
+    background-image: url('../assets/Fondo_Inicio.png');
     background-size: cover;
     background-position: center;
+
+}
+.hero h1{
+    color: rgb(255, 255, 255);
+    font-size: 4rem;
+    text-align: left;
+    margin-top: 20%;
+}
+.botones_inicio{
+    display: flex;
+    justify-content: left  ;
+    margin-top: 20px;
+
+}
+.cards{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+.botones_inicio button{
+    background-color: #FFB800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.botones_inicio a{
+    color: white;
+    text-decoration: none;
 }
