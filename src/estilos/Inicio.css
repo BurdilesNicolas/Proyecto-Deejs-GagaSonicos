@@ -25,8 +25,29 @@
 }
 .cards{
     display: flex;
-    justify-content: center;
     margin-top: 50px;
+    width: max-content;
+    animation: slide 20s linear infinite;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    width: 100%;
+}
+
+.card {
+    flex: 0 0 25vw;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 .botones_inicio button{
     background-color: #FFB800;
@@ -45,5 +66,10 @@
 .secundario{
     background-color: #F5F5F5;
     padding: 50px;
-    text-align: center;
+}
+.secundario h2{
+    color: #333;
+    font-size: 2rem;
+    text-align: left   ;
+    margin-bottom: 30px;
 }
