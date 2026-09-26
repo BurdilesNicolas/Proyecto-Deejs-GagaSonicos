@@ -18,10 +18,11 @@ function Productos() {
     <div>
       {/* NAVBAR */}
       <header className="navbar">
-        <h1 className="logo">Em vez de voce ficar pensando nele</h1>
+        <h1 className="logo"></h1>
         <nav className="nav-botones">
           <a href="#" className="btn-nav">Vinilos</a>
           <a href="#" className="btn-nav">CDs</a>
+          <a href="#" className="btn-nav">Merch</a>x
         </nav>
       </header>
 

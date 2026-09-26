@@ -29,6 +29,24 @@ function Navbar() {
               Productos
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/paginas/Comunidad" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+              <span className="nav-icon" aria-hidden="true"></span>
+              Comunidad
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/paginas/Nosotros" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+              <span className="nav-icon" aria-hidden="true"></span>
+              Nosotros
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/paginas/Locales" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+              <span className="nav-icon" aria-hidden="true"></span>
+              Locales
+            </NavLink>
+          </li>
         </ul>
 
         {/* ACCIONES */}
