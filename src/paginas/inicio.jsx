@@ -25,9 +25,10 @@ function Inicio() {
               <p>Tema 1</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor:
                 </p>
               </div>
             </div>
@@ -35,9 +36,10 @@ function Inicio() {
               <p>Tema 2</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor:
                 </p>
               </div>
             </div>
@@ -45,9 +47,10 @@ function Inicio() {
               <p>Tema 3</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor:
                 </p>
               </div>
             </div>
@@ -55,9 +58,10 @@ function Inicio() {
               <p>Tema 4</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
@@ -65,9 +69,10 @@ function Inicio() {
               <p>Tema 5</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
@@ -75,9 +80,10 @@ function Inicio() {
               <p>Tema 6</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
@@ -85,9 +91,10 @@ function Inicio() {
               <p>Tema 7</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
@@ -95,9 +102,10 @@ function Inicio() {
               <p>Tema 8</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
@@ -105,19 +113,10 @@ function Inicio() {
               <p>Tema 9</p>
               <img src="" className="card-img-top" alt="" />
               <div className="card-body">
+                <h3 className="card-title">"nombre"</h3>
+                <img src="" alt="" className="card-img" />
                 <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
-                </p>
-              </div>
-            </div>
-            <div className="card">
-              <p>Tema 10</p>
-              <img src="" className="card-img-top" alt="" />
-              <div className="card-body">
-                <p className="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card’s content.
+                  Autor: "autor"
                 </p>
               </div>
             </div>
