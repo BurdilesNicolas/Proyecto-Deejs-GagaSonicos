@@ -19,6 +19,48 @@
   margin-bottom: 40px;
 }
 
+/* ===== HEADER / NAV-BOTONES (el <header> propio de esta página) ===== */
+.navbar {
+  --accent: #378ADD;
+  --accent-bg: rgba(55, 138, 221, 0.1);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
+.navbar .logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.nav-botones {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-nav {
+  text-decoration: none;
+  color: #1a1a1a;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
+}
+
 /* ===== GRILLA DE PRODUCTOS ===== */
 .grilla {
   display: grid;
