@@ -60,8 +60,59 @@ export default function Comunidad() {
             <p style={{ textAlign: 'center', marginBottom: '2rem', color: '#ccc' }}>
                 Comparte tus opiniones, reseñas y recomendaciones de tus álbumes, vinilos y cassettes favoritos con otros melómanos.
             </p>
-            /*---*/
-            {/*lista reseña*/}
+
+            {/* Formulario de publicación */}
+            <div className="glass-card" style={{ ...styles.card, marginBottom: '2rem' }}>
+                <h2 style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>Dejar una reseña</h2>
+                <form onSubmit={handleSubmit} style={styles.form}>
+                    <div style={styles.inputGroup}>
+                        <label>Tu nombre/usuario:</label>
+                        <input 
+                            type="text" 
+                            style={styles.input} 
+                            value={nuevoUsuario} 
+                            onChange={(e) => setNuevoUsuario(e.target.value)} 
+                            placeholder="Ej: Melómano99"
+                        />
+                    </div>
+                    <div style={styles.inputGroup}>
+                        <label>Álbum / Artista:</label>
+                        <input 
+                            type="text" 
+                            style={styles.input} 
+                            value={nuevoAlbum} 
+                            onChange={(e) => setNuevoAlbum(e.target.value)} 
+                            placeholder="Ej: Abbey Road - The Beatles"
+                        />
+                    </div>
+                    <div style={styles.inputGroup}>
+                        <label>Calificación (1-5 estrellas):</label>
+                        <select 
+                            style={styles.input} 
+                            value={nuevaCalificacion} 
+                            onChange={(e) => setNuevaCalificacion(e.target.value)}
+                        >
+                            <option value={5}>5 ★★★★★</option>
+                            <option value={4}>4 ★★★★☆</option>
+                            <option value={3}>3 ★★★☆☆</option>
+                            <option value={2}>2 ★★☆☆☆</option>
+                            <option value={1}>1 ★☆☆☆☆</option>
+                        </select>
+                    </div>
+                    <div style={styles.inputGroup}>
+                        <label>Comentario / Reseña:</label>
+                        <textarea 
+                            style={{ ...styles.input, resize: 'vertical', minHeight: '80px' }} 
+                            value={nuevoComentario} 
+                            onChange={(e) => setNuevoComentario(e.target.value)} 
+                            placeholder="¿Qué te pareció el sonido, la presentación o las canciones?"
+                        />
+                    </div>
+                    <button type="submit" style={styles.button}>Publicar reseña</button>
+                </form>
+            </div>
+
+            {/* Lista reseña */}
             <section style={{ marginTop: '2.5rem' }}>
                 <h2 style={{ marginBottom: '1rem', fontSize: '1.4rem' }}>Reseñas recientes</h2>
                 {resenas.map((item) => (
@@ -71,7 +122,7 @@ export default function Comunidad() {
                             <span style={{ color: '#fbbf24' }}>{'★'.repeat(item.calificacion)}</span>
                         </div>
                         <p style={{ fontSize: '0.85rem', color: '#aaa', margin: '0.3rem 0 0.8rem 0' }}>
-                            Por <strong>{item.usuario}</strong> - {item.fecha}
+                            Por <strong>{item.usuario}</strong> • {item.fecha}
                         </p>
                         <p style={{ margin: 0, lineHeight: '1.4' }}>{item.comentario}</p>
                     </div>
@@ -80,7 +131,8 @@ export default function Comunidad() {
         </div>
     );
 }
-//estilos rapidos en objeto js
+
+//estilos rápidos en objeto js
 const styles = {
     card: {
         backgroundColor: 'rgba(255, 255, 255, 0.08)',
