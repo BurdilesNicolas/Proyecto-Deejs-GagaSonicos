@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Inicio from "./paginas/Inicio";
 import Login from "./paginas/Login";
 import Navbar from "./componentes/Navbar";
+import Footer from "./componentes/Footer";
 import Productos from "./paginas/productos";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/paginas/Login" element={<Login />} />
         <Route path="/paginas/Productos" element={<Productos />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
