@@ -137,6 +137,26 @@ function Inicio() {
                   <p className="card-text">Autor: "autor"</p>
                 </div>
               </div>
+              {/* Carta 8 */}
+              <div className="card">
+                <p>Tema 8</p>
+                <img src="" className="card-img-top" alt="" />
+                <div className="card-body">
+                  <h3 className="card-title">"nombre"</h3>
+                  <img src="" alt="" className="card-img" />
+                  <p className="card-text">Autor: "autor"</p>
+                </div>
+              </div>
+              {/* Carta 9 */}
+              <div className="card">
+                <p>Tema 9</p>
+                <img src="" className="card-img-top" alt="" />
+                <div className="card-body">
+                  <h3 className="card-title">"nombre"</h3>
+                  <img src="" alt="" className="card-img" />
+                  <p className="card-text">Autor: "autor"</p>
+                </div>
+              </div>
               {/* Carta 10 */}
               <div className="card">
                 <p>Tema 10</p>
