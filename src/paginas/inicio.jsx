@@ -13,6 +13,10 @@ function Inicio() {
     setCurrentIndex((prev) => (prev === 0 ? totalCards - 1 : prev - 1));
   };
 
+  const listadoNovedades = [
+
+  ];
+
   return (
     <div>
       <div className="hero">
@@ -34,7 +38,9 @@ function Inicio() {
         </div>
 
         <div className="carousel-container">
-          <button className="nav-btn prev" onClick={prevSlide}>&#10094;</button>
+          <button className="nav-btn prev" onClick={prevSlide}>
+            &#10094;
+          </button>
 
           <div className="carousel-viewport">
             <div
@@ -143,7 +149,9 @@ function Inicio() {
               </div>
             </div>
           </div>
-          <button className="nav-btn next" onClick={nextSlide}>&#10095;</button>
+          <button className="nav-btn next" onClick={nextSlide}>
+            &#10095;
+          </button>
         </div>
       </div>
     </div>
