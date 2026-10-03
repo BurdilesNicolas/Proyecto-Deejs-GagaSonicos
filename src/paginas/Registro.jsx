@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Registro(){
 return (
@@ -75,8 +77,10 @@ return (
                   {/* Volver al Login y Redes Sociales */}
                   <div className="text-center">
                     <p className="small text-muted mb-4">
-                      ¿Ya tienes una cuenta? <a href="paginas/login" className="text-decoration-none fw-semibold text-primary">Iniciar sesión</a>
+                    ¿Ya tienes una cuenta? 
+                    <Link to="/login" className="text-decoration-none fw-semibold text-primary"> Iniciar sesión</Link>
                     </p>
+
 
                     <div className="position-relative mb-4">
                       <hr className="text-muted" />
