@@ -78,7 +78,7 @@ return (
                   <div className="text-center">
                     <p className="small text-muted mb-4">
                     ¿Ya tienes una cuenta? 
-                    <Link to="/login" className="text-decoration-none fw-semibold text-primary"> Iniciar sesión</Link>
+                    <Link to="/Login" className="text-decoration-none fw-semibold text-primary"> Iniciar sesión</Link>
                     </p>
 
 

@@ -92,7 +92,7 @@ function Login() {
                     <p className="small text-muted mb-4">
                       ¿No tienes una cuenta?
                       <Link
-                        to="/paginas/Registro"
+                        to="/Registro"
                         className="text-decoration-none fw-semibold text-primary"
                         aria-label="Registrarse"
                       >
