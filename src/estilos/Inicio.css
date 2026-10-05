@@ -9,7 +9,6 @@
     background-image: url('../assets/Fondo_Inicio.png');
     background-size: cover;
     background-position: center;
-
 }
 .hero h1{
     color: rgb(255, 255, 255);
@@ -42,7 +41,8 @@
     border-radius: 10px;
     width: max-content;
     transition: transform 0.5s ease-in-out;
-    background-color: rgb(255, 255, 255);
+    background-color: #ffffff;
+    opacity: 1;
 }
 
 .card {
@@ -51,6 +51,8 @@
     margin: 10px;
     padding: 10px;
     box-sizing: border-box;
+    opacity: 1;
+    background-color: #ffffff;
 }
 
 .nav-btn {
