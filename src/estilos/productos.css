@@ -61,6 +61,164 @@
   background-color: var(--accent-bg);
 }
 
+/* ===== BREADCRUMB ===== */
+.breadcrumb {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.breadcrumb a {
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--accent, #378ADD);
+}
+
+/* ===== LAYOUT: sidebar + contenido ===== */
+.layout-productos {
+  --accent: #378ADD;
+  --accent-bg: rgba(55, 138, 221, 0.1);
+
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  align-items: start;
+}
+
+/* ===== SIDEBAR DE FILTROS ===== */
+.sidebar-titulo {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.lista-categorias {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cat-link {
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 6px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.cat-link:hover {
+  color: var(--accent);
+}
+
+.cat-link.activo {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.filtro-subtitulo {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.filtro-label {
+  display: block;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+}
+
+.precio-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.precio-campo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.precio-campo label {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.precio-campo input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.precio-campo input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ===== BARRA DE ORDEN ===== */
+.barra-orden {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.select-orden {
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.select-orden:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sin-resultados {
+  grid-column: 1 / -1;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* ===== RESPONSIVE: sidebar arriba en mobile ===== */
+@media (max-width: 800px) {
+  .layout-productos {
+    grid-template-columns: 1fr;
+  }
+
+  .lista-categorias {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .precio-inputs {
+    max-width: 280px;
+  }
+}
+
 /* ===== GRILLA DE PRODUCTOS ===== */
 .grilla {
   display: grid;
