@@ -24,25 +24,25 @@ function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Productos" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Productos" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Productos
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Comunidad" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Comunidad" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Comunidad
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Nosotros" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Nosotros" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Nosotros
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Locales" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Locales" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Locales
             </NavLink>
@@ -58,7 +58,7 @@ function Navbar() {
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
           </Link>
-          <NavLink to="/Login" className="icon-btn" aria-label="Login">
+          <NavLink to="/Perfil" className="icon-btn" aria-label="Login">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="8" r="4" />
               <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
@@ -70,5 +70,4 @@ function Navbar() {
     </nav>
   )
 }
-
-export default Navbar
+export default Navbar;
