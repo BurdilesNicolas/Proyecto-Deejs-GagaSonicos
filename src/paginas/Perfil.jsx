@@ -15,10 +15,12 @@ function Perfil() {
     setEstaLogueado(true); // Cambia el estado para mostrar el Perfil
   };
   //Registrarse
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = (e, nombreIngresado, correoIngresado) => {
     e.preventDefault();
-    localStorage.setItem("userToken", "token-valido-123"); // Guarda la sesión
-    setEstaLogueado(true); // Cambia el estado para mostrar el Perfil
+    setNombre(nombreIngresado); //Captura y guarda el nombre escrito
+    setCorreo(correoIngresado); //Captura y guarda el correo escrito
+    localStorage.setItem("userToken", "token-valido-123");
+    setEstaLogueado(true);
   };
   //Cerrar sesión
   const handleCerrarSesion = () => {
@@ -32,12 +34,14 @@ function Perfil() {
     setModoEdicion(false); // Apaga el modo edición y vuelve a mostrar tus datos limpios
     alert("¡Cambios guardados con éxito!"); // Alerta visual de confirmación
   };
-  
-//=======================Variables========================
-  const [nombre, setNombre] = useState("juan");
-  const [correo, setCorreo] = useState("juan@email.com");
+
+  //=======================Variables========================
+  const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
   const [mostrarCorreo, setMostrarCorreo] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [inputNombre, setInputNombre] = useState("");
+  const [inputCorreo, setInputCorreo] = useState("");
 
   //=======================VISTAS DE PERFIL=========================
   //Perfil de usuario
@@ -100,7 +104,7 @@ function Perfil() {
                               Correo Electrónico
                             </small>
                             <div className="d-flex justify-content-between align-items-center">
-                              {/* 👁️ Lógica del ojito: oculta el correo reemplazando caracteres si mostrarCorreo es false */}
+                              {/*Lógica del ojito: oculta el correo reemplazando caracteres si mostrarCorreo es false */}
                               <span className="text-dark fw-semibold text-truncate me-2">
                                 {mostrarCorreo
                                   ? correo
@@ -129,11 +133,15 @@ function Perfil() {
                         {/*Boton de Editar Perfil */}
                         <button
                           type="button"
-                          className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 fw-semibold small transition-all"
+                          className="btn btn-primary w-100 py-2.5 fw-semibold rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2 mt-4"
+                          style={{
+                            backgroundColor: "#0066ff",
+                            borderColor: "#0066ff",
+                          }} // Azul vibrante idéntico a tu diseño
                           onClick={() => setModoEdicion(true)}
                         >
-                          <i className="bi bi-pencil-square me-1.5"></i>Editar
-                          datos
+                          <i className="bi bi-pencil-square fs-5"></i>
+                          EDITAR DATOS
                         </button>
                       </div>
                     ) : (
@@ -365,10 +373,8 @@ function Perfil() {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
-            {/* Tarjeta Contenedora del Registro */}
             <div className="card border-0 shadow-sm rounded-4 p-4 bg-white">
               <div className="card-body">
-                {/* Cabecera del Registro */}
                 <div className="text-center mb-4">
                   <h2 className="fw-bold text-dark mb-1">Crea tu cuenta</h2>
                   <p className="text-muted small">
@@ -376,7 +382,12 @@ function Perfil() {
                   </p>
                 </div>
 
-                <form onSubmit={handleRegisterSubmit}>
+                {/* 2. Al hacer el submit, enviamos los datos temporales a la función superior */}
+                <form
+                  onSubmit={(e) =>
+                    handleRegisterSubmit(e, inputNombre, inputCorreo)
+                  }
+                >
                   {/* Input de Nombre Completo */}
                   <div className="form-floating mb-3">
                     <input
@@ -384,13 +395,14 @@ function Perfil() {
                       id="registerName"
                       className="form-control bg-light border-0 text-secondary"
                       placeholder="Nombre completo"
+                      value={inputNombre}
+                      onChange={(e) => setInputNombre(e.target.value)}
                       required
                     />
                     <label htmlFor="registerName" className="text-muted">
                       Nombre completo
                     </label>
-                  </div>
-
+                  </div>{" "}
                   {/* Input de Email */}
                   <div className="form-floating mb-3">
                     <input
@@ -398,13 +410,14 @@ function Perfil() {
                       id="registerEmail"
                       className="form-control bg-light border-0 text-secondary"
                       placeholder="Dirección de correo"
+                      value={inputCorreo}
+                      onChange={(e) => setInputCorreo(e.target.value)}
                       required
                     />
                     <label htmlFor="registerEmail" className="text-muted">
                       Dirección de correo
                     </label>
                   </div>
-
                   {/* Input de Contraseña */}
                   <div className="form-floating mb-3">
                     <input
@@ -418,8 +431,6 @@ function Perfil() {
                       Contraseña
                     </label>
                   </div>
-
-                  {/* Términos y Condiciones */}
                   <div className="row my-4 align-items-center">
                     <div className="col-12">
                       <div className="form-check">
@@ -451,20 +462,15 @@ function Perfil() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Botón de Registro */}
                   <button
                     type="submit"
                     className="btn btn-primary w-100 py-2.5 fw-bold text-uppercase shadow-sm mb-4 rounded-3"
                   >
                     Registrarse
                   </button>
-
-                  {/* Volver al Login y Redes Sociales */}
                   <div className="text-center">
                     <p className="small text-muted mb-4">
                       ¿Ya tienes una cuenta?
-                      {/*BOTÓN DE CAMBIO: Al hacer clic, vuelve a poner el estado en "login" */}
                       <button
                         type="button"
                         className="btn btn-link p-0 fw-semibold text-decoration-none align-baseline ms-1"
@@ -481,7 +487,6 @@ function Perfil() {
                       </span>
                     </div>
 
-                    {/* Botones de Redes Sociales con tus Bootstrap Icons */}
                     <div className="d-flex justify-content-center gap-2">
                       <button
                         type="button"
