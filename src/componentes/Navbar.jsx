@@ -24,25 +24,25 @@ function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Productos" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Productos" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Productos
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Comunidad" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Comunidad" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Comunidad
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Nosotros" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Nosotros" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Nosotros
             </NavLink>
           </li>
           <li>
-            <NavLink to="/paginas/Locales" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
+            <NavLink to="/Locales" className={({ isActive }) => isActive ? 'nav-pill active' : 'nav-pill'}>
               <span className="nav-icon" aria-hidden="true"></span>
               Locales
             </NavLink>
@@ -70,5 +70,4 @@ function Navbar() {
     </nav>
   )
 }
-
-export default Navbar
+export default Navbar;
