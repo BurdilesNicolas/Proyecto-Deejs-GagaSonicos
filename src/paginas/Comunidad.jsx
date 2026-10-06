@@ -1,185 +1,123 @@
 import React, { useState } from 'react';
-import { 
-  FaFire, 
-  FaMusic, 
-  FaComments, 
-  FaCalendarDays, 
-  FaPaperclip, 
-  FaHeart, 
-  FaRegHeart, 
-  FaComment, 
-  FaShareNodes, 
-  FaCirclePlay 
-} from 'react-icons/fa6';
+import '../estilos/App.css'; 
 
 export default function Comunidad() {
-  const [activeTab, setActiveTab] = useState('destacados');
-  const [likedPosts, setLikedPosts] = useState({});
+    //reseñas de ejemplo
+    const [resenas, setResenas] = useState([
+        {
+            id: 1,
+            usuario: 'Ana Vinyl',
+            album: 'Blonde - Frank Ocean',
+            calificacion: 5,
+            comentario: 'La edición en vinilo suena impecable. La calidez del audio analógico realza muchísimo la producción del álbum.',
+            fecha: '2026-03-10'
+        },
+        {
+            id: 2,
+            usuario: 'Diego_Tape',
+            album: 'channel ORANGE - Frank Ocean',
+            calificacion: 4,
+            comentario: 'El cassette llegó en excelentes condiciones. ¡Muy recomendado para coleccionistas!',
+            fecha: '2026-03-12'
+        }
+    ]);
 
-  const toggleLike = (postId) => {
-    setLikedPosts((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
-  };
+    //estado para el formulario de nueva reseña
+    const [nuevoUsuario, setNuevoUsuario] = useState('');
+    const [nuevoAlbum, setNuevoAlbum] = useState('');
+    const [nuevaCalificacion, setNuevaCalificacion] = useState(5);
+    const [nuevoComentario, setNuevoComentario] = useState('');
 
-  return (
-    <div className="min-h-screen bg-[#0b0c10] text-white font-sans">
-      {/* Banner Principal */}
-      <section className="text-center py-12 px-4 bg-gradient-to-b from-[#66fcf1]/10 to-[#0b0c10]">
-        <h1 className="text-4xl font-extrabold text-[#66fcf1] mb-2 tracking-wide uppercase">
-          Comunidad GagaSonicos
-        </h1>
-        <p className="text-[#c5c6c7] max-w-xl mx-auto">
-          Conéctate con otros DJs, comparte tus sets, opiniones y entérate de las últimas novedades.
-        </p>
-      </section>
+    //agregar una reseña al enviar el formulario
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!nuevoUsuario || !nuevoAlbum || !nuevoComentario) {
+            alert('Por favor completa todos los campos.');
+            return;
+        }
 
-      {/* Grid Principal */}
-      <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-        
-        {/* Columna Izquierda: Sidebar de Navegación */}
-        <aside className="space-y-4">
-          <div className="bg-[#1f2833] p-5 rounded-xl border border-[#2c3540] shadow-lg">
-            <h3 className="text-lg font-bold text-[#66fcf1] mb-4">Categorías</h3>
-            <nav className="flex flex-col space-y-2">
-              <button 
-                onClick={() => setActiveTab('destacados')}
-                className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                  activeTab === 'destacados' ? 'bg-[#66fcf1]/10 text-[#66fcf1] font-semibold' : 'text-[#c5c6c7] hover:text-white'
-                }`}
-              >
-                <FaFire /> Destacados
-              </button>
-              <button 
-                onClick={() => setActiveTab('sets')}
-                className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                  activeTab === 'sets' ? 'bg-[#66fcf1]/10 text-[#66fcf1] font-semibold' : 'text-[#c5c6c7] hover:text-white'
-                }`}
-              >
-                <FaMusic /> Compartir Sets
-              </button>
-              <button 
-                onClick={() => setActiveTab('debate')}
-                className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                  activeTab === 'debate' ? 'bg-[#66fcf1]/10 text-[#66fcf1] font-semibold' : 'text-[#c5c6c7] hover:text-white'
-                }`}
-              >
-                <FaComments /> Debate & Charla
-              </button>
-              <button 
-                onClick={() => setActiveTab('eventos')}
-                className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                  activeTab === 'eventos' ? 'bg-[#66fcf1]/10 text-[#66fcf1] font-semibold' : 'text-[#c5c6c7] hover:text-white'
-                }`}
-              >
-                <FaCalendarDays /> Eventos
-              </button>
-            </nav>
-          </div>
+        const nuevaResenaObj = {
+            id: Date.now(),
+            usuario: nuevoUsuario,
+            album: nuevoAlbum,
+            calificacion: Number(nuevaCalificacion),
+            comentario: nuevoComentario,
+            fecha: new Date().toISOString().split('T')[0]
+        };
 
-          <button className="w-full bg-[#66fcf1] text-black font-bold py-3 rounded-full hover:bg-[#45a29e] hover:shadow-[0_0_15px_#66fcf1] transition-all">
-            + Crear Publicación
-          </button>
-        </aside>
+        setResenas([nuevaResenaObj, ...resenas]);
 
-        {/* Columna Central: Feed de Publicaciones */}
-        <section className="md:col-span-2 space-y-6">
-          
-          {/* Formulario para publicar */}
-          <div className="bg-[#1f2833] p-4 rounded-xl border border-[#2c3540] shadow-md">
-            <textarea 
-              className="w-full bg-[#0b0c10] text-white p-3 rounded-lg border border-[#2c3540] focus:border-[#66fcf1] focus:outline-none resize-none transition-colors"
-              rows="3"
-              placeholder="¿Qué estás escuchando o mezclando hoy?..."
-            ></textarea>
-            <div className="flex justify-between items-center mt-3">
-              <button className="flex items-center gap-2 text-[#c5c6c7] hover:text-[#66fcf1] text-sm transition-colors">
-                <FaPaperclip /> Adjuntar Set / Audio
-              </button>
-              <button className="bg-[#66fcf1] text-black font-bold px-5 py-2 rounded-full hover:bg-[#45a29e] transition-colors">
-                Publicar
-              </button>
-            </div>
-          </div>
+        //limpiar formulario
+        setNuevoUsuario('');
+        setNuevoAlbum('');
+        setNuevaCalificacion(5);
+        setNuevoComentario('');
+    };
 
-          {/* Tarjeta de Publicación Ejemplo */}
-          <article className="bg-[#1f2833] p-5 rounded-xl border border-[#2c3540] shadow-lg space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#66fcf1] text-black font-bold flex items-center justify-center">
-                  DJ
-                </div>
-                <div>
-                  <h4 className="font-bold text-white leading-tight">DJ Alex Sonic</h4>
-                  <span className="text-xs text-[#c5c6c7]">Hace 2 horas</span>
-                </div>
-              </div>
-              <span className="bg-[#66fcf1]/20 text-[#66fcf1] text-xs font-semibold px-3 py-1 rounded-full">
-                Sets & Mixes
-              </span>
-            </div>
-
-            <p className="text-sm text-gray-200 leading-relaxed">
-              ¡Les comparto mi último set de Techno grabado este fin de semana! Dejen sus comentarios y feedbacks. 🎧🔥
+    return (
+        <div className="comunidad-container" style={{ padding: '2rem', color: '#fff', maxWidth: '900px', margin: '0 auto' }}>
+            <h1 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Comunidad DEEJ's 🎵</h1>
+            <p style={{ textAlign: 'center', marginBottom: '2rem', color: '#ccc' }}>
+                Comparte tus opiniones, reseñas y recomendaciones de tus álbumes, vinilos y cassettes favoritos con otros melómanos.
             </p>
-
-            {/* Reproductor / Preview de Media */}
-            <div className="bg-[#0b0c10] p-4 rounded-lg border-l-4 border-[#66fcf1] flex items-center gap-4 cursor-pointer hover:bg-black/50 transition-colors">
-              <FaCirclePlay className="text-3xl text-[#66fcf1]" />
-              <div>
-                <p className="font-bold text-sm text-white">Electro Session Vol. 4</p>
-                <p className="text-xs text-[#c5c6c7]">Duración: 45:20 min</p>
-              </div>
-            </div>
-
-            {/* Footer de Interacciones */}
-            <div className="flex justify-around pt-3 border-t border-[#2c3540] text-sm text-[#c5c6c7]">
-              <button 
-                onClick={() => toggleLike(1)} 
-                className={`flex items-center gap-2 transition-colors ${likedPosts[1] ? 'text-red-500' : 'hover:text-[#66fcf1]'}`}
-              >
-                {likedPosts[1] ? <FaHeart /> : <FaRegHeart />} {likedPosts[1] ? 25 : 24} Me gusta
-              </button>
-              <button className="flex items-center gap-2 hover:text-[#66fcf1] transition-colors">
-                <FaComment /> 8 Comentarios
-              </button>
-              <button className="flex items-center gap-2 hover:text-[#66fcf1] transition-colors">
-                <FaShareNodes /> Compartir
-              </button>
-            </div>
-          </article>
-
-        </section>
-
-        {/* Columna Derecha: Ranking / Widgets */}
-        <aside className="space-y-4">
-          <div className="bg-[#1f2833] p-5 rounded-xl border border-[#2c3540] shadow-lg">
-            <h3 className="text-lg font-bold text-[#66fcf1] mb-4">Top DJs de la Semana</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-3">
-                  <span className="text-[#66fcf1] font-bold">1.</span> DJ BeatMaster
-                </span>
-                <span className="text-xs text-[#c5c6c7]">1.2k pts</span>
-              </li>
-              <li className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-3">
-                  <span className="text-[#66fcf1] font-bold">2.</span> ElectroQueen
-                </span>
-                <span className="text-xs text-[#c5c6c7]">980 pts</span>
-              </li>
-              <li className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-3">
-                  <span className="text-[#66fcf1] font-bold">3.</span> GrooveLover
-                </span>
-                <span className="text-xs text-[#c5c6c7]">850 pts</span>
-              </li>
-            </ul>
-          </div>
-        </aside>
-
-      </main>
-    </div>
-  );
+            /*---*/
+            {/*lista reseña*/}
+            <section style={{ marginTop: '2.5rem' }}>
+                <h2 style={{ marginBottom: '1rem', fontSize: '1.4rem' }}>Reseñas recientes</h2>
+                {resenas.map((item) => (
+                    <div key={item.id} className="glass-card" style={{ ...styles.card, marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h3 style={{ fontSize: '1.1rem', margin: 0, color: '#a78bfa' }}>{item.album}</h3>
+                            <span style={{ color: '#fbbf24' }}>{'★'.repeat(item.calificacion)}</span>
+                        </div>
+                        <p style={{ fontSize: '0.85rem', color: '#aaa', margin: '0.3rem 0 0.8rem 0' }}>
+                            Por <strong>{item.usuario}</strong> - {item.fecha}
+                        </p>
+                        <p style={{ margin: 0, lineHeight: '1.4' }}>{item.comentario}</p>
+                    </div>
+                ))}
+            </section>
+        </div>
+    );
 }
+//estilos rapidos en objeto js
+const styles = {
+    card: {
+        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        borderRadius: '12px',
+        padding: '1.5rem',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem'
+    },
+    inputGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.3rem',
+        textAlign: 'left'
+    },
+    input: {
+        padding: '0.6rem 0.8rem',
+        borderRadius: '6px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        color: '#fff',
+        fontSize: '0.95rem'
+    },
+    button: {
+        padding: '0.75rem',
+        borderRadius: '8px',
+        border: 'none',
+        backgroundColor: '#6d28d9',
+        color: '#fff',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        marginTop: '0.5rem',
+        transition: 'background-color 0.2s'
+    }
+};
