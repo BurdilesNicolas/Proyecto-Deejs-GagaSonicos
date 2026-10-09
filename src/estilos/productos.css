@@ -329,6 +329,7 @@
 }
 
 .btn-comprar:hover {
+  color:var(--accent);
   background-color: var(--accent-hover);
 }
 
