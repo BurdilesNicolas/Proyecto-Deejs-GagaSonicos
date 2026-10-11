@@ -4,73 +4,29 @@
     box-sizing: border-box;
 }
 
-.hero{
+.hero {
     padding: 100px;
     background-image: url('../assets/Fondo_Inicio.png');
     background-size: cover;
     background-position: center;
-
+    min-height: 60vh;
 }
-.hero h1{
+
+.hero-title {
     color: rgb(255, 255, 255);
     font-size: 4rem;
     text-align: left;
     margin-top: 20%;
 }
-.botones_inicio{
+
+.botones_inicio {
     display: flex;
-    justify-content: left  ;
+    justify-content: flex-start;
     margin-top: 20px;
-
-}
-.carousel-container {
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 100%;
 }
 
-.carousel-viewport {
-    overflow: hidden;
-    width: 100%;
-}
-
-.cards {
-    display: flex;
-    border-radius: 10px;
-    width: max-content;
-    transition: transform 0.5s ease-in-out;
-    background-color: rgb(255, 255, 255);
-}
-
-.card {
-    flex: 0 0 25vw;
-    gap: 20px;
-    margin: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-.nav-btn {
-    background-color: #0084ff;
-    color: white;
-    border: none;
-    font-size: 2rem;
-    padding: 10px;
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 50%;
-    transition: background 0.3s;
-}
-
-.nav-btn:hover {
-    background-color: #3d00cc;
-}
-
-.botones_inicio button{
-    background-color: #2c05db;;
+.botones_inicio button {
+    background-color: #2c05db;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -79,10 +35,12 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-.botones_inicio a{
+
+.botones_inicio a {
     color: white;
     text-decoration: none;
 }
+
 .secundario {
     background: linear-gradient(-45deg, #3d00cc, #6a11cb, #2575fc, #3d00cc);
     background-size: 400% 400%;
@@ -93,22 +51,117 @@
 }
 
 @keyframes gradientBG {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.secundario h2 {
+.section-title {
     color: #ffffff;
     font-size: 2.5rem;
     text-align: left;
     margin-bottom: 40px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     font-weight: bold;
+}
+
+/* CARRUSEL DE MÚSICA */
+.music-carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    position: relative;
+}
+
+.music-carousel-viewport {
+    overflow: hidden;
+    width: 80vw;
+    margin: 0 auto;
+}
+
+.music-cards-container {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+
+.music-card {
+    flex: 0 0 calc(33.333% - 13.33px);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.music-card-inner {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.music-card-inner:hover {
+    transform: translateY(-10px);
+}
+
+.music-img-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 15px;
+    background: #eee;
+}
+
+.music-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.music-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+.music-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.music-artist {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+}
+
+.music-nav-btn {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.music-nav-btn:hover {
+    background-color: #3d00cc;
+    transform: scale(1.1);
 }
