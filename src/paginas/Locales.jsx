@@ -68,6 +68,20 @@ function Locales() {
           nuestras sedes están equipadas con tecnología de sonido de última generación para asegurar que
           cada beat se sienta en el alma.
         </p>
+        <div style={{ width: "100%" }}>
+          <iframe
+            width="100%"
+            height="600"
+            frameborder="0"
+            scrolling="no"
+            marginheight="0"
+            marginwidth="0"
+            src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=Lanin%202020,%20neuquen+(Zizou)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+            title="Google Maps"
+          >
+            <a href="https://www.mapsdirections.info/calcular-la-poblacion-en-un-mapa/">Estimar la población</a>
+          </iframe>
+        </div>
         <div className="about-features">
           <div className="feature-item">
             <strong className="feature-label">Sonido Hi-Fi</strong>
