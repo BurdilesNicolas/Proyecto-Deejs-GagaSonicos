@@ -3,173 +3,78 @@ import "../estilos/Inicio.css";
 
 function Inicio() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const totalCards = 8;
+
+  const musicData = [
+    { id: 1, title: "Sinfonía No. 5", artist: "Beethoven", image: "https://via.placeholder.com/300x300?text=Beethoven" },
+    { id: 2, title: "Bohemian Rhapsody", artist: "Queen", image: "https://via.placeholder.com/300x300?text=Queen" },
+    { id: 3, title: "Billie Jean", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=MJ" },
+    { id: 4, title: "Imagine", artist: "John Lennon", image: "https://via.placeholder.com/300x300?text=Lennon" },
+    { id: 5, title: "Smooth Criminal", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=MJ2" },
+    { id: 6, title: "Like a Virgin", artist: "Madonna", image: "https://via.placeholder.com/300x300?text=Madonna" },
+    { id: 7, title: "Hotel California", artist: "Eagles", image: "https://via.placeholder.com/300x300?text=Eagles" },
+    { id: 8, title: "Stayin' Alive", artist: "Bee Gees", image: "https://via.placeholder.com/300x300?text=BeeGees" },
+    { id: 9, title: "Thriller", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=Thriller" },
+    { id: 10, title: "Yesterday", artist: "The Beatles", image: "https://via.placeholder.com/300x300?text=Beatles" },
+  ];
+
+  const totalCards = musicData.length;
+  const cardsToShow = 3;
+  const maxIndex = totalCards - cardsToShow;
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === totalCards - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? totalCards - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
-  const listadoNovedades = [
-
-  ];
-
   return (
-    <div>
+    <div className="inicio-page">
       <div className="hero">
-        <h1>DEEJ`S</h1>
-        <p></p>
+        <h1 className="hero-title">DEEJ`S</h1>
         <div className="botones_inicio">
-          <button>
-            <a href="..\paginas\Productos">Explorar</a>
+          <button className="btn-explorar">
+            <a href="/productos">Explorar</a>
           </button>
-          <button>
-            <a href=""></a>Conocernos
+          <button className="btn-conocernos">
+            <a href="">Conocernos</a>
           </button>
         </div>
-        <p></p>
       </div>
       <div className="secundario">
         <div className="subtitulo">
-          <h2>Novedades</h2>
+          <h2 className="section-title">Temas de Música</h2>
         </div>
 
-        <div className="carousel-container">
-          <button className="nav-btn prev" onClick={prevSlide}>
+        <div className="music-carousel-wrapper">
+          <button className="music-nav-btn prev" onClick={prevSlide}>
             &#10094;
           </button>
 
-          <div className="carousel-viewport">
+          <div className="music-carousel-viewport">
             <div
-              className="cards"
-              style={{ transform: `translateX(-${currentIndex * 25}vw)` }}
+              className="music-cards-container"
+              style={{
+                transform: `translateX(-${currentIndex * 31.33}vw)`,
+              }}
             >
-              {/* Carta 1 */}
-              <div className="card">
-                <p>Tema 1</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor:</p>
+              {musicData.map((music) => (
+                <div className="music-card" key={music.id}>
+                  <div className="music-card-inner">
+                    <div className="music-img-wrapper">
+                      <img src={music.image} alt={music.title} className="music-img" />
+                    </div>
+                    <div className="music-info">
+                      <h3 className="music-title">{music.title}</h3>
+                      <p className="music-artist">{music.artist}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              {/* Carta 2 */}
-              <div className="card">
-                <p>Tema 2</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor:</p>
-                </div>
-              </div>
-              {/* Carta 3 */}
-              <div className="card">
-                <p>Tema 3</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor:</p>
-                </div>
-              </div>
-              {/* Carta 4 */}
-              <div className="card">
-                <p>Tema 4</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 5 */}
-              <div className="card">
-                <p>Tema 5</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 6 */}
-              <div className="card">
-                <p>Tema 6</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 7 */}
-              <div className="card">
-                <p>Tema 7</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 8 */}
-              <div className="card">
-                <p>Tema 8</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 9 */}
-              <div className="card">
-                <p>Tema 9</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 8 */}
-              <div className="card">
-                <p>Tema 8</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 9 */}
-              <div className="card">
-                <p>Tema 9</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
-              {/* Carta 10 */}
-              <div className="card">
-                <p>Tema 10</p>
-                <img src="" className="card-img-top" alt="" />
-                <div className="card-body">
-                  <h3 className="card-title">"nombre"</h3>
-                  <img src="" alt="" className="card-img" />
-                  <p className="card-text">Autor: "autor"</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-          <button className="nav-btn next" onClick={nextSlide}>
+          <button className="music-nav-btn next" onClick={nextSlide}>
             &#10095;
           </button>
         </div>
@@ -177,4 +82,5 @@ function Inicio() {
     </div>
   );
 }
+
 export default Inicio;
