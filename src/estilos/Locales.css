@@ -99,6 +99,23 @@
     gap: 8px;
     color: #666;
     font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.local-event {
+    background: #f0eaff;
+    color: #3d00cc;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    border-left: 4px solid #3d00cc;
+}
+
+.local-desc {
+    color: #777;
+    font-size: 0.9rem;
+    line-height: 1.4;
     margin-bottom: 20px;
 }
 
@@ -166,6 +183,12 @@
     margin-bottom: 10px;
 }
 
+.feature-desc {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+}
 
 .feature-label {
     display: block;
