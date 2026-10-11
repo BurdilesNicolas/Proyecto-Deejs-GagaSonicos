@@ -1,0 +1,174 @@
+.locales-page {
+    padding: 80px 20px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(-45deg, #1900f8, #090a7a, #49006f, #8b00fd);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 90vh;
+    color: white;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.locales-header {
+    margin-bottom: 60px;
+}
+
+.locales-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.locales-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 300;
+}
+
+.locales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.local-card {
+    background: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.local-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.local-image-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.local-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.local-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #3d00cc;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.local-info {
+    padding: 25px;
+    text-align: left;
+}
+
+.local-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #1a1a2e;
+}
+
+.local-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.local-btn {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    background: #3d00cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.local-btn:hover {
+    background: #2c05db;
+}
+
+/* ESTILOS NUEVOS PARA LA SECCIÓN ABOUT */
+.locales-about {
+    margin: 80px auto 0 auto;
+    padding: 40px 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 900px;
+    text-align: center;
+}
+
+.about-title {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    color: #fff;
+    font-weight: 700;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.about-features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    text-align: center;
+    min-width: 150px;
+}
+
+.feature-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+.feature-label {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+}
