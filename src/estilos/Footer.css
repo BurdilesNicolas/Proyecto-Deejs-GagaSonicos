@@ -4,7 +4,7 @@
   padding: 50px 0 20px 0;
   margin-top: auto;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  border-top: 3px solid #ffcc00; /* Detalle de color para resaltar */
+  border-top: 3px solid #333; /* Detalle de color para resaltar */
 }
 
 .footer-container {
@@ -54,7 +54,7 @@
   bottom: 0;
   width: 40px;
   height: 2px;
-  background-color: #ffcc00;
+  background-color: #555;
 }
 
 .footer-section ul {
@@ -76,7 +76,7 @@
 }
 
 .footer-section ul li a:hover {
-  color: #ffcc00;
+  color: #ddd;
   transform: translateX(5px);
 }
 
@@ -98,9 +98,9 @@
 }
 
 .social-icons a:hover {
-  background-color: #ffcc00;
-  color: #1a1a1a;
-  border-color: #ffcc00;
+  background-color: #444;
+  color: #ffffff;
+  border-color: #444;
 }
 
 .footer-bottom {
