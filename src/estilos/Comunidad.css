@@ -1,0 +1,674 @@
+/* ==========================================================
+   RESEÑAS Y COMUNIDAD
+   Mantiene el lenguaje visual de productos.css: fondo blanco,
+   acento azul #378ADD, cards tipo vidrio, botones pill y
+   layout con sidebar a la izquierda.
+
+   Todas las clases llevan el prefijo "cm-" y las variables van
+   en .cm-page (no en :root), así no chocan con Bootstrap, con
+   .card de productos.css ni afectan al Navbar o al Footer.
+   ========================================================== */
+
+.cm-page {
+    --cm-accent: #378ADD;
+    --cm-accent-hover: #2f78c2;
+    --cm-accent-bg: rgba(55, 138, 221, 0.1);
+    --cm-border: rgba(0, 0, 0, 0.08);
+    --cm-input-border: rgba(0, 0, 0, 0.15);
+    --cm-text: #1a1a1a;
+    --cm-muted: rgba(0, 0, 0, 0.55);
+    --cm-star: #f5a623;
+    --cm-error: #d64545;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    background-color: #ffffff;
+    color: var(--cm-text);
+    text-align: left;
+}
+
+.cm-page *,
+.cm-page *::before,
+.cm-page *::after {
+    box-sizing: border-box;
+}
+
+/* ===== BREADCRUMB (igual que Productos) ===== */
+.cm-breadcrumb {
+    padding: 24px 0 0;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.cm-breadcrumb a {
+    color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+}
+
+.cm-breadcrumb a:hover {
+    color: var(--cm-accent);
+}
+
+/* ===== ENCABEZADO ===== */
+.cm-header {
+    padding: 20px 0 8px;
+}
+
+.cm-titulo {
+    margin: 0 0 8px;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    color: var(--cm-text);
+}
+
+.cm-subtitulo {
+    margin: 0 0 24px;
+    max-width: 560px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--cm-muted);
+}
+
+/* ===== TABS (selector Reseñas / Comunidad) ===== */
+.cm-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--cm-border);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.cm-tab {
+    padding: 8px 22px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cm-muted);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cm-tab:hover {
+    color: var(--cm-accent);
+}
+
+/* Misma "pastilla" activa que usa el Navbar */
+.cm-tab.activo {
+    background: var(--cm-accent);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(55, 138, 221, 0.35);
+}
+
+/* ===== LAYOUT: sidebar + contenido ===== */
+.cm-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+    padding: 24px 0 8px;
+    align-items: start;
+}
+
+/* ===== SIDEBAR ===== */
+.cm-sidebar-titulo {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--cm-text);
+}
+
+.cm-filtro-titulo {
+    margin: 28px 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cm-text);
+}
+
+.cm-lista-filtros {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cm-filtro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: left;
+    color: var(--cm-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.cm-filtro:hover {
+    color: var(--cm-accent);
+}
+
+.cm-filtro.activo {
+    color: var(--cm-accent);
+    font-weight: 700;
+}
+
+.cm-filtro-cant {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.35);
+}
+
+.cm-nota-chica {
+    margin: 24px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* ===== RESUMEN DE CALIFICACIONES ===== */
+.cm-resumen {
+    padding: 16px;
+    border: 1px solid var(--cm-border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.cm-resumen-nota {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.cm-nota {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--cm-text);
+}
+
+.cm-resumen-total {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--cm-muted);
+}
+
+.cm-distribucion {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cm-distribucion li {
+    display: grid;
+    grid-template-columns: 28px 1fr 18px;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--cm-muted);
+}
+
+.cm-dist-barra {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+}
+
+.cm-dist-relleno {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--cm-accent);
+    transition: width 0.4s ease;
+}
+
+.cm-dist-cantidad {
+    text-align: right;
+}
+
+/* ===== BARRA SUPERIOR (acción + orden) ===== */
+.cm-barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.cm-select-orden {
+    padding: 10px 14px;
+    border: 1px solid var(--cm-input-border);
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--cm-text);
+    cursor: pointer;
+}
+
+.cm-select-orden:focus {
+    outline: none;
+    border-color: var(--cm-accent);
+}
+
+/* ===== BOTONES ===== */
+.cm-btn {
+    padding: 10px 22px;
+    border: 1px solid var(--cm-accent);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cm-btn-prim {
+    background-color: var(--cm-accent);
+    color: #ffffff;
+}
+
+.cm-btn-prim:hover {
+    background-color: var(--cm-accent-hover);
+}
+
+.cm-btn-sec {
+    background-color: transparent;
+    color: var(--cm-accent);
+}
+
+.cm-btn-sec:hover {
+    background-color: var(--cm-accent-bg);
+}
+
+.cm-btn-mini {
+    padding: 6px 14px;
+    border: 1px solid var(--cm-border);
+    border-radius: 999px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--cm-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cm-btn-mini:hover {
+    border-color: var(--cm-accent);
+    color: var(--cm-accent);
+}
+
+.cm-btn-mini.activo {
+    border-color: var(--cm-accent);
+    background: var(--cm-accent-bg);
+    color: var(--cm-accent);
+}
+
+.cm-btn:focus-visible,
+.cm-btn-mini:focus-visible,
+.cm-tab:focus-visible,
+.cm-filtro:focus-visible,
+.cm-selector-btn:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: 2px;
+}
+
+/* ===== AVISO DE ÉXITO ===== */
+.cm-aviso {
+    margin: 0 0 16px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--cm-accent-bg);
+    font-size: 14px;
+    color: var(--cm-accent-hover);
+}
+
+/* ===== CARDS (mismo efecto vidrio que Productos) ===== */
+.cm-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cm-card {
+    padding: 20px;
+    border: 1px solid var(--cm-border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.cm-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--cm-accent);
+    box-shadow: 0 12px 28px rgba(55, 138, 221, 0.15);
+}
+
+.cm-card-titulo {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cm-text);
+}
+
+.cm-texto {
+    margin: 14px 0 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+.cm-card-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cm-border);
+}
+
+.cm-fecha {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* ----- reseña ----- */
+.cm-resena-cab {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cm-miniatura {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cm-miniatura img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.cm-resena-datos {
+    min-width: 0;
+}
+
+.cm-resena-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+/* ----- recomendación ----- */
+.cm-reco-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.cm-reco-titulo {
+    font-size: 18px;
+}
+
+.cm-reco-titulo+.cm-texto {
+    margin-top: 8px;
+}
+
+.cm-tag {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--cm-accent-bg);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cm-accent);
+}
+
+/* ----- autor ----- */
+.cm-autor {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cm-text);
+}
+
+.cm-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--cm-accent-bg);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cm-accent);
+}
+
+/* ===== ESTRELLAS (solo lectura) ===== */
+.cm-estrellas {
+    display: inline-flex;
+    gap: 1px;
+    line-height: 1;
+}
+
+.cm-estrella {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.15);
+}
+
+.cm-estrella.llena {
+    color: var(--cm-star);
+}
+
+/* ===== ESTRELLAS (selector del formulario) ===== */
+.cm-selector {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.cm-selector-btn {
+    padding: 0 2px;
+    border: none;
+    background: none;
+    font-size: 28px;
+    line-height: 1.2;
+    color: rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.cm-selector-btn.llena {
+    color: var(--cm-star);
+}
+
+.cm-selector-btn:hover {
+    transform: scale(1.12);
+}
+
+.cm-selector-texto {
+    margin-left: 10px;
+    font-size: 13px;
+    color: var(--cm-muted);
+}
+
+/* ===== FORMULARIO ===== */
+.cm-form {
+    margin-bottom: 24px;
+    padding: 24px;
+    border: 1px solid var(--cm-border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.cm-form-titulo {
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--cm-text);
+}
+
+.cm-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.cm-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.cm-campo.completo {
+    grid-column: 1 / -1;
+}
+
+.cm-campo label {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cm-muted);
+}
+
+.cm-campo input,
+.cm-campo select,
+.cm-campo textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--cm-input-border);
+    border-radius: 8px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--cm-text);
+}
+
+.cm-campo textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+.cm-campo input:focus,
+.cm-campo select:focus,
+.cm-campo textarea:focus {
+    outline: none;
+    border-color: var(--cm-accent);
+}
+
+.cm-campo [aria-invalid="true"] {
+    border-color: var(--cm-error);
+}
+
+.cm-error {
+    font-size: 12px;
+    color: var(--cm-error);
+}
+
+.cm-contador {
+    align-self: flex-end;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.cm-form-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ===== ESTADO VACÍO ===== */
+.cm-vacio {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.cm-vacio p {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: var(--cm-muted);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 800px) {
+    .cm-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    /* Los filtros pasan a ser "chips" horizontales */
+    .cm-lista-filtros {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .cm-filtro {
+        width: auto;
+        gap: 6px;
+        padding: 6px 14px;
+        border: 1px solid var(--cm-border);
+        border-radius: 999px;
+    }
+
+    .cm-filtro.activo {
+        border-color: var(--cm-accent);
+        background: var(--cm-accent-bg);
+    }
+
+    .cm-titulo {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cm-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cm-barra {
+        flex-wrap: wrap;
+    }
+
+    .cm-card,
+    .cm-form {
+        padding: 16px;
+    }
+}
