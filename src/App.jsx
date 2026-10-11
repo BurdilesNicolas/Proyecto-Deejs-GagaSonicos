@@ -4,6 +4,7 @@ import Navbar from "./componentes/Navbar";
 import Footer from "./componentes/Footer";
 import Productos from "./paginas/productos";
 import Perfil from "./paginas/Perfil";
+import Locales from "./paginas/Locales";
 
 function App() {
   return (
