@@ -1,34 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../estilos/Perfil.css";
 
-// Asegúrate de tener importado Bootstrap y Bootstrap Icons en tu index.js o App.js:
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap-icons/font/bootstrap-icons.css';
+// Props opcionales (usadas desde Perfil.jsx):
+//  onLogin()       -> se ejecuta al enviar el formulario
+//  onIrARegistro() -> cambia a la vista de registro sin usar el router
+function Login({ onLogin, onIrARegistro }) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (onLogin) onLogin(e);
+  };
 
-function Login() {
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center py-5 auth-page">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
             {/* Tarjeta Contenedora */}
-            <div className="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div className="card rounded-4 p-4 text-white auth-card">
               <div className="card-body">
                 {/* Cabecera del Login */}
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold text-dark mb-1">¡Bienvenido!</h2>
-                  <p className="text-muted small">
+                  <h2 className="fw-bold text-white mb-1">¡Bienvenido!</h2>
+                  <p className="text-white-50 small mb-0">
                     Ingresa tus credenciales para continuar
                   </p>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                   {/* Input de Email */}
                   <div className="form-floating mb-3">
                     <input
                       type="email"
                       id="form2Example1"
-                      className="form-control bg-light border-0 text-secondary"
+                      required
+                      className="form-control auth-input bg-white border-0 text-dark"
                       placeholder="Dirección de correo"
                     />
                     <label htmlFor="form2Example1" className="text-muted">
@@ -41,7 +47,8 @@ function Login() {
                     <input
                       type="password"
                       id="form2Example2"
-                      className="form-control bg-light border-0 text-secondary"
+                      required
+                      className="form-control auth-input bg-white border-0 text-dark"
                       placeholder="Contraseña"
                     />
                     <label htmlFor="form2Example2" className="text-muted">
@@ -54,14 +61,14 @@ function Login() {
                     <div className="col-6">
                       <div className="form-check">
                         <input
-                          className="form-check-input"
+                          className="form-check-input auth-check"
                           type="checkbox"
                           value=""
                           id="form2Example31"
                           defaultChecked
                         />
                         <label
-                          className="form-check-label small text-secondary"
+                          className="form-check-label small text-white"
                           htmlFor="form2Example31"
                         >
                           Recordar datos
@@ -70,10 +77,7 @@ function Login() {
                     </div>
 
                     <div className="col-6 text-end">
-                      <a
-                        href="#!"
-                        className="text-decoration-none small fw-semibold text-primary"
-                      >
+                      <a href="#!" className="auth-link small fw-semibold">
                         ¿Olvidaste tu contraseña?
                       </a>
                     </div>
@@ -81,29 +85,41 @@ function Login() {
 
                   {/* Botón de Ingreso */}
                   <button
-                    type="button"
-                    className="btn btn-primary w-100 py-2.5 fw-bold text-uppercase shadow-sm mb-4 rounded-3"
+                    type="submit"
+                    className="btn btn-light w-100 py-2 fw-bold text-uppercase shadow-sm mb-4 rounded-3 auth-btn-primary"
                   >
                     Iniciar sesión
                   </button>
 
                   {/* Registro y Redes Sociales */}
                   <div className="text-center">
-                    <p className="small text-muted mb-4">
+                    <p className="small text-white-50 mb-4">
                       ¿No tienes una cuenta?
-                      <Link
-                        to="/Registro"
-                        className="text-decoration-none fw-semibold text-primary"
-                        aria-label="Registrarse"
-                      >
-                        {" "}
-                        Registrarse
-                      </Link>
+                      {onIrARegistro ? (
+                        <button
+                          type="button"
+                          className="btn btn-link auth-link p-0 fw-semibold align-baseline ms-1"
+                          onClick={onIrARegistro}
+                        >
+                          Registrarse
+                        </button>
+                      ) : (
+                        <Link
+                          to="/Registro"
+                          className="auth-link fw-semibold"
+                          aria-label="Registrarse"
+                        >
+                          {" "}
+                          Registrarse
+                        </Link>
+                      )}
                     </p>
 
                     <div className="position-relative mb-4">
-                      <hr className="text-muted" />
-                      <span className="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                      <hr className="text-white-50" />
+                      <span
+                        className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small auth-divider-text"
+                      >
                         O ingresa con
                       </span>
                     </div>
@@ -112,28 +128,28 @@ function Login() {
                     <div className="d-flex justify-content-center gap-2">
                       <button
                         type="button"
-                        className="btn btn-outline-light text-dark border shadow-sm px-3"
+                        className="btn auth-social px-3"
                         title="Google"
                       >
-                        <i className="bi bi-google text-danger"></i>
+                        <i className="bi bi-google"></i>
                       </button>
                       <button
                         type="button"
-                        className="btn btn-outline-light text-dark border shadow-sm px-3"
+                        className="btn auth-social px-3"
                         title="Facebook"
                       >
-                        <i className="bi bi-facebook text-primary"></i>
+                        <i className="bi bi-facebook"></i>
                       </button>
                       <button
                         type="button"
-                        className="btn btn-outline-light text-dark border shadow-sm px-3"
+                        className="btn auth-social px-3"
                         title="GitHub"
                       >
                         <i className="bi bi-github"></i>
                       </button>
                       <button
                         type="button"
-                        className="btn btn-outline-light text-dark border shadow-sm px-3"
+                        className="btn auth-social px-3"
                         title="Twitter"
                       >
                         <i className="bi bi-twitter-x"></i>
