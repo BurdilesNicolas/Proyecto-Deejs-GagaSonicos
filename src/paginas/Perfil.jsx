@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import Login from "./login";
+import Login from "./Login";
 import Registro from "./Registro";
 import "../estilos/Perfil.css";
-
-
 
 function Perfil() {
   //Estado de autenticación

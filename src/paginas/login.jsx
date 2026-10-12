@@ -2,12 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../estilos/Perfil.css";
 
-// Asegúrate de tener importado Bootstrap y Bootstrap Icons en tu index.js o App.js:
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap-icons/font/bootstrap-icons.css';
-
-
-
 // Props opcionales (usadas desde Perfil.jsx):
 //  onLogin()       -> se ejecuta al enviar el formulario
 //  onIrARegistro() -> cambia a la vista de registro sin usar el router

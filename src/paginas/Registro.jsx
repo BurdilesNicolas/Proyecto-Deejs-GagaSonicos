@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../estilos/Perfil.css";
 
-
-
 // Props opcionales (usadas desde Perfil.jsx):
 //  onRegistro(nombre, apellido, correo, password) -> se ejecuta al enviar el formulario
 //  onIrALogin()               -> cambia a la vista de login sin usar el router
