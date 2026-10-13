@@ -3,6 +3,8 @@ import "../estilos/Inicio.css";
 
 function Inicio() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
 
   const musicData = [
     { id: 1, title: "Sinfonía No. 5", artist: "Beethoven", image: "https://via.placeholder.com/300x300?text=Beethoven" },
@@ -20,6 +22,25 @@ function Inicio() {
   const totalCards = musicData.length;
   const cardsToShow = 3;
   const maxIndex = totalCards - cardsToShow;
+
+  const faqData = [
+    {
+      question: "¿Cómo puedo solicitar un DJ para mi evento?",
+      answer: "Puedes hacerlo a través de nuestra sección de contacto o haciendo clic en el botón 'Explorar' para ver nuestros paquetes disponibles.",
+    },
+    {
+      question: "¿Qué géneros musicales manejan?",
+      answer: "Nos especializamos en una amplia variedad, desde éxitos actuales y música electrónica hasta clásicos del pop y rock, adaptándonos al ambiente de tu fiesta.",
+    },
+    {
+      question: "¿Con cuánta anticipación debo hacer la reserva?",
+      answer: "Recomendamos reservar con al menos 2 semanas de antelación para asegurar la disponibilidad de nuestro equipo, especialmente en fines de semana.",
+    },
+    {
+      question: "¿Cuentan con equipo de sonido e iluminación?",
+      answer: "Sí, ofrecemos paquetes integrales que incluyen equipo profesional de audio e iluminación para que no tengas que preocuparte por nada.",
+    },
+  ];
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -77,6 +98,30 @@ function Inicio() {
           <button className="music-nav-btn next" onClick={nextSlide}>
             &#10095;
           </button>
+        </div>
+        <div className="faq-section">
+          <h2 className="section-title">Preguntas Frecuentes</h2>
+          <div className="faq-container">
+            {faqData.map((faq, index) => (
+              <div
+                key={index}
+                className={`faq-item ${openFaqIndex === index ? "active" : ""}`}
+              >
+                <button
+                  className="faq-question"
+                  onClick={() =>
+                    setOpenFaqIndex(openFaqIndex === index ? null : index)
+                  }
+                >
+                  {faq.question}
+                  <span className="faq-icon">{openFaqIndex === index ? "−" : "+"}</span>
+                </button>
+                <div className="faq-answer">
+                  <div className="faq-answer-content">{faq.answer}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
