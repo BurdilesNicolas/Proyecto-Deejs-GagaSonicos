@@ -1,20 +1,8 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import '../estilos/productos.css'
-import producto1 from'../assets/ProducutosImgs/IN RAINBOWS.jpg'
-
-// Editá esta lista para agregar, sacar o cambiar productos.
-// "categoria" se usa para el filtro de la izquierda.
-const productos = [
-  { id: 1, nombre: 'Producto 1', precio: 100000, categoria: 'Internacional', imagen: producto1 },
-  { id: 2, nombre: 'Producto 2', precio: 235000, categoria: 'Internacional', imagen: producto1 },
-  { id: 3, nombre: 'Producto 3', precio: 150000, categoria: 'Nacional', imagen: producto1 },
-  { id: 4, nombre: 'Producto 4', precio: 115000, categoria: 'Nacional', imagen: producto1 },
-  { id: 5, nombre: 'Producto 5', precio: 98000, categoria: 'Jazz / Blues', imagen: producto1 },
-  { id: 6, nombre: 'Producto 6', precio: 142500, categoria: 'Jazz / Blues', imagen: producto1 },
-  { id: 7, nombre: 'Producto 7', precio: 76000, categoria: 'Soundtrack / OST', imagen: producto1 },
-  { id: 8, nombre: 'Producto 8', precio: 189000, categoria: 'Soundtrack / OST', imagen: producto1 },
-]
+import { useSearchParams } from 'react-router-dom'
+import { productos, normalizar } from '../data/Productos'
 
 // Lista de categorías únicas, calculada a partir del array de arriba.
 // Si agregás un producto con una categoría nueva, aparece sola en el filtro.
@@ -25,6 +13,8 @@ function formatearPrecio(numero) {
 }
 
 function Productos() {
+  const [searchParams] = useSearchParams()
+const busqueda = searchParams.get('buscar') || ''
   const [categoriaActiva, setCategoriaActiva] = useState(null) // null = "todas"
   const [precioDesde, setPrecioDesde] = useState('')
   const [precioHasta, setPrecioHasta] = useState('')
@@ -36,6 +26,9 @@ function Productos() {
       const pasaCategoria = !categoriaActiva || producto.categoria === categoriaActiva
       const pasaDesde = precioDesde === '' || producto.precio >= Number(precioDesde)
       const pasaHasta = precioHasta === '' || producto.precio <= Number(precioHasta)
+        const pasaBusqueda =
+      busqueda === '' ||
+      normalizar(`${producto.nombre} ${producto.artista || ''}`).includes(normalizar(busqueda))
       return pasaCategoria && pasaDesde && pasaHasta
     })
 
@@ -139,6 +132,7 @@ function Productos() {
                 </div>
 
                 <h3 className="card-titulo">{producto.nombre}</h3>
+                <h3 className="card-artista">{producto.artist}</h3>
                 <p className="card-precio">${formatearPrecio(producto.precio)},00</p>
 
                 <div className="card-acciones">

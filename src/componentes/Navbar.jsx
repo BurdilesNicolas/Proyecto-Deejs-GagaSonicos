@@ -1,6 +1,7 @@
 import { NavLink, Link } from 'react-router-dom'
 import logo from '../assets/LOGO DEEJS 2.svg'
 import '../estilos/Navbar.css'
+import Buscador from './Buscador'
 
 function Navbar() {
   return (
@@ -51,6 +52,7 @@ function Navbar() {
 
         {/* ACCIONES */}
         <div className="navbar-actions">
+          <Buscador />
           <Link to="/carrito" className="icon-btn" aria-label="Carrito">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1" />
@@ -64,6 +66,7 @@ function Navbar() {
               <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
             </svg>
           </NavLink>
+
         </div>
 
       </div>
