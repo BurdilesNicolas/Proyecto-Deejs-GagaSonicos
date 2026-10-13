@@ -1,20 +1,33 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import SelectorFoto from "../componentes/SelectorFoto";
 import "../estilos/Perfil.css";
 
 // Props opcionales (usadas desde Perfil.jsx):
-//  onRegistro(nombre, apellido, correo, password) -> se ejecuta al enviar el formulario
-//  onIrALogin()               -> cambia a la vista de login sin usar el router
+//  onRegistro(nombre, apellido, correo, password, foto)
+//      -> devuelve un texto de error, o null si todo salió bien
+//  onIrALogin() -> cambia a la vista de login sin usar el router
 function Registro({ onRegistro, onIrALogin }) {
   const [inputNombre, setInputNombre] = useState("");
   const [inputApellido, setInputApellido] = useState("");
   const [inputCorreo, setInputCorreo] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [inputFoto, setInputFoto] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onRegistro)
-      onRegistro(inputNombre, inputApellido, inputCorreo, inputPassword);
+    if (onRegistro) {
+      setError(
+        onRegistro(
+          inputNombre,
+          inputApellido,
+          inputCorreo,
+          inputPassword,
+          inputFoto,
+        ) || "",
+      );
+    }
   };
 
   return (
@@ -34,6 +47,11 @@ function Registro({ onRegistro, onIrALogin }) {
                 </div>
 
                 <form onSubmit={handleSubmit}>
+                  {/* Foto de perfil (opcional) */}
+                  <div className="mb-4">
+                    <SelectorFoto value={inputFoto} onChange={setInputFoto} />
+                  </div>
+
                   {/* Nombre y Apellido */}
                   <div className="row g-2 mb-3">
                     <div className="col-6">
@@ -102,6 +120,8 @@ function Registro({ onRegistro, onIrALogin }) {
                     </label>
                   </div>
 
+                  {error && <div className="auth-error mb-3">{error}</div>}
+
                   {/* Términos y Condiciones */}
                   <div className="row my-4 align-items-center">
                     <div className="col-12">
@@ -160,41 +180,23 @@ function Registro({ onRegistro, onIrALogin }) {
 
                     <div className="position-relative mb-4">
                       <hr className="text-white-50" />
-                      <span
-                        className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small auth-divider-text"
-                      >
+                      <span className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small auth-divider-text">
                         O regístrate con
                       </span>
                     </div>
 
                     {/* Botones de Redes Sociales con Íconos */}
                     <div className="d-flex justify-content-center gap-2">
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Google"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Google">
                         <i className="bi bi-google"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Facebook"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Facebook">
                         <i className="bi bi-facebook"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="GitHub"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="GitHub">
                         <i className="bi bi-github"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Twitter"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Twitter">
                         <i className="bi bi-twitter-x"></i>
                       </button>
                     </div>

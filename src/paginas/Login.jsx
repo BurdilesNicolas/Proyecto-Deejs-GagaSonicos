@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import SelectorFoto from "../componentes/SelectorFoto";
 import "../estilos/Perfil.css";
 
 // Props opcionales (usadas desde Perfil.jsx):
-//  onLogin()       -> se ejecuta al enviar el formulario
-//  onIrARegistro() -> cambia a la vista de registro sin usar el router
+//  onLogin(correo, password) -> devuelve un texto de error, o null si todo salió bien
+//  onIrARegistro()           -> cambia a la vista de registro sin usar el router
 function Login({ onLogin, onIrARegistro }) {
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onLogin) onLogin(e);
+    if (onLogin) setError(onLogin(correo, password) || "");
   };
 
   return (
@@ -36,6 +41,8 @@ function Login({ onLogin, onIrARegistro }) {
                       required
                       className="form-control auth-input bg-white border-0 text-dark"
                       placeholder="Dirección de correo"
+                      value={correo}
+                      onChange={(e) => setCorreo(e.target.value)}
                     />
                     <label htmlFor="form2Example1" className="text-muted">
                       Dirección de correo
@@ -50,11 +57,15 @@ function Login({ onLogin, onIrARegistro }) {
                       required
                       className="form-control auth-input bg-white border-0 text-dark"
                       placeholder="Contraseña"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <label htmlFor="form2Example2" className="text-muted">
                       Contraseña
                     </label>
                   </div>
+
+                  {error && <div className="auth-error mb-3">{error}</div>}
 
                   {/* Recordarme y Olvido */}
                   <div className="row my-4 align-items-center">
@@ -117,41 +128,23 @@ function Login({ onLogin, onIrARegistro }) {
 
                     <div className="position-relative mb-4">
                       <hr className="text-white-50" />
-                      <span
-                        className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small auth-divider-text"
-                      >
+                      <span className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small auth-divider-text">
                         O ingresa con
                       </span>
                     </div>
 
                     {/* Botones de Redes Sociales con Íconos */}
                     <div className="d-flex justify-content-center gap-2">
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Google"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Google">
                         <i className="bi bi-google"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Facebook"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Facebook">
                         <i className="bi bi-facebook"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="GitHub"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="GitHub">
                         <i className="bi bi-github"></i>
                       </button>
-                      <button
-                        type="button"
-                        className="btn auth-social px-3"
-                        title="Twitter"
-                      >
+                      <button type="button" className="btn auth-social px-3" title="Twitter">
                         <i className="bi bi-twitter-x"></i>
                       </button>
                     </div>

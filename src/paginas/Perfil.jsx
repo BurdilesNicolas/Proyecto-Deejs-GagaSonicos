@@ -1,100 +1,165 @@
 import React, { useState } from "react";
 import Login from "./Login";
 import Registro from "./Registro";
+import SelectorFoto from "../componentes/SelectorFoto";
 import "../estilos/Perfil.css";
 
+//=======================Almacenamiento (localStorage)========================
+//es solo para prototipo. Ya que en una app real los usuarios y contraseña deben vivir en un backend (con la contraseña cifrada), no en el navegador.
+const CLAVE_USUARIOS = "usuarios"; // lista de todos los usuarios registrados
+const CLAVE_SESION = "sesionCorreo"; // correo del usuario con sesión abierta
+const CLAVE_TOKEN = "userToken";
+
+const leerUsuarios = () => {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || [];
+  } catch {
+    return [];
+  }
+};
+const guardarUsuarios = (lista) =>
+  localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(lista));
+
+const normalizarCorreo = (correo) => correo.trim().toLowerCase();
+
+// Recupera al usuario de la sesión guardada (o null si no hay sesión)
+const recuperarSesion = () => {
+  if (!localStorage.getItem(CLAVE_TOKEN)) return null;
+  const correo = localStorage.getItem(CLAVE_SESION);
+  return leerUsuarios().find((u) => u.correo === correo) || null;
+};
+
 function Perfil() {
-  //Estado de autenticación
-  const [estaLogueado, setEstaLogueado] = useState(
-    !!localStorage.getItem("userToken"),
-  );
-  //Estado de vista interna
+  //=======================Estado========================
+  // usuario = datos del usuario con sesión abierta, o null si no hay sesión
+  const [usuario, setUsuario] = useState(recuperarSesion);
+  const estaLogueado = usuario !== null;
+
+  //Estado de vista interna (login / registro)
   const [vistaActual, setVistaActual] = useState("login");
 
-  //=======================Datos del usuario========================
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [correo, setCorreo] = useState("");
-  const [password, setPassword] = useState("");
-
-  //=======================Estado de la interfaz====================
   const [mostrarCorreo, setMostrarCorreo] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [errorEdicion, setErrorEdicion] = useState("");
   // Copia temporal de los datos mientras se edita (así "Cancelar" no pierde nada)
   const [edicion, setEdicion] = useState({
     nombre: "",
     apellido: "",
     correo: "",
     password: "",
+    foto: "",
   });
 
-  //Funciones de acción
-  //Inicio de sesión
-  const handleLoginSubmit = (e) => {
-    e.preventDefault(); // Evita que la página se recargue por completo
-    localStorage.setItem("userToken", "token-valido-123"); // Guarda la sesión
-    setEstaLogueado(true); // Cambia el estado para mostrar el Perfil
+  //=======================Acciones========================
+  const iniciarSesion = (u) => {
+    localStorage.setItem(CLAVE_TOKEN, "token-valido-123");
+    localStorage.setItem(CLAVE_SESION, u.correo);
+    setUsuario(u);
   };
-  //Registrarse
-  const handleRegisterSubmit = (
-    nombreIngresado,
-    apellidoIngresado,
-    correoIngresado,
-    passwordIngresado,
-  ) => {
-    setNombre(nombreIngresado);
-    setApellido(apellidoIngresado);
-    setCorreo(correoIngresado);
-    setPassword(passwordIngresado);
-    localStorage.setItem("userToken", "token-valido-123");
-    setEstaLogueado(true);
+
+  //Inicio de sesión: devuelve un texto de error o null
+  const handleLogin = (correo, password) => {
+    const email = normalizarCorreo(correo);
+    const encontrado = leerUsuarios().find((u) => u.correo === email);
+    if (!encontrado || encontrado.password !== password) {
+      return "Correo o contraseña incorrectos.";
+    }
+    iniciarSesion(encontrado);
+    return null;
   };
-  //Cerrar sesión
+
+  //Registrarse: devuelve un texto de error o null
+  const handleRegistro = (nombre, apellido, correo, password, foto) => {
+    const email = normalizarCorreo(correo);
+    const lista = leerUsuarios();
+    if (lista.some((u) => u.correo === email)) {
+      return "Ya existe una cuenta con ese correo.";
+    }
+    const nuevo = {
+      nombre: nombre.trim(),
+      apellido: apellido.trim(),
+      correo: email,
+      password,
+      foto,
+    };
+    guardarUsuarios([...lista, nuevo]);
+    iniciarSesion(nuevo);
+    return null;
+  };
+
+  //Cerrar sesión (los datos del usuario se conservan para su próximo ingreso)
   const handleCerrarSesion = () => {
-    localStorage.removeItem("userToken"); // Borra la sesión de la memoria
-    setEstaLogueado(false); // Quita el Perfil
-    setVistaActual("login"); // Deja el Login listo para volver a entrar
+    localStorage.removeItem(CLAVE_TOKEN);
+    localStorage.removeItem(CLAVE_SESION);
+    setUsuario(null);
+    setModoEdicion(false);
+    setMostrarCorreo(false);
+    setVistaActual("login");
   };
+
   //Editar datos
   const handleEditar = () => {
-    setEdicion({ nombre, apellido, correo, password: "" });
+    setEdicion({
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      correo: usuario.correo,
+      password: "",
+      foto: usuario.foto || "",
+    });
+    setErrorEdicion("");
     setModoEdicion(true);
   };
   const handleCambioEdicion = (e) => {
     setEdicion({ ...edicion, [e.target.name]: e.target.value });
   };
   const handleUpdateSubmit = (e) => {
-    e.preventDefault(); // Evita que la página se recargue por completo
-    setNombre(edicion.nombre);
-    setApellido(edicion.apellido);
-    setCorreo(edicion.correo);
-    // La contraseña solo cambia si escribió una nueva
-    if (edicion.password) setPassword(edicion.password);
+    e.preventDefault();
+    const email = normalizarCorreo(edicion.correo);
+    const lista = leerUsuarios();
+
+    // El nuevo correo no puede pertenecer a otro usuario
+    if (lista.some((u) => u.correo === email && u.correo !== usuario.correo)) {
+      setErrorEdicion("Ese correo ya está en uso por otra cuenta.");
+      return;
+    }
+
+    const actualizado = {
+      nombre: edicion.nombre.trim(),
+      apellido: edicion.apellido.trim(),
+      correo: email,
+      // La contraseña solo cambia si escribió una nueva
+      password: edicion.password || usuario.password,
+      foto: edicion.foto,
+    };
+
+    guardarUsuarios(
+      lista.map((u) => (u.correo === usuario.correo ? actualizado : u)),
+    );
+    localStorage.setItem(CLAVE_SESION, actualizado.correo);
+    setUsuario(actualizado);
     setModoEdicion(false);
     alert("¡Cambios guardados con éxito!");
   };
 
-  //=======================VISTAS DE PERFIL=========================
+  //=======================VISTAS=========================
   //Perfil de usuario
   if (estaLogueado) {
+    const { nombre, apellido, correo, password, foto } = usuario;
     const nombreCompleto = `${nombre} ${apellido}`.trim();
-    // Iniciales para el avatar (nombre + apellido)
-    const iniciales = `${nombre.trim()[0] || ""}${apellido.trim()[0] || ""}`.toUpperCase();
+    // Iniciales para el avatar cuando no hay foto
+    const iniciales =
+      `${nombre.trim()[0] || ""}${apellido.trim()[0] || ""}`.toUpperCase();
 
     // Fila de información reutilizable
     const Fila = ({ icono, etiqueta, valor, primera, accion }) => (
       <div
         className={`perfil-fila d-flex align-items-center gap-3 p-3 ${primera ? "" : "border-top"}`}
       >
-        <div
-          className="perfil-icono d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
-        >
+        <div className="perfil-icono d-flex align-items-center justify-content-center rounded-3 flex-shrink-0">
           <i className={`bi ${icono} fs-5`}></i>
         </div>
         <div className="flex-grow-1 overflow-hidden">
-          <small
-            className="perfil-etiqueta text-white-50 d-block text-uppercase fw-bold"
-          >
+          <small className="perfil-etiqueta text-white-50 d-block text-uppercase fw-bold">
             {etiqueta}
           </small>
           <span className="text-white fw-semibold text-truncate d-block">
@@ -112,11 +177,13 @@ function Perfil() {
             <div className="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
               <div className="card rounded-4 p-4 text-white auth-card">
                 <div className="card-body text-center">
-                  {/* Avatar */}
-                  <div
-                    className="perfil-avatar d-flex align-items-center justify-content-center rounded-circle mx-auto fw-bold text-white"
-                  >
-                    {iniciales || <i className="bi bi-person-fill fs-1"></i>}
+                  {/* Avatar: foto, o iniciales si no hay foto */}
+                  <div className="perfil-avatar d-flex align-items-center justify-content-center rounded-circle mx-auto fw-bold text-white">
+                    {foto ? (
+                      <img src={foto} alt="Foto de perfil" />
+                    ) : (
+                      iniciales || <i className="bi bi-person-fill fs-1"></i>
+                    )}
                   </div>
 
                   {/* Título */}
@@ -128,9 +195,7 @@ function Perfil() {
                   {/* SECCIÓN DINÁMICA: VISTA O EDICIÓN */}
                   {!modoEdicion ? (
                     <div className="mt-4 text-start">
-                      <div
-                        className="perfil-grupo rounded-4 overflow-hidden"
-                      >
+                      <div className="perfil-grupo rounded-4 overflow-hidden">
                         <Fila
                           primera
                           icono="bi-person"
@@ -202,6 +267,14 @@ function Perfil() {
                       onSubmit={handleUpdateSubmit}
                       className="mt-4 text-start"
                     >
+                      {/* Foto de perfil */}
+                      <div className="mb-4">
+                        <SelectorFoto
+                          value={edicion.foto}
+                          onChange={(f) => setEdicion({ ...edicion, foto: f })}
+                        />
+                      </div>
+
                       <div className="row g-2 mb-3">
                         <div className="col-6">
                           <div className="form-floating">
@@ -274,6 +347,10 @@ function Perfil() {
                         Déjala vacía si no quieres cambiarla.
                       </small>
 
+                      {errorEdicion && (
+                        <div className="auth-error mb-3">{errorEdicion}</div>
+                      )}
+
                       <div className="d-flex gap-2 mt-4">
                         <button
                           type="button"
@@ -304,7 +381,7 @@ function Perfil() {
   if (vistaActual === "login") {
     return (
       <Login
-        onLogin={handleLoginSubmit}
+        onLogin={handleLogin}
         onIrARegistro={() => setVistaActual("registro")}
       />
     );
@@ -313,7 +390,7 @@ function Perfil() {
   //Formulario de registro (usa Registro.jsx)
   return (
     <Registro
-      onRegistro={handleRegisterSubmit}
+      onRegistro={handleRegistro}
       onIrALogin={() => setVistaActual("login")}
     />
   );
