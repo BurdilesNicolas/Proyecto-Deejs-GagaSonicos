@@ -132,7 +132,7 @@ const busqueda = searchParams.get('buscar') || ''
                 </div>
 
                 <h3 className="card-titulo">{producto.nombre}</h3>
-                <h3 className="card-artista">{producto.artist}</h3>
+                <h3 className="card-artista">{producto.artista}</h3>
                 <p className="card-precio">${formatearPrecio(producto.precio)},00</p>
 
                 <div className="card-acciones">
