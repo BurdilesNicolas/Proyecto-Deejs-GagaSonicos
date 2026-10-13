@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState, useMemo } from 'react'
-import '../estilos/productos.css'
+import '../estilos/Productos.css'
 import { useSearchParams } from 'react-router-dom'
 import { productos, normalizar } from '../data/Productos'
 
