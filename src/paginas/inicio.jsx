@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../estilos/Inicio.css";
-
+//prueba profe
 function Inicio() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
