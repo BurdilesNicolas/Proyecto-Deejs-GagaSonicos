@@ -8,28 +8,31 @@
 
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: clamp(24px, 5vw, 40px) clamp(14px, 4vw, 20px);
   background-color: #ffffff;
 }
 
 .pagina-productos {
-  padding-top: 100px;
-
+  /* --navbar-offset se define en Navbar.css (100px en escritorio, 140px en celular) */
+  padding-top: var(--navbar-offset, 100px);
 }
 
 .titulo-seccion {
   text-align: center;
-  font-size: 28px;
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
   color: #1a1a1a;
-  margin-bottom: 40px;
+  margin-bottom: clamp(24px, 5vw, 40px);
 }
 
-/* ===== HEADER / NAV-BOTONES (el <header> propio de esta página) ===== */
+/* ===== HEADER / NAV-BOTONES (el <header> propio de esta página) =====
+   Si tu Productos.jsx ya no usa este header, podés borrar este bloque. */
 .navbar {
   --accent: #378ADD;
   --accent-bg: rgba(55, 138, 221, 0.1);
 
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   align-items: center;
   justify-content: space-between;
   max-width: 1200px;
@@ -46,6 +49,7 @@
 
 .nav-botones {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -70,7 +74,7 @@
 .breadcrumb {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 0;
+  padding: 24px clamp(14px, 4vw, 20px) 0;
   font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
 }
@@ -90,11 +94,12 @@
   --accent-bg: rgba(55, 138, 221, 0.1);
 
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 32px;
+  /* minmax(0, 1fr): evita que contenido ancho empuje la columna y genere scroll horizontal */
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 32px);
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 40px;
+  padding: 24px clamp(14px, 4vw, 20px) 40px;
   align-items: start;
 }
 
@@ -154,6 +159,7 @@
 
 .precio-campo {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -207,35 +213,21 @@
   text-align: center;
 }
 
-/* ===== RESPONSIVE: sidebar arriba en mobile ===== */
-@media (max-width: 800px) {
-  .layout-productos {
-    grid-template-columns: 1fr;
-  }
-
-  .lista-categorias {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .precio-inputs {
-    max-width: 280px;
-  }
-}
-
-/* ===== GRILLA DE PRODUCTOS ===== */
+/* ===== GRILLA DE PRODUCTOS =====
+   La cantidad de columnas se adapta sola: el ancho mínimo de cada card
+   va de 150px (celular) a 240px (escritorio). No hace falta @media. */
 .grilla {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 22vw, 240px), 1fr));
+  gap: clamp(12px, 2vw, 24px);
 }
 
 /* ===== CARD con efecto vidrio esmerilado ===== */
 .card {
   position: relative;
+  min-width: 0;
   border-radius: 14px;
-  padding: 16px;
+  padding: clamp(10px, 2.5vw, 16px);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -250,10 +242,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: 0 12px 28px rgba(55, 138, 221, 0.15);
+/* Solo en dispositivos con mouse: en el celular el hover quedaría "pegado" tras tocar */
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px rgba(55, 138, 221, 0.15);
+  }
 }
 
 /* Botón wishlist, esquina superior derecha */
@@ -278,9 +273,10 @@
   color: #ffffff;
 }
 
-/* Imagen: el recuadro se ve mientras no haya src */
+/* Imagen: cuadrada siempre (como las portadas), a cualquier ancho de card.
+   El recuadro gris se ve mientras no haya src. */
 .card-img {
-  height: 200px;
+  aspect-ratio: 1 / 1;
   background-color: rgba(0, 0, 0, 0.03);
   border-radius: 8px;
   display: flex;
@@ -291,35 +287,46 @@
 }
 
 .card-img img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
 .card-titulo {
-  font-size: 15px;
+  font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   color: #1a1a1a;
   margin-bottom: 2px;
+  overflow-wrap: break-word;
+}
+
+.card-artista {
+  font-size: clamp(12px, 1.5vw, 13px);
+  color: rgba(0, 0, 0, 0.55);
+  margin: 0 0 2px;
+  overflow-wrap: break-word;
 }
 
 .card-precio {
-  font-size: 18px;
+  font-size: clamp(15px, 2vw, 18px);
   font-weight: 700;
   color: #111111;
-  margin-bottom:2px;
+  margin-bottom: 2px;
   margin-top: auto;
 }
 
-/* ===== BOTONES DE LA CARD ===== */
+/* ===== BOTONES DE LA CARD =====
+   flex-wrap + flex-basis: si la card es angosta, los botones pasan
+   solos a una columna. No hace falta @media. */
 .card-acciones {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .btn-comprar,
 .btn-carrito {
-  flex: 1;
+  flex: 1 1 90px;
   padding: 10px 0;
   border-radius: 999px;
   font-size: 13px;
@@ -334,7 +341,7 @@
 }
 
 .btn-comprar:hover {
-  color:var(--accent);
+  color: var(--accent);
   background-color: var(--accent-hover);
 }
 
@@ -347,23 +354,63 @@
   background-color: var(--accent-bg);
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .grilla {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+/* ===== RESPONSIVE: la sidebar pasa arriba del catálogo =====
+   Este sí es un cambio de estructura, por eso usa @media. */
+@media (max-width: 800px) {
+  .layout-productos {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .card-img {
-    height: 140px;
+  .sidebar-titulo {
+    margin-bottom: 12px;
   }
 
-  .card-acciones {
-    flex-direction: column;
+  /* Categorías como chips que se deslizan horizontalmente */
+  .lista-categorias {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
   }
-}
-.card-artista {
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.55);
-  margin: 0 0 2px;
+
+  .lista-categorias::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lista-categorias li {
+    flex-shrink: 0;
+  }
+
+  .cat-link {
+    white-space: nowrap;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+
+  .cat-link.activo {
+    border-color: var(--accent);
+    background-color: var(--accent-bg);
+  }
+
+  .precio-inputs {
+    max-width: 360px;
+  }
+
+  /* 16px evita que iPhone haga zoom automático al tocar el campo */
+  .precio-campo input,
+  .select-orden {
+    font-size: 16px;
+  }
+
+  .barra-orden {
+    justify-content: stretch;
+  }
+
+  .select-orden {
+    width: 100%;
+  }
 }
