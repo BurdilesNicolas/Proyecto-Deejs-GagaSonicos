@@ -22,7 +22,10 @@
 
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px 40px;
+    /* El Navbar es position: fixed (~86px de alto), así que se deja ese
+       espacio arriba para que no tape el breadcrumb ni el título.
+       Mismo criterio que .pagina-productos en Productos.css. */
+    padding: 100px 20px 40px;
     background-color: #ffffff;
     color: var(--cm-text);
     text-align: left;
@@ -671,4 +674,69 @@
     .cm-form {
         padding: 16px;
     }
+}
+
+/* ===== ACCIONES DEL PIE (eliminar + útil / me gusta) ===== */
+.cm-acciones {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cm-btn-eliminar:hover,
+.cm-btn-peligro {
+    border-color: var(--cm-error);
+    color: var(--cm-error);
+}
+
+.cm-btn-peligro {
+    background: rgba(214, 69, 69, 0.08);
+}
+
+.cm-btn-peligro:hover {
+    background: var(--cm-error);
+    color: #ffffff;
+}
+
+.cm-confirmar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cm-confirmar-texto {
+    font-size: 13px;
+    color: var(--cm-muted);
+}
+
+.cm-btn-mini:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: 2px;
+}
+
+/* ===== USUARIO SIN SESIÓN / PUBLICANDO COMO ===== */
+.cm-gate-texto {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--cm-muted);
+}
+
+.cm-btn-link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.cm-btn-link:hover {
+    color: #ffffff;
+}
+
+.cm-publicando {
+    margin: -8px 0 16px;
+    font-size: 13px;
+    color: var(--cm-muted);
+}
+
+.cm-publicando strong {
+    color: var(--cm-text);
 }
