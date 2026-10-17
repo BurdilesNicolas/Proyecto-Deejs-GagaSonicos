@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../estilos/Inicio.css";
+import { getSpotifyTracks } from "../services/spotify";
 
 function Inicio() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const musicData = [
+  const staticMusicData = [
     { id: 1, title: "Sinfonía No. 5", artist: "Beethoven", image: "https://via.placeholder.com/300x300?text=Beethoven" },
     { id: 2, title: "Bohemian Rhapsody", artist: "Queen", image: "https://via.placeholder.com/300x300?text=Queen" },
     { id: 3, title: "Billie Jean", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=MJ" },
@@ -17,9 +16,33 @@ function Inicio() {
     { id: 10, title: "Yesterday", artist: "The Beatles", image: "https://via.placeholder.com/300x300?text=Beatles" },
   ];
 
+  const [musicData, setMusicData] = useState(staticMusicData);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMusic() {
+      try {
+        setIsLoading(true);
+        const data = await getSpotifyTracks('pop hits');
+        if (data && data.length > 0) {
+          setMusicData(data);
+        } else {
+          setMusicData(staticMusicData);
+        }
+      } catch (error) {
+        console.error("Spotify API Error, using fallback data:", error);
+        setMusicData(staticMusicData);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMusic();
+  }, []);
+
   const totalCards = musicData.length;
   const cardsToShow = 3;
-  const maxIndex = totalCards - cardsToShow;
+  const maxIndex = Math.max(0, totalCards - cardsToShow);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -74,26 +97,32 @@ function Inicio() {
           </button>
 
           <div className="music-carousel-viewport">
-            <div
-              className="music-cards-container"
-              style={{
-                transform: `translateX(-${currentIndex * 31.33}vw)`,
-              }}
-            >
-              {musicData.map((music) => (
-                <div className="music-card" key={music.id}>
-                  <div className="music-card-inner">
-                    <div className="music-img-wrapper">
-                      <img src={music.image} alt={music.title} className="music-img" />
-                    </div>
-                    <div className="music-info">
-                      <h3 className="music-title">{music.title}</h3>
-                      <p className="music-artist">{music.artist}</p>
+            {isLoading ? (
+              <div className="loading-music" style={{ color: 'white', textAlign: 'center', width: '100%', padding: '20px' }}>
+                Cargando música de Spotify...
+              </div>
+            ) : (
+              <div
+                className="music-cards-container"
+                style={{
+                  transform: `translateX(-${currentIndex * 31.33}vw)`,
+                }}
+              >
+                {musicData && musicData.map((music) => (
+                  <div className="music-card" key={music.id}>
+                    <div className="music-card-inner">
+                      <div className="music-img-wrapper">
+                        <img src={music.image} alt={music.title} className="music-img" />
+                      </div>
+                      <div className="music-info">
+                        <h3 className="music-title">{music.title}</h3>
+                        <p className="music-artist">{music.artist}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
           <button className="music-nav-btn next" onClick={nextSlide}>
             <i className="bi bi-chevron-right"></i>
