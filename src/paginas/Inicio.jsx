@@ -33,15 +33,36 @@ function Inicio() {
     <div className="inicio-page">
       <div className="hero">
         <h1 className="hero-title">DEEJ`S</h1>
+        <div className="hero-icons">
+          <i className="bi bi-music-note-beamed floating-icon"></i>
+          <i className="bi bi-volume-up floating-icon"></i>
+          <i className="bi bi-mic floating-icon"></i>
+        </div>
         <div className="botones_inicio">
           <button className="btn-explorar">
             <a href="/productos">Explorar</a>
           </button>
           <button className="btn-conocernos">
-            <a href="">Conocernos</a>
+            <a href="#nosotros">Conocernos</a>
           </button>
         </div>
       </div>
+
+      <section id="nosotros" className="about-section">
+        <div className="about-container">
+          <div className="about-header">
+            <i className="bi bi-heart-fill heart-icon"></i>
+            <h2 className="about-title">Pasión por el Sonido</h2>
+            <i className="bi bi-heart-fill heart-icon"></i>
+          </div>
+          <p className="about-text">
+            En DEEJ'S, no solo vendemos equipos; compartimos una obsesión por la calidad auditiva.
+            Desde los vinilos más raros hasta la tecnología de audio más avanzada,
+            estamos aquí para que cada nota cuente. Bienvenido al destino definitivo para los melómanos.
+          </p>
+        </div>
+      </section>
+
       <div className="secundario">
         <div className="subtitulo">
           <h2 className="section-title">Temas de Música</h2>
@@ -49,7 +70,7 @@ function Inicio() {
 
         <div className="music-carousel-wrapper">
           <button className="music-nav-btn prev" onClick={prevSlide}>
-            &#10094;
+            <i className="bi bi-chevron-left"></i>
           </button>
 
           <div className="music-carousel-viewport">
@@ -75,10 +96,36 @@ function Inicio() {
             </div>
           </div>
           <button className="music-nav-btn next" onClick={nextSlide}>
-            &#10095;
+            <i className="bi bi-chevron-right"></i>
           </button>
         </div>
+
+        <div className="features-grid">
+          <div className="feature-item">
+            <span className="feature-icon"><i className="bi bi-headphones"></i></span>
+            <h3>Audio Premium</h3>
+            <p>Equipos de alta fidelidad para una experiencia inmersiva.</p>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon"><i className="bi bi-disc"></i></span>
+            <h3>Coleccionismo</h3>
+            <p>Vinilos y ediciones limitadas que hacen historia.</p>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon"><i className="bi bi-music-note-beamed"></i></span>
+            <h3>Accesorios</h3>
+            <p>Todo lo necesario para optimizar tu setup musical.</p>
+          </div>
+        </div>
       </div>
+
+      <section className="cta-section">
+        <div className="cta-container">
+          <h2 className="cta-title">¿Listo para elevar tu sonido?</h2>
+          <p className="cta-subtitle">Únete a nuestra comunidad y descubre el mundo del audio pro.</p>
+          <button className="btn-cta">Ir a la Comunidad</button>
+        </div>
+      </section>
     </div>
   );
 }
