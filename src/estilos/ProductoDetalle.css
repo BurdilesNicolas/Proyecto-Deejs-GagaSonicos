@@ -1,0 +1,562 @@
+/* Variables SOLO para esta página (no usan :root, así no pisan nada del resto del sitio) */
+.pagina-detalle {
+  --acento: #5b4ee6;
+  --acento-hover: #7065f0;
+  --acento-2: #7a49e8;
+  --panel: rgba(8, 8, 40, 0.82);
+  --borde: rgba(255, 255, 255, 0.1);
+  --texto: #ffffff;
+  --texto-suave: rgba(255, 255, 255, 0.72);
+  --dorado: #ffc83d;
+
+  min-height: 100vh;
+  /* --navbar-offset se define en Navbar.css */
+  padding: var(--navbar-offset, 100px) clamp(14px, 4vw, 32px) 64px;
+  color: var(--texto);
+  background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
+}
+
+.pagina-detalle h1 {
+  color: var(--texto);
+}
+
+.pagina-detalle :focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.detalle-contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(16px, 3vw, 24px);
+}
+
+/* ===== BREADCRUMB ===== */
+.detalle-breadcrumb {
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.detalle-breadcrumb a {
+  color: var(--texto-suave);
+  text-decoration: none;
+}
+
+.detalle-breadcrumb a:hover {
+  color: #ffffff;
+}
+
+/* ===== HERO: portada + panel ===== */
+.detalle-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.5fr);
+  gap: clamp(20px, 4vw, 40px);
+  align-items: center;
+}
+
+/* ----- Elegir formato ----- */
+.detalle-formato {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 18px;
+}
+
+.detalle-formato-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.detalle-formato-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detalle-formato-opcion {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--borde);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.detalle-formato-opcion:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.detalle-formato-opcion.activa {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.detalle-formato-unico {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--borde);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+}
+
+/* ----- Portada con el vinilo asomando -----
+   Tres cuadrados del mismo tamaño apilados: disco (atrás), funda interior
+   (en el medio) y portada (adelante), cada uno corrido un poco a la derecha. */
+.detalle-portada-wrap {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 100 / 86;
+}
+
+.detalle-portada,
+.detalle-funda,
+.detalle-disco {
+  position: absolute;
+  top: 0;
+  width: 86%;
+  aspect-ratio: 1 / 1;
+}
+
+.detalle-portada {
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e8e8f2;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+.detalle-portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detalle-portada-vacia {
+  font-size: 4rem;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.detalle-funda {
+  left: 6%;
+  border-radius: 4px;
+  background: #e9dfc2;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.detalle-disco {
+  left: 14%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--acento) 0 11%, #111111 11.5% 13%, transparent 13.5%),
+    repeating-radial-gradient(circle at center, #0a0a0a 0 2px, #1b1b1b 2px 3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.4s ease;
+}
+
+/* Agujero central del disco */
+.detalle-disco::after {
+  content: '';
+  position: absolute;
+  inset: 48.5%;
+  border-radius: 50%;
+  background: #0b0b30;
+}
+
+@media (hover: hover) {
+  .detalle-portada-wrap:hover .detalle-disco {
+    transform: translateX(4%);
+  }
+}
+
+/* ===== PANEL DERECHO ===== */
+.detalle-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: clamp(16px, 3vw, 28px);
+  align-items: center;
+  padding: clamp(16px, 3vw, 28px);
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 22px;
+}
+
+.detalle-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  min-width: 0;
+}
+
+.detalle-titulo {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.detalle-artista {
+  margin: 0;
+  font-size: 15px;
+  color: var(--texto-suave);
+}
+
+.detalle-estrellas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 22px;
+}
+
+.detalle-estrella {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.detalle-estrella.llena {
+  color: var(--dorado);
+}
+
+.detalle-rating {
+  margin-left: 8px;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.detalle-precio {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+}
+
+/* ----- Cantidad ----- */
+.detalle-cantidad {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detalle-cantidad-etiqueta {
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.detalle-cantidad-control {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+}
+
+.detalle-cantidad-control button {
+  width: 38px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.detalle-cantidad-control button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.detalle-cantidad-control button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.detalle-cantidad-control span {
+  min-width: 36px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.detalle-total {
+  margin: 0;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+/* ----- Botones ----- */
+.detalle-botones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.detalle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.detalle-btn:active {
+  transform: scale(0.98);
+}
+
+.detalle-btn-principal {
+  background: transparent;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.detalle-btn-principal:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+}
+
+/* Comprar ya: blanco sólido */
+.detalle-btn-secundario {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #1b1a82;
+}
+
+.detalle-btn-secundario:hover {
+  background: #e6e6ff;
+  border-color: #e6e6ff;
+}
+
+.detalle-favorito {
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.detalle-favorito:hover {
+  color: #ffffff;
+}
+
+.detalle-favorito.activo {
+  color: #ff7a9a;
+}
+
+.detalle-aviso {
+  min-height: 1.4em; /* reserva el lugar para que no salte el layout al aparecer */
+  margin: 0;
+  font-size: 14px;
+  color: #7dffb0;
+}
+
+.detalle-aviso a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* ----- Spotify ----- */
+.detalle-spotify {
+  min-width: 0;
+}
+
+.detalle-spotify iframe {
+  display: block;
+  width: 100%;
+  height: 352px;
+  border: 0;
+  border-radius: 12px;
+}
+
+/* ===== ACORDEONES (Descripción / También te puede gustar) ===== */
+.detalle-acordeon {
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+}
+
+.detalle-acordeon > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 24px;
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.detalle-acordeon > summary::-webkit-details-marker {
+  display: none;
+}
+
+.detalle-acordeon > summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Flecha dibujada con bordes: gira al abrir */
+.detalle-acordeon > summary::after {
+  content: '';
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border-right: 2.5px solid currentColor;
+  border-bottom: 2.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.25s ease;
+}
+
+.detalle-acordeon[open] > summary::after {
+  transform: rotate(-135deg);
+}
+
+.detalle-acordeon-contenido {
+  padding: 0 24px 24px;
+}
+
+.detalle-acordeon-contenido > p {
+  max-width: 70ch;
+  margin: 0;
+  line-height: 1.65;
+  color: var(--texto-suave);
+}
+
+.detalle-ficha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px 24px;
+  margin: 20px 0 0;
+}
+
+.detalle-ficha > div {
+  padding-top: 10px;
+  border-top: 1px solid var(--borde);
+}
+
+.detalle-ficha dt {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.detalle-ficha dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+
+/* ----- Relacionados ----- */
+.detalle-relacionados {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 20vw, 200px), 1fr));
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.detalle-rel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.detalle-rel-img {
+  aspect-ratio: 1 / 1;
+  margin-bottom: 6px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.detalle-rel-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.detalle-rel-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.detalle-rel-artista {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.detalle-rel-precio {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (hover: hover) {
+  .detalle-rel:hover img {
+    transform: scale(1.05);
+  }
+
+  .detalle-rel:hover .detalle-rel-nombre {
+    color: #b9b2ff;
+  }
+}
+
+/* ===== PRODUCTO NO ENCONTRADO ===== */
+.detalle-vacio {
+  justify-items: center;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* ===== RESPONSIVE: la portada pasa arriba del panel ===== */
+@media (max-width: 900px) {
+  .detalle-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detalle-visual {
+    text-align: center;
+  }
+
+  .detalle-formato {
+    justify-content: center;
+  }
+
+  .detalle-portada-wrap {
+    width: min(100%, 360px);
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina-detalle * {
+    transition: none !important;
+  }
+}

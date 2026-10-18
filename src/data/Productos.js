@@ -9,14 +9,14 @@ import producto8 from '../assets/ProducutosImgs/YO PRAY.webp'
 // Fuente única de datos: la usan la página Productos y el Buscador del navbar.
 // Pegá acá tu array real (con tus imágenes importadas si ya las tenés).
 export const productos = [
-  { id: 1, nombre: 'IN RAINBOWS', artista: 'Radiohead', precio: 100000, categoria: 'Internacional', imagen: producto1 },
+  { id: 1, nombre: 'IN RAINBOWS', artista: 'Radiohead', precio: 100000, categoria: 'Internacional', imagen: producto1, spotify: '6dGnYIeXmHdcikdzNNDMm2' },
   { id: 2, nombre: 'COWBOY BEBOP', artista: 'Seatbelts', precio: 235000, categoria: 'Jazz / Blues', imagen: producto2 },
-  { id: 3, nombre: 'BLONDE', artista: 'Frank Ocean', precio: 150000, categoria: 'Internacional', imagen: producto3 },
-  { id: 4, nombre: 'CHARM', artista: 'Clairo', precio: 120000, categoria: 'Internacional', imagen: producto4 },
-  { id: 5, nombre: 'GULP!', artista: 'Patricio rey y sus redonditos de ricota', precio: 98000, categoria: 'Internacional', imagen: producto5 },
-  { id: 6, nombre: 'OKTUBRE', artista: 'OKTUBRE', precio: 142500, categoria: 'Jazz / Blues', imagen: producto6 },
-  { id: 7, nombre: 'MECAE', artista: 'MECAE', precio: 76000, categoria: 'Soundtrack / OST', imagen: producto7 },
-  { id: 8, nombre: 'YO PRAY', artista: 'YO PRAY', precio: 189000, categoria: 'Soundtrack / OST', imagen: producto8 },
+  { id: 3, nombre: 'BLONDE', artista: 'Frank Ocean', precio: 150000, categoria: 'Indie', imagen: producto3 },
+  { id: 4, nombre: 'CHARM', artista: 'Clairo', precio: 120000, categoria: 'Indie', imagen: producto4 },
+  { id: 5, nombre: 'GULP!', artista: 'Patricio rey y sus redonditos de ricota', precio: 98000, categoria: 'Rock', imagen: producto5 },
+  { id: 6, nombre: 'OKTUBRE', artista: 'Patricio rey y sus redonditos de ricota', precio: 142500, categoria: 'Rock', imagen: producto6 },
+  { id: 7, nombre: 'MECAE', artista: 'cero', precio: 76000, categoria: 'Under', imagen: producto7 },
+  { id: 8, nombre: 'YO PRAY', artista: 'cero', precio: 189000, categoria: 'Under', imagen: producto8, spotify: '1oewbFslWDSzh9Rl7Y483n' },
 ]
  
 // Quita tildes y pasa a minúsculas: así "cafe" encuentra "Café".

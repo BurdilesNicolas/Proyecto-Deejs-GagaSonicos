@@ -131,7 +131,7 @@
 /* El ítem activo: la "pastilla" celeste, como en la referencia */
 .nav-pill.active {
     color: #ffffff;
-    background: var(--accent, #3b82f6);
+    background: var(--accent, #378ADD);
     box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
 }
 
