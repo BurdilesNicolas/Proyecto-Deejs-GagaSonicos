@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { productos } from '../data/Productos'
-import { agregarAlCarrito } from '../data/carrito'
+import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/carrito'
 import '../estilos/ProductoDetalle.css'
+import '../estilos/FormatosAnimados.css'
 
 function formatearPrecio(numero) {
   return `$${numero.toLocaleString('es-AR')},00`
@@ -13,6 +14,21 @@ function extraerSpotifyId(valor) {
   if (!valor) return null
   const coincidencia = valor.match(/album\/([A-Za-z0-9]+)/)
   return coincidencia ? coincidencia[1] : valor.trim()
+}
+
+// Los tres formatos que se pueden elegir, en este orden
+const NOMBRES_FORMATO = ['Vinilo', 'CD', 'Cassette']
+
+function normalizar(texto) {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+}
+
+// Decide qué dibujo/animación usar según el nombre ("Vinilo", "CD", "Cassette" o "Casete")
+function tipoDeFormato(nombre) {
+  const n = normalizar(nombre)
+  if (n.startsWith('cd')) return 'cd'
+  if (n.startsWith('cas')) return 'cassette'
+  return 'vinilo'
 }
 
 /* ---------- Página: busca el producto según la URL (/Productos/3) ---------- */
@@ -47,17 +63,61 @@ function ProductoDetalle() {
 function DetalleProducto({ producto }) {
   const navigate = useNavigate()
 
-  // Si el producto no define "formatos", se usa uno solo con su precio base
-  const formatos = producto.formatos?.length
-    ? producto.formatos
-    : [{ nombre: producto.formato || 'Edición estándar', precio: producto.precio }]
+  // Si el producto define "formatos", siempre se muestran los tres (Vinilo, CD, Cassette):
+  // los que no estén cargados o tengan stock 0 aparecen deshabilitados como "Agotado".
+  // Si no define "formatos", se usa una sola edición con el precio base.
+  const tieneFormatos = Array.isArray(producto.formatos) && producto.formatos.length > 0
 
-  const [formatoActivo, setFormatoActivo] = useState(0)
-  const [cantidad, setCantidad] = useState(1)
+  const formatos = tieneFormatos
+    ? NOMBRES_FORMATO.map((nombre) => {
+        const tipo = tipoDeFormato(nombre)
+        const dato = producto.formatos.find((f) => tipoDeFormato(f.nombre) === tipo)
+        return {
+          nombre: dato ? dato.nombre : nombre,
+          tipo,
+          precio: dato?.precio ?? producto.precio,
+          stock: dato ? dato.stock : 0,
+          disponible: Boolean(dato) && (dato.stock === undefined || dato.stock > 0),
+        }
+      })
+    : [
+        {
+          nombre: producto.formato || 'Edición estándar',
+          tipo: tipoDeFormato(producto.formato || ''),
+          precio: producto.precio,
+          stock: undefined,
+          disponible: true,
+        },
+      ]
+
+  // Arranca en el primer formato disponible
+  const primerDisponible = Math.max(0, formatos.findIndex((f) => f.disponible))
+
+  const [formatoActivo, setFormatoActivo] = useState(primerDisponible)
+  const [cantidadElegida, setCantidadElegida] = useState(1)
   const [favorito, setFavorito] = useState(false)
-  const [agregado, setAgregado] = useState(null) // hora del último "agregado": reinicia el aviso
+  const [aviso, setAviso] = useState(null) // { tipo: 'ok' | 'parcial' | 'limite', hora }
 
   const formato = formatos[formatoActivo]
+
+  // Límite de unidades: el general (2) o el stock de ese formato, lo que sea menor
+  const limite = formato.disponible
+    ? Math.min(
+        LIMITE_POR_PRODUCTO,
+        typeof formato.stock === 'number' ? formato.stock : LIMITE_POR_PRODUCTO
+      )
+    : 0
+  const cantidad = Math.max(1, Math.min(cantidadElegida, limite || 1))
+
+  let nota = null
+  if (formato.disponible) {
+    if (typeof formato.stock === 'number' && formato.stock < LIMITE_POR_PRODUCTO) {
+      nota = formato.stock === 1 ? 'Queda solo 1 unidad' : `Quedan solo ${formato.stock}`
+    } else {
+      nota = `Máximo ${LIMITE_POR_PRODUCTO} unidades por producto`
+    }
+  }
+
   const spotifyId = extraerSpotifyId(producto.spotify)
   const tieneRating = typeof producto.rating === 'number'
   const estrellasLlenas = tieneRating ? Math.round(producto.rating) : 0
@@ -70,7 +130,13 @@ function DetalleProducto({ producto }) {
     ['Año', producto.anio],
     ['Sello', producto.sello],
     ['Categoría', producto.categoria],
-    ['Formatos', formatos.map((f) => f.nombre).join(' · ')],
+    [
+      'Formatos',
+      formatos
+        .filter((f) => f.disponible)
+        .map((f) => f.nombre)
+        .join(' · '),
+    ],
   ].filter(([, valor]) => valor)
 
   // Primero los de la misma categoría, después el resto. Máximo 4.
@@ -79,20 +145,33 @@ function DetalleProducto({ producto }) {
     ...productos.filter((p) => p.id !== producto.id && p.categoria !== producto.categoria),
   ].slice(0, 4)
 
-  // El aviso "Agregado al carrito" se esconde solo a los 3 segundos
+  // El aviso se esconde solo a los 3,5 segundos
   useEffect(() => {
-    if (agregado === null) return
-    const timer = setTimeout(() => setAgregado(null), 3000)
+    if (aviso === null) return
+    const timer = setTimeout(() => setAviso(null), 3500)
     return () => clearTimeout(timer)
-  }, [agregado])
+  }, [aviso])
 
   function sumarAlCarrito() {
-    agregarAlCarrito({ id: producto.id, formato: formato.nombre, cantidad })
-    setAgregado(Date.now())
+    const agregadas = agregarAlCarrito({
+      id: producto.id,
+      formato: formato.nombre,
+      cantidad,
+      maximo: limite,
+    })
+    let tipo = 'ok'
+    if (agregadas === 0) tipo = 'limite'
+    else if (agregadas < cantidad) tipo = 'parcial'
+    setAviso({ tipo, hora: Date.now() })
   }
 
   function comprarYa() {
-    agregarAlCarrito({ id: producto.id, formato: formato.nombre, cantidad })
+    agregarAlCarrito({
+      id: producto.id,
+      formato: formato.nombre,
+      cantidad,
+      maximo: limite,
+    })
     navigate('/carrito')
   }
 
@@ -111,16 +190,17 @@ function DetalleProducto({ producto }) {
 
         <section className="detalle-hero">
 
-          {/* IZQUIERDA: formato + portada con el vinilo asomando */}
+          {/* IZQUIERDA: formato + portada con el vinilo / CD / cassette asomando */}
           <div className="detalle-visual">
-            {formatos.length > 1 ? (
+            {tieneFormatos ? (
               <div className="detalle-formato" role="group" aria-label="Elegir formato">
                 <span className="detalle-formato-titulo">Elegir formato →</span>
                 <div className="detalle-formato-opciones">
                   {formatos.map((f, i) => (
                     <button
-                      key={f.nombre}
+                      key={f.tipo}
                       type="button"
+                      disabled={!f.disponible}
                       aria-pressed={i === formatoActivo}
                       className={
                         i === formatoActivo
@@ -130,6 +210,7 @@ function DetalleProducto({ producto }) {
                       onClick={() => setFormatoActivo(i)}
                     >
                       {f.nombre}
+                      {!f.disponible && <small>Agotado</small>}
                     </button>
                   ))}
                 </div>
@@ -138,9 +219,42 @@ function DetalleProducto({ producto }) {
               <span className="detalle-formato-unico">{formato.nombre}</span>
             )}
 
-            <div className="detalle-portada-wrap">
-              <div className="detalle-disco" aria-hidden="true" />
-              <div className="detalle-funda" aria-hidden="true" />
+            {/* El tipo elegido cambia la clase y el objeto que asoma detrás de la portada.
+                Al elegir otro formato, el nuevo objeto se monta y su animación arranca. */}
+            <div className={`detalle-portada-wrap detalle-tipo-${formato.tipo}`}>
+              {formato.tipo === 'vinilo' && (
+                <div className="detalle-disco" aria-hidden="true" />
+              )}
+
+              {formato.tipo === 'cd' && (
+                <div className="detalle-cd" aria-hidden="true" />
+              )}
+
+              {/* Si el producto tiene "imagenCassette" se usa esa imagen;
+                  si no, se muestra una cinta dibujada con CSS */}
+              {formato.tipo === 'cassette' && (
+                <div
+                  className={producto.imagenCassette ? 'detalle-casete con-imagen' : 'detalle-casete'}
+                  aria-hidden="true"
+                >
+                  {producto.imagenCassette ? (
+                    <img src={producto.imagenCassette} alt="" />
+                  ) : (
+                    <>
+                      <div className="detalle-casete-etiqueta" />
+                      <div className="detalle-casete-ventana">
+                        <span className="detalle-rueda" />
+                        <span className="detalle-rueda" />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {formato.tipo === 'vinilo' && (
+                <div className="detalle-funda" aria-hidden="true" />
+              )}
+
               <div className="detalle-portada">
                 {producto.imagen ? (
                   <img src={producto.imagen} alt={`Portada de ${producto.nombre}`} />
@@ -181,7 +295,9 @@ function DetalleProducto({ producto }) {
                 </div>
               )}
 
-              <p className="detalle-precio">{formatearPrecio(formato.precio)}</p>
+              <p className="detalle-precio">
+                {formato.disponible ? formatearPrecio(formato.precio) : 'No disponible'}
+              </p>
 
               <div className="detalle-cantidad">
                 <span id="etiqueta-cantidad" className="detalle-cantidad-etiqueta">
@@ -196,7 +312,7 @@ function DetalleProducto({ producto }) {
                     type="button"
                     aria-label="Restar una unidad"
                     disabled={cantidad <= 1}
-                    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+                    onClick={() => setCantidadElegida((c) => Math.max(1, c - 1))}
                   >
                     −
                   </button>
@@ -204,15 +320,21 @@ function DetalleProducto({ producto }) {
                   <button
                     type="button"
                     aria-label="Sumar una unidad"
-                    disabled={cantidad >= 10}
-                    onClick={() => setCantidad((c) => Math.min(10, c + 1))}
+                    disabled={cantidad >= limite}
+                    onClick={() => setCantidadElegida((c) => Math.min(limite, c + 1))}
                   >
                     +
                   </button>
                 </div>
               </div>
 
-              {cantidad > 1 && (
+              {nota && <p className="detalle-nota">{nota}</p>}
+
+              {!formato.disponible && (
+                <p className="detalle-agotado">Este formato está agotado por ahora.</p>
+              )}
+
+              {cantidad > 1 && formato.disponible && (
                 <p className="detalle-total">
                   Total: {formatearPrecio(formato.precio * cantidad)}
                 </p>
@@ -222,6 +344,7 @@ function DetalleProducto({ producto }) {
                 <button
                   type="button"
                   className="detalle-btn detalle-btn-principal"
+                  disabled={!formato.disponible}
                   onClick={sumarAlCarrito}
                 >
                   Agregar al carrito
@@ -229,6 +352,7 @@ function DetalleProducto({ producto }) {
                 <button
                   type="button"
                   className="detalle-btn detalle-btn-secundario"
+                  disabled={!formato.disponible}
                   onClick={comprarYa}
                 >
                   Comprar ya
@@ -245,9 +369,21 @@ function DetalleProducto({ producto }) {
               </button>
 
               <p className="detalle-aviso" role="status">
-                {agregado !== null && (
+                {aviso?.tipo === 'ok' && (
                   <>
                     Agregado al carrito ✓ <Link to="/carrito">Ver carrito</Link>
+                  </>
+                )}
+                {aviso?.tipo === 'parcial' && (
+                  <>
+                    Agregamos las que entraban: el máximo es {limite} por producto.{' '}
+                    <Link to="/carrito">Ver carrito</Link>
+                  </>
+                )}
+                {aviso?.tipo === 'limite' && (
+                  <>
+                    Ya tenés el máximo ({limite}) de este formato en tu carrito.{' '}
+                    <Link to="/carrito">Ver carrito</Link>
                   </>
                 )}
               </p>

@@ -6,6 +6,7 @@ import {
   cambiarCantidad,
   quitarDelCarrito,
   vaciarCarrito,
+  LIMITE_POR_PRODUCTO,
 } from '../data/carrito'
 import '../estilos/Carrito.css'
 
@@ -25,15 +26,21 @@ function Carrito() {
       if (!producto) return null
       const infoFormato = producto.formatos?.find((f) => f.nombre === item.formato)
       const precio = infoFormato ? infoFormato.precio : producto.precio
-      return { ...item, producto, precio }
+      const stock = infoFormato?.stock
+      // Máximo de esa línea: el límite general o el stock del formato, lo que sea menor
+      const maximo = Math.max(
+        1,
+        Math.min(LIMITE_POR_PRODUCTO, typeof stock === 'number' ? stock : LIMITE_POR_PRODUCTO)
+      )
+      return { ...item, producto, precio, maximo }
     })
     .filter(Boolean)
 
   const unidades = lineas.reduce((acc, l) => acc + l.cantidad, 0)
   const total = lineas.reduce((acc, l) => acc + l.precio * l.cantidad, 0)
 
-  function cambiar(id, formato, nuevaCantidad) {
-    setItems(cambiarCantidad(id, formato, nuevaCantidad))
+  function cambiar(id, formato, nuevaCantidad, maximo) {
+    setItems(cambiarCantidad(id, formato, nuevaCantidad, maximo))
   }
 
   function quitar(id, formato) {
@@ -67,7 +74,7 @@ function Carrito() {
           <div className="carrito-layout">
 
             <ul className="carrito-lista">
-              {lineas.map(({ producto, formato, cantidad, precio }) => (
+              {lineas.map(({ producto, formato, cantidad, precio, maximo }) => (
                 <li key={`${producto.id}-${formato}`} className="carrito-item">
                   <Link to={`/Productos/${producto.id}`} className="carrito-img">
                     {producto.imagen && <img src={producto.imagen} alt="" />}
@@ -90,7 +97,7 @@ function Carrito() {
                         type="button"
                         aria-label="Restar una unidad"
                         disabled={cantidad <= 1}
-                        onClick={() => cambiar(producto.id, formato, cantidad - 1)}
+                        onClick={() => cambiar(producto.id, formato, cantidad - 1, maximo)}
                       >
                         −
                       </button>
@@ -98,8 +105,9 @@ function Carrito() {
                       <button
                         type="button"
                         aria-label="Sumar una unidad"
-                        disabled={cantidad >= 99}
-                        onClick={() => cambiar(producto.id, formato, cantidad + 1)}
+                        title={cantidad >= maximo ? `Máximo ${maximo} por producto` : undefined}
+                        disabled={cantidad >= maximo}
+                        onClick={() => cambiar(producto.id, formato, cantidad + 1, maximo)}
                       >
                         +
                       </button>
