@@ -91,6 +91,8 @@ const busqueda = searchParams.get('buscar') || ''
                   type="number"
                   placeholder="0"
                   value={precioDesde}
+                  step={1000}
+                  min={0}
                   onChange={(e) => setPrecioDesde(e.target.value)}
                 />
               </div>
@@ -101,6 +103,8 @@ const busqueda = searchParams.get('buscar') || ''
                   type="number"
                   placeholder="690000"
                   value={precioHasta}
+                  step={1000}
+                  min={0}
                   onChange={(e) => setPrecioHasta(e.target.value)}
                 />
               </div>
