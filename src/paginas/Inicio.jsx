@@ -24,7 +24,7 @@ function Inicio() {
     async function fetchMusic() {
       try {
         setIsLoading(true);
-        const data = await getSpotifyTracks('pop hits');
+        const data = await getSpotifyTracks('90s hip hop rap ');
         if (data && data.length > 0) {
           setMusicData(data);
         } else {
@@ -41,7 +41,7 @@ function Inicio() {
   }, []);
 
   const totalCards = musicData.length;
-  const cardsToShow = 3;
+  const cardsToShow = 4;
   const maxIndex = Math.max(0, totalCards - cardsToShow);
 
   const nextSlide = () => {
