@@ -98,7 +98,6 @@
     background: linear-gradient(to right, #0b03f3 0%, #7205d2 100%);
     text-align: center;
     color: #fff;
-    border-bottom: 5px solid black;
 }
 
 .about-container {
@@ -125,7 +124,6 @@
     padding: 80px 50px;
     position: relative;
     overflow: hidden;
-    border-bottom: 5px solid black;
 }
 
 @keyframes gradientBG {
