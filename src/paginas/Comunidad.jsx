@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../estilos/Comunidad.css'
 import portada from '../assets/ProducutosImgs/IN RAINBOWS.jpg'
+import { useUsuarioActual, nombrePublico } from '../utils/sesion'
 
 /* ============================================================
    DATOS
@@ -181,13 +182,52 @@ function Avatar({ nombre }) {
     return <span className="cm-avatar" aria-hidden="true">{nombre.trim().charAt(0).toUpperCase()}</span>
 }
 
+// Cartel que reemplaza al formulario cuando no hay sesión iniciada.
+function AvisoSesion({ accion, onCerrar }) {
+    return (
+        <div className="cm-form cm-gate" role="alert">
+            <h3 className="cm-form-titulo">Necesitás una cuenta</h3>
+            <p className="cm-gate-texto">Para {accion} tenés que iniciar sesión o crear una cuenta.</p>
+            <div className="cm-form-acciones">
+                <button type="button" className="cm-btn cm-btn-sec" onClick={onCerrar}>Ahora no</button>
+                <Link to="/Perfil" className="cm-btn cm-btn-prim cm-btn-link">Iniciar sesión / Registrarse</Link>
+            </div>
+        </div>
+    )
+}
+
+// Botón "Eliminar" con confirmación en dos pasos (evita borrar sin querer).
+function BotonEliminar({ onConfirmar, etiqueta }) {
+    const [confirmando, setConfirmando] = useState(false)
+
+    if (confirmando) {
+        return (
+            <span className="cm-confirmar" role="group" aria-label="Confirmar eliminación">
+                <span className="cm-confirmar-texto">¿Eliminar?</span>
+                <button type="button" className="cm-btn-mini cm-btn-peligro" onClick={onConfirmar}>Sí</button>
+                <button type="button" className="cm-btn-mini" onClick={() => setConfirmando(false)}>No</button>
+            </span>
+        )
+    }
+
+    return (
+        <button
+            type="button"
+            className="cm-btn-mini cm-btn-eliminar"
+            onClick={() => setConfirmando(true)}
+            aria-label={etiqueta}
+        >
+            Eliminar
+        </button>
+    )
+}
+
 /* ============================================================
    FORMULARIO DE RESEÑA
    ============================================================ */
-function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
+function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
     const [productoId, setProductoId] = useState(productoInicial ? String(productoInicial) : '')
     const [calificacion, setCalificacion] = useState(0)
-    const [usuario, setUsuario] = useState('')
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})
 
@@ -197,7 +237,6 @@ function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
         const nuevos = {}
         if (!productoId) nuevos.productoId = 'Elegí un producto.'
         if (calificacion < 1) nuevos.calificacion = 'Elegí una calificación.'
-        if (usuario.trim().length < 2) nuevos.usuario = 'Ingresá tu nombre o alias.'
         if (comentario.trim().length < 10) nuevos.comentario = 'Contanos un poco más (mínimo 10 caracteres).'
 
         setErrores(nuevos)
@@ -206,7 +245,8 @@ function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
         onPublicar({
             id: Date.now(),
             productoId: Number(productoId),
-            usuario: usuario.trim(),
+            usuario: nombrePublico(cuenta),
+            autorCorreo: cuenta.correo,
             calificacion,
             comentario: comentario.trim(),
             fecha: hoy(),
@@ -218,9 +258,10 @@ function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
     return (
         <form className="cm-form" onSubmit={enviar} noValidate>
             <h3 className="cm-form-titulo">Escribir una reseña</h3>
+            <p className="cm-publicando">Publicando como <strong>{nombrePublico(cuenta)}</strong></p>
 
             <div className="cm-form-grid">
-                <Campo etiqueta="Producto" htmlFor="rs-producto" error={errores.productoId}>
+                <Campo etiqueta="Producto" htmlFor="rs-producto" error={errores.productoId} ancho="completo">
                     <select
                         id="rs-producto"
                         value={productoId}
@@ -232,18 +273,6 @@ function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
                             <option key={p.id} value={p.id}>{p.nombre}</option>
                         ))}
                     </select>
-                </Campo>
-
-                <Campo etiqueta="Tu nombre o alias" htmlFor="rs-usuario" error={errores.usuario}>
-                    <input
-                        id="rs-usuario"
-                        type="text"
-                        maxLength={30}
-                        placeholder="Ej: Ana Vinyl"
-                        value={usuario}
-                        onChange={(e) => setUsuario(e.target.value)}
-                        aria-invalid={!!errores.usuario}
-                    />
                 </Campo>
 
                 <Campo etiqueta="Calificación" error={errores.calificacion} ancho="completo">
@@ -275,7 +304,7 @@ function FormularioResena({ productoInicial, onPublicar, onCancelar }) {
 /* ============================================================
    SECCIÓN: RESEÑAS
    ============================================================ */
-function SeccionResenas({ resenas, setResenas }) {
+function SeccionResenas({ cuenta, resenas, setResenas }) {
     const [productoFiltro, setProductoFiltro] = useState(null) // null = todos
     const [orden, setOrden] = useState('recientes')
     const [formAbierto, setFormAbierto] = useState(false)
@@ -308,12 +337,19 @@ function SeccionResenas({ resenas, setResenas }) {
     const cantidadPorProducto = (id) => resenas.filter((r) => r.productoId === id).length
 
     const publicar = (nueva) => {
+        if (!cuenta) return // solo usuarios con cuenta pueden publicar
         setResenas((prev) => [nueva, ...prev])
         setFormAbierto(false)
         setProductoFiltro(null)
         setOrden('recientes')
         setAviso('¡Gracias! Tu reseña ya está publicada.')
         setTimeout(() => setAviso(''), 4000)
+    }
+
+    // Solo se puede borrar una reseña propia (se valida acá además de en la UI).
+    const eliminar = (id) => {
+        if (!cuenta) return
+        setResenas((prev) => prev.filter((r) => !(r.id === id && r.autorCorreo === cuenta.correo)))
     }
 
     const alternarUtil = (id) => {
@@ -402,13 +438,16 @@ function SeccionResenas({ resenas, setResenas }) {
 
                 {aviso && <p className="cm-aviso" role="status">{aviso}</p>}
 
-                {formAbierto && (
+                {formAbierto && (cuenta ? (
                     <FormularioResena
+                        cuenta={cuenta}
                         productoInicial={productoFiltro}
                         onPublicar={publicar}
                         onCancelar={() => setFormAbierto(false)}
                     />
-                )}
+                ) : (
+                    <AvisoSesion accion="escribir una reseña" onCerrar={() => setFormAbierto(false)} />
+                ))}
 
                 <div className="cm-lista">
                     {lista.map((item) => {
@@ -435,13 +474,21 @@ function SeccionResenas({ resenas, setResenas }) {
                                         <Avatar nombre={item.usuario} />
                                         {item.usuario}
                                     </span>
-                                    <button
-                                        className={item.votado ? 'cm-btn-mini activo' : 'cm-btn-mini'}
-                                        onClick={() => alternarUtil(item.id)}
-                                        aria-pressed={item.votado}
-                                    >
-                                        Útil · {item.util}
-                                    </button>
+                                    <span className="cm-acciones">
+                                        {cuenta && item.autorCorreo === cuenta.correo && (
+                                            <BotonEliminar
+                                                onConfirmar={() => eliminar(item.id)}
+                                                etiqueta="Eliminar mi reseña"
+                                            />
+                                        )}
+                                        <button
+                                            className={item.votado ? 'cm-btn-mini activo' : 'cm-btn-mini'}
+                                            onClick={() => alternarUtil(item.id)}
+                                            aria-pressed={item.votado}
+                                        >
+                                            Útil · {item.util}
+                                        </button>
+                                    </span>
                                 </footer>
                             </article>
                         )
@@ -449,7 +496,7 @@ function SeccionResenas({ resenas, setResenas }) {
 
                     {lista.length === 0 && (
                         <div className="cm-vacio">
-                            <p>Todavía no hay reseñas para este producto.</p>
+                            <p>Todavía no hay reseñas</p>
                             <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)}>
                                 Sé el primero en opinar
                             </button>
@@ -464,8 +511,7 @@ function SeccionResenas({ resenas, setResenas }) {
 /* ============================================================
    FORMULARIO DE RECOMENDACIÓN
    ============================================================ */
-function FormularioRecomendacion({ onPublicar, onCancelar }) {
-    const [usuario, setUsuario] = useState('')
+function FormularioRecomendacion({ cuenta, onPublicar, onCancelar }) {
     const [tipo, setTipo] = useState(TIPOS[0])
     const [titulo, setTitulo] = useState('')
     const [comentario, setComentario] = useState('')
@@ -475,7 +521,6 @@ function FormularioRecomendacion({ onPublicar, onCancelar }) {
         e.preventDefault()
 
         const nuevos = {}
-        if (usuario.trim().length < 2) nuevos.usuario = 'Ingresá tu nombre o alias.'
         if (titulo.trim().length < 2) nuevos.titulo = '¿Qué querés recomendar?'
         if (comentario.trim().length < 10) nuevos.comentario = 'Contanos por qué (mínimo 10 caracteres).'
 
@@ -484,7 +529,8 @@ function FormularioRecomendacion({ onPublicar, onCancelar }) {
 
         onPublicar({
             id: Date.now(),
-            usuario: usuario.trim(),
+            usuario: nombrePublico(cuenta),
+            autorCorreo: cuenta.correo,
             tipo,
             titulo: titulo.trim(),
             comentario: comentario.trim(),
@@ -497,21 +543,10 @@ function FormularioRecomendacion({ onPublicar, onCancelar }) {
     return (
         <form className="cm-form" onSubmit={enviar} noValidate>
             <h3 className="cm-form-titulo">Hacer una recomendación</h3>
+            <p className="cm-publicando">Publicando como <strong>{nombrePublico(cuenta)}</strong></p>
 
             <div className="cm-form-grid">
-                <Campo etiqueta="Tu nombre o alias" htmlFor="rc-usuario" error={errores.usuario}>
-                    <input
-                        id="rc-usuario"
-                        type="text"
-                        maxLength={30}
-                        placeholder="Ej: Diego_Tape"
-                        value={usuario}
-                        onChange={(e) => setUsuario(e.target.value)}
-                        aria-invalid={!!errores.usuario}
-                    />
-                </Campo>
-
-                <Campo etiqueta="Tipo" htmlFor="rc-tipo">
+                <Campo etiqueta="Tipo" htmlFor="rc-tipo" ancho="completo">
                     <select id="rc-tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
                         {TIPOS.map((t) => (
                             <option key={t} value={t}>{t}</option>
@@ -556,7 +591,7 @@ function FormularioRecomendacion({ onPublicar, onCancelar }) {
 /* ============================================================
    SECCIÓN: COMUNIDAD
    ============================================================ */
-function SeccionComunidad({ recomendaciones, setRecomendaciones }) {
+function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
     const [tipoActivo, setTipoActivo] = useState(null) // null = todas
     const [formAbierto, setFormAbierto] = useState(false)
     const [aviso, setAviso] = useState('')
@@ -569,11 +604,18 @@ function SeccionComunidad({ recomendaciones, setRecomendaciones }) {
     const cantidadPorTipo = (tipo) => recomendaciones.filter((r) => r.tipo === tipo).length
 
     const publicar = (nueva) => {
+        if (!cuenta) return // solo usuarios con cuenta pueden publicar
         setRecomendaciones((prev) => [nueva, ...prev])
         setFormAbierto(false)
         setTipoActivo(null)
         setAviso('¡Gracias por recomendar! Ya está publicado.')
         setTimeout(() => setAviso(''), 4000)
+    }
+
+    // Solo se puede borrar una opinión propia (se valida acá además de en la UI).
+    const eliminar = (id) => {
+        if (!cuenta) return
+        setRecomendaciones((prev) => prev.filter((r) => !(r.id === id && r.autorCorreo === cuenta.correo)))
     }
 
     const alternarLike = (id) => {
@@ -630,9 +672,15 @@ function SeccionComunidad({ recomendaciones, setRecomendaciones }) {
 
                 {aviso && <p className="cm-aviso" role="status">{aviso}</p>}
 
-                {formAbierto && (
-                    <FormularioRecomendacion onPublicar={publicar} onCancelar={() => setFormAbierto(false)} />
-                )}
+                {formAbierto && (cuenta ? (
+                    <FormularioRecomendacion
+                        cuenta={cuenta}
+                        onPublicar={publicar}
+                        onCancelar={() => setFormAbierto(false)}
+                    />
+                ) : (
+                    <AvisoSesion accion="publicar una opinión" onCerrar={() => setFormAbierto(false)} />
+                ))}
 
                 <div className="cm-lista">
                     {lista.map((item) => (
@@ -650,21 +698,29 @@ function SeccionComunidad({ recomendaciones, setRecomendaciones }) {
                                     <Avatar nombre={item.usuario} />
                                     {item.usuario}
                                 </span>
-                                <button
-                                    className={item.meGusta ? 'cm-btn-mini activo' : 'cm-btn-mini'}
-                                    onClick={() => alternarLike(item.id)}
-                                    aria-pressed={item.meGusta}
-                                    aria-label={item.meGusta ? 'Quitar me gusta' : 'Me gusta'}
-                                >
-                                    {item.meGusta ? '♥' : '♡'} {item.likes}
-                                </button>
+                                <span className="cm-acciones">
+                                    {cuenta && item.autorCorreo === cuenta.correo && (
+                                        <BotonEliminar
+                                            onConfirmar={() => eliminar(item.id)}
+                                            etiqueta="Eliminar mi opinión"
+                                        />
+                                    )}
+                                    <button
+                                        className={item.meGusta ? 'cm-btn-mini activo' : 'cm-btn-mini'}
+                                        onClick={() => alternarLike(item.id)}
+                                        aria-pressed={item.meGusta}
+                                        aria-label={item.meGusta ? 'Quitar me gusta' : 'Me gusta'}
+                                    >
+                                        {item.meGusta ? '♥' : '♡'} {item.likes}
+                                    </button>
+                                </span>
                             </footer>
                         </article>
                     ))}
 
                     {lista.length === 0 && (
                         <div className="cm-vacio">
-                            <p>Todavía no hay recomendaciones en esta categoría.</p>
+                            <p>Todavía no hay opiniones</p>
                             <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)}>
                                 Hacer la primera
                             </button>
@@ -681,6 +737,7 @@ function SeccionComunidad({ recomendaciones, setRecomendaciones }) {
    ============================================================ */
 function Comunidad() {
     const [pestana, setPestana] = useState('resenas') // 'resenas' | 'comunidad'
+    const cuenta = useUsuarioActual() // null si no hay sesión iniciada
     const [resenas, setResenas] = useAlmacenado('deejs_resenas', RESENAS_INICIALES)
     const [recomendaciones, setRecomendaciones] = useAlmacenado('deejs_recomendaciones', RECOMENDACIONES_INICIALES)
 
@@ -721,9 +778,9 @@ function Comunidad() {
             </header>
 
             {pestana === 'resenas' ? (
-                <SeccionResenas resenas={resenas} setResenas={setResenas} />
+                <SeccionResenas cuenta={cuenta} resenas={resenas} setResenas={setResenas} />
             ) : (
-                <SeccionComunidad recomendaciones={recomendaciones} setRecomendaciones={setRecomendaciones} />
+                <SeccionComunidad cuenta={cuenta} recomendaciones={recomendaciones} setRecomendaciones={setRecomendaciones} />
             )}
         </div>
     )
