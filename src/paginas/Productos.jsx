@@ -1,8 +1,9 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState, useMemo } from 'react'
-import '../estilos/Productos.css'
+import '../estilos/productos.css'
 import { useSearchParams } from 'react-router-dom'
 import { productos, normalizar } from '../data/Productos'
+
 
 // Lista de categorías únicas, calculada a partir del array de arriba.
 // Si agregás un producto con una categoría nueva, aparece sola en el filtro.
@@ -29,7 +30,7 @@ const busqueda = searchParams.get('buscar') || ''
         const pasaBusqueda =
       busqueda === '' ||
       normalizar(`${producto.nombre} ${producto.artista || ''}`).includes(normalizar(busqueda))
-      return pasaCategoria && pasaDesde && pasaHasta
+      return pasaCategoria && pasaDesde && pasaHasta && pasaBusqueda
     })
 
     if (orden === 'menor-precio') {
@@ -39,7 +40,7 @@ const busqueda = searchParams.get('buscar') || ''
     }
 
     return resultado
-  }, [categoriaActiva, precioDesde, precioHasta, orden])
+  }, [categoriaActiva, precioDesde, precioHasta, orden, busqueda])
 
   return (
     <div className="pagina-productos">
@@ -90,6 +91,8 @@ const busqueda = searchParams.get('buscar') || ''
                   type="number"
                   placeholder="0"
                   value={precioDesde}
+                  step={1000}
+                  min={0}
                   onChange={(e) => setPrecioDesde(e.target.value)}
                 />
               </div>
@@ -100,6 +103,8 @@ const busqueda = searchParams.get('buscar') || ''
                   type="number"
                   placeholder="690000"
                   value={precioHasta}
+                  step={1000}
+                  min={0}
                   onChange={(e) => setPrecioHasta(e.target.value)}
                 />
               </div>
@@ -124,7 +129,7 @@ const busqueda = searchParams.get('buscar') || ''
             {productosFiltrados.map((producto) => (
               <article className="card" key={producto.id}>
                 <button className="btn-wishlist" title="Agregar a la wishlist">♡</button>
-
+<Link to={`/Productos/${producto.id}`} className="card-link">
                 <div className="card-img">
                   {producto.imagen && (
                     <img src={producto.imagen} alt={producto.nombre} />
@@ -134,7 +139,7 @@ const busqueda = searchParams.get('buscar') || ''
                 <h3 className="card-titulo">{producto.nombre}</h3>
                 <h3 className="card-artista">{producto.artista}</h3>
                 <p className="card-precio">${formatearPrecio(producto.precio)},00</p>
-
+</Link>
                 <div className="card-acciones">
                   <button className="btn-comprar">Comprar</button>
                   <button className="btn-carrito">Carrito</button>

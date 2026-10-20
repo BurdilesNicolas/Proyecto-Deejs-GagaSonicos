@@ -2,10 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Inicio from "./paginas/Inicio";
 import Navbar from "./componentes/Navbar";
 import Footer from "./componentes/Footer";
-import Productos from "./paginas/Productos";
+import Productos from "./paginas/productos";
 import Perfil from "./paginas/Perfil";
 import Locales from "./paginas/Locales";
 import Comunidad from "./paginas/Comunidad";
+import ProductoDetalle from "./paginas/ProductoDetalle";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Perfil" element={<Perfil />} />
         <Route path="/Locales" element={<Locales />} />
         <Route path="/Comunidad" element={<Comunidad />} />
+        <Route path="/Productos/:id" element={<ProductoDetalle />} />
       </Routes>
       <Footer />
     </BrowserRouter>
