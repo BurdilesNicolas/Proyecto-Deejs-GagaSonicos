@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { productos } from '../data/Productos'
-import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/carrito'
+import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/carrito.js'
 import '../estilos/ProductoDetalle.css'
 import '../estilos/FormatosAnimados.css'
 
