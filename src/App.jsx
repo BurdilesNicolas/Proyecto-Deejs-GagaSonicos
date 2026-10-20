@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Inicio from "./paginas/Inicio";
 import Navbar from "./componentes/Navbar";
 import Footer from "./componentes/Footer";
-import Productos from "./paginas/productos";
+import Productos from "./paginas/Productos";
 import Perfil from "./paginas/Perfil";
 import Locales from "./paginas/Locales";
 import Comunidad from "./paginas/Comunidad";
