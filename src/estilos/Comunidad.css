@@ -1,13 +1,23 @@
 .cm-page {
-    --cm-accent: #378ADD;
-    --cm-accent-hover: #2f78c2;
-    --cm-accent-bg: rgba(55, 138, 221, 0.1);
-    --cm-border: rgba(0, 0, 0, 0.08);
-    --cm-input-border: rgba(0, 0, 0, 0.15);
-    --cm-text: #1a1a1a;
-    --cm-muted: rgba(0, 0, 0, 0.55);
-    --cm-star: #f5a623;
-    --cm-error: #d64545;
+    /* Paleta pensada para el degradé azul oscuro de fondo:
+       texto claro, "vidrio" translúcido blanco para cards/inputs y
+       acentos luminosos que se despegan bien del azul. */
+    --cm-accent: #9ad2ff;            /* acento para texto, bordes y barras */
+    --cm-accent-solid: #2468c4;      /* fondo de botones primarios (texto blanco, contraste AA) */
+    --cm-accent-hover: #2f78d0;
+    --cm-accent-bg: rgba(124, 196, 255, 0.16);
+    --cm-glass: rgba(255, 255, 255, 0.08);
+    --cm-glass-strong: rgba(255, 255, 255, 0.12);
+    --cm-border: rgba(255, 255, 255, 0.16);
+    --cm-input-border: rgba(255, 255, 255, 0.28);
+    --cm-text: #ffffff;
+    --cm-text-soft: rgba(255, 255, 255, 0.86);
+    --cm-muted: rgba(255, 255, 255, 0.80);
+    --cm-faint: rgba(255, 255, 255, 0.66);
+    --cm-star: #ffc83d;
+    --cm-star-off: rgba(255, 255, 255, 0.22);
+    --cm-error: #ffa3a3;
+    --cm-ok: #8df0c0;
 
     max-width: 1200px;
     margin: 0 auto;
@@ -15,10 +25,10 @@
        espacio arriba para que no tape el breadcrumb ni el título.
        Mismo criterio que .pagina-productos en Productos.css. */
     padding: 100px 20px 40px;
-    background-color: #ffffff;
+    flex: 1 0 auto;
     color: var(--cm-text);
     text-align: left;
-    background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%)
+    background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
 }
 
 .cm-page *,
@@ -31,16 +41,17 @@
 .cm-breadcrumb {
     padding: 24px 0 0;
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--cm-muted);
 }
 
 .cm-breadcrumb a {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--cm-muted);
     text-decoration: none;
 }
 
 .cm-breadcrumb a:hover {
-    color: var(--cm-accent);
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 /* ===== ENCABEZADO ===== */
@@ -72,7 +83,9 @@
     padding: 4px;
     border: 1px solid var(--cm-border);
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--cm-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .cm-tab {
@@ -89,14 +102,15 @@
 }
 
 .cm-tab:hover {
-    color: var(--cm-accent);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* Misma "pastilla" activa que usa el Navbar */
 .cm-tab.activo {
-    background: var(--cm-accent);
+    background: var(--cm-accent-solid);
     color: #ffffff;
-    box-shadow: 0 2px 10px rgba(55, 138, 221, 0.35);
+    box-shadow: 0 2px 12px rgba(47, 127, 216, 0.55);
 }
 
 /* ===== LAYOUT: sidebar + contenido ===== */
@@ -149,7 +163,7 @@
 }
 
 .cm-filtro:hover {
-    color: var(--cm-accent);
+    color: #ffffff;
 }
 
 .cm-filtro.activo {
@@ -160,14 +174,14 @@
 .cm-filtro-cant {
     font-size: 12px;
     font-weight: 400;
-    color: rgba(0, 0, 0, 0.35);
+    color: var(--cm-faint);
 }
 
 .cm-nota-chica {
     margin: 24px 0 0;
     font-size: 12px;
     line-height: 1.5;
-    color: rgba(0, 0, 0, 0.45);
+    color: var(--cm-faint);
 }
 
 /* ===== RESUMEN DE CALIFICACIONES ===== */
@@ -175,8 +189,10 @@
     padding: 16px;
     border: 1px solid var(--cm-border);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.55);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    background: var(--cm-glass);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .cm-resumen-nota {
@@ -221,7 +237,7 @@
 .cm-dist-barra {
     height: 6px;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.07);
+    background: rgba(255, 255, 255, 0.16);
     overflow: hidden;
 }
 
@@ -229,7 +245,7 @@
     display: block;
     height: 100%;
     border-radius: 999px;
-    background: var(--cm-accent);
+    background: linear-gradient(90deg, #7cc4ff, #b4a0ff);
     transition: width 0.4s ease;
 }
 
@@ -250,16 +266,25 @@
     padding: 10px 14px;
     border: 1px solid var(--cm-input-border);
     border-radius: 10px;
-    background: #ffffff;
+    background: var(--cm-glass-strong);
     font-family: inherit;
     font-size: 14px;
     color: var(--cm-text);
+    color-scheme: dark;
     cursor: pointer;
 }
 
 .cm-select-orden:focus {
     outline: none;
     border-color: var(--cm-accent);
+    box-shadow: 0 0 0 3px rgba(124, 196, 255, 0.25);
+}
+
+/* El desplegable nativo no hereda la transparencia: se le da fondo propio */
+.cm-select-orden option,
+.cm-campo select option {
+    background: #15145f;
+    color: #ffffff;
 }
 
 /* ===== BOTONES ===== */
@@ -269,18 +294,21 @@
     border-radius: 999px;
     font-family: inherit;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cm-btn-prim {
-    background-color: var(--cm-accent);
+    background-color: var(--cm-accent-solid);
+    border-color: var(--cm-accent-solid);
     color: #ffffff;
+    box-shadow: 0 4px 14px rgba(47, 127, 216, 0.45);
 }
 
 .cm-btn-prim:hover {
     background-color: var(--cm-accent-hover);
+    border-color: var(--cm-accent-hover);
 }
 
 .cm-btn-sec {
@@ -290,29 +318,32 @@
 
 .cm-btn-sec:hover {
     background-color: var(--cm-accent-bg);
+    color: #ffffff;
 }
 
 .cm-btn-mini {
     padding: 6px 14px;
-    border: 1px solid var(--cm-border);
+    border: 1px solid var(--cm-input-border);
     border-radius: 999px;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.06);
     font-family: inherit;
     font-size: 13px;
-    color: var(--cm-muted);
+    color: var(--cm-text-soft);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .cm-btn-mini:hover {
     border-color: var(--cm-accent);
-    color: var(--cm-accent);
+    background: var(--cm-accent-bg);
+    color: #ffffff;
 }
 
 .cm-btn-mini.activo {
     border-color: var(--cm-accent);
     background: var(--cm-accent-bg);
     color: var(--cm-accent);
+    font-weight: 600;
 }
 
 .cm-btn:focus-visible,
@@ -320,7 +351,7 @@
 .cm-tab:focus-visible,
 .cm-filtro:focus-visible,
 .cm-selector-btn:focus-visible {
-    outline: 2px solid var(--cm-accent);
+    outline: 2px solid #ffffff;
     outline-offset: 2px;
 }
 
@@ -328,10 +359,11 @@
 .cm-aviso {
     margin: 0 0 16px;
     padding: 10px 16px;
+    border: 1px solid rgba(141, 240, 192, 0.35);
     border-radius: 10px;
-    background: var(--cm-accent-bg);
+    background: rgba(141, 240, 192, 0.12);
     font-size: 14px;
-    color: var(--cm-accent-hover);
+    color: var(--cm-ok);
 }
 
 /* ===== CARDS (mismo efecto vidrio que Productos) ===== */
@@ -345,17 +377,18 @@
     padding: 20px;
     border: 1px solid var(--cm-border);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--cm-glass);
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .cm-card:hover {
     transform: translateY(-2px);
-    border-color: var(--cm-accent);
-    box-shadow: 0 12px 28px rgba(55, 138, 221, 0.15);
+    border-color: rgba(124, 196, 255, 0.6);
+    background: var(--cm-glass-strong);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(124, 196, 255, 0.15);
 }
 
 .cm-card-titulo {
@@ -369,7 +402,7 @@
     margin: 14px 0 16px;
     font-size: 14px;
     line-height: 1.6;
-    color: rgba(0, 0, 0, 0.75);
+    color: var(--cm-text-soft);
 }
 
 .cm-card-pie {
@@ -383,7 +416,7 @@
 
 .cm-fecha {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.45);
+    color: var(--cm-faint);
 }
 
 /* ----- reseña ----- */
@@ -398,7 +431,8 @@
     width: 56px;
     height: 56px;
     border-radius: 8px;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: #eef2ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -442,10 +476,11 @@
 .cm-tag {
     padding: 4px 12px;
     border-radius: 999px;
+    border: 1px solid rgba(124, 196, 255, 0.3);
     background: var(--cm-accent-bg);
     font-size: 12px;
     font-weight: 500;
-    color: var(--cm-accent);
+    color: #bfe3ff;
 }
 
 /* ----- autor ----- */
@@ -465,10 +500,10 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: var(--cm-accent-bg);
+    background: linear-gradient(135deg, #4a96ec, #8f7bff);
     font-size: 13px;
     font-weight: 700;
-    color: var(--cm-accent);
+    color: #ffffff;
 }
 
 /* ===== ESTRELLAS (solo lectura) ===== */
@@ -480,11 +515,12 @@
 
 .cm-estrella {
     font-size: 15px;
-    color: rgba(0, 0, 0, 0.15);
+    color: var(--cm-star-off);
 }
 
 .cm-estrella.llena {
     color: var(--cm-star);
+    text-shadow: 0 0 6px rgba(255, 200, 61, 0.35);
 }
 
 /* ===== ESTRELLAS (selector del formulario) ===== */
@@ -500,7 +536,7 @@
     background: none;
     font-size: 28px;
     line-height: 1.2;
-    color: rgba(0, 0, 0, 0.15);
+    color: var(--cm-star-off);
     cursor: pointer;
     transition: color 0.15s ease, transform 0.15s ease;
 }
@@ -525,8 +561,10 @@
     padding: 24px;
     border: 1px solid var(--cm-border);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.55);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    background: var(--cm-glass);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 .cm-form-titulo {
@@ -556,7 +594,8 @@
 .cm-campo label {
     margin: 0;
     font-size: 13px;
-    color: var(--cm-muted);
+    font-weight: 500;
+    color: var(--cm-text-soft);
 }
 
 .cm-campo input,
@@ -566,10 +605,16 @@
     padding: 10px 12px;
     border: 1px solid var(--cm-input-border);
     border-radius: 8px;
-    background: #ffffff;
+    background: rgba(8, 8, 50, 0.45);
     font-family: inherit;
     font-size: 14px;
     color: var(--cm-text);
+    color-scheme: dark;
+}
+
+.cm-campo input::placeholder,
+.cm-campo textarea::placeholder {
+    color: var(--cm-faint);
 }
 
 .cm-campo textarea {
@@ -583,6 +628,7 @@
 .cm-campo textarea:focus {
     outline: none;
     border-color: var(--cm-accent);
+    box-shadow: 0 0 0 3px rgba(124, 196, 255, 0.25);
 }
 
 .cm-campo [aria-invalid="true"] {
@@ -597,7 +643,7 @@
 .cm-contador {
     align-self: flex-end;
     font-size: 11px;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--cm-faint);
 }
 
 .cm-form-acciones {
@@ -637,7 +683,7 @@
         width: auto;
         gap: 6px;
         padding: 6px 14px;
-        border: 1px solid var(--cm-border);
+        border: 1px solid var(--cm-input-border);
         border-radius: 999px;
     }
 
@@ -680,11 +726,12 @@
 }
 
 .cm-btn-peligro {
-    background: rgba(214, 69, 69, 0.08);
+    background: rgba(255, 163, 163, 0.12);
 }
 
 .cm-btn-peligro:hover {
-    background: var(--cm-error);
+    background: #e5484d;
+    border-color: #e5484d;
     color: #ffffff;
 }
 
@@ -700,7 +747,7 @@
 }
 
 .cm-btn-mini:focus-visible {
-    outline: 2px solid var(--cm-accent);
+    outline: 2px solid #ffffff;
     outline-offset: 2px;
 }
 
