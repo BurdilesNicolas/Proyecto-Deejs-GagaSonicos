@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../estilos/Inicio.css";
-import { getSpotifyTracks } from "../services/spotify";
+import { productos } from "../data/Productos";
+import { getSpotifyAlbums } from "../services/spotify";
+
+const staticMusicData = productos.map((producto) => ({
+  id: producto.id,
+  productId: producto.id,
+  title: producto.nombre,
+  artist: producto.artista,
+  image: producto.imagen,
+}));
 
 function Inicio() {
-  const staticMusicData = [
-    { id: 1, title: "Sinfonía No. 5", artist: "Beethoven", image: "https://via.placeholder.com/300x300?text=Beethoven" },
-    { id: 2, title: "Bohemian Rhapsody", artist: "Queen", image: "https://via.placeholder.com/300x300?text=Queen" },
-    { id: 3, title: "Billie Jean", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=MJ" },
-    { id: 4, title: "Imagine", artist: "John Lennon", image: "https://via.placeholder.com/300x300?text=Lennon" },
-    { id: 5, title: "Smooth Criminal", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=MJ2" },
-    { id: 6, title: "Like a Virgin", artist: "Madonna", image: "https://via.placeholder.com/300x300?text=Madonna" },
-    { id: 7, title: "Hotel California", artist: "Eagles", image: "https://via.placeholder.com/300x300?text=Eagles" },
-    { id: 8, title: "Stayin' Alive", artist: "Bee Gees", image: "https://via.placeholder.com/300x300?text=BeeGees" },
-    { id: 9, title: "Thriller", artist: "Michael Jackson", image: "https://via.placeholder.com/300x300?text=Thriller" },
-    { id: 10, title: "Yesterday", artist: "The Beatles", image: "https://via.placeholder.com/300x300?text=Beatles" },
-  ];
-
   const [musicData, setMusicData] = useState(staticMusicData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +21,7 @@ function Inicio() {
     async function fetchMusic() {
       try {
         setIsLoading(true);
-        const data = await getSpotifyTracks('90s hip hop rap ');
+        const data = await getSpotifyAlbums('90s hip hop rap');
         if (data && data.length > 0) {
           setMusicData(data);
         } else {
@@ -88,7 +85,7 @@ function Inicio() {
 
       <div className="secundario">
         <div className="subtitulo">
-          <h2 className="section-title">Temas de Música</h2>
+          <h2 className="section-title">Álbumes de Música</h2>
         </div>
 
         <div className="music-carousel-wrapper">
@@ -110,15 +107,25 @@ function Inicio() {
               >
                 {musicData && musicData.map((music) => (
                   <div className="music-card" key={music.id}>
-                    <div className="music-card-inner">
-                      <div className="music-img-wrapper">
-                        <img src={music.image} alt={music.title} className="music-img" />
+                    <Link
+                      className="music-card-link"
+                      to={
+                        music.spotifyAlbumId
+                          ? `/Productos/spotify/${music.spotifyAlbumId}`
+                          : `/Productos/${music.productId}`
+                      }
+                      aria-label={`Ver álbum ${music.title} de ${music.artist}`}
+                    >
+                      <div className="music-card-inner">
+                        <div className="music-img-wrapper">
+                          <img src={music.image} alt={music.title} className="music-img" />
+                        </div>
+                        <div className="music-info">
+                          <h3 className="music-title">{music.title}</h3>
+                          <p className="music-artist">{music.artist}</p>
+                        </div>
                       </div>
-                      <div className="music-info">
-                        <h3 className="music-title">{music.title}</h3>
-                        <p className="music-artist">{music.artist}</p>
-                      </div>
-                    </div>
+                    </Link>
                   </div>
                 ))}
               </div>

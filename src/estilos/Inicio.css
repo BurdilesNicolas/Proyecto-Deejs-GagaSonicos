@@ -186,6 +186,19 @@
     transition: transform 0.3s ease;
 }
 
+.music-card-link {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
+.music-card-link:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 4px;
+    border-radius: 20px;
+}
+
 .music-card-inner:hover {
     transform: translateY(-10px);
 }

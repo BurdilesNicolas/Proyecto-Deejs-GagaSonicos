@@ -54,3 +54,46 @@ export async function getSpotifyTracks(query = 'top hits') {
     throw error;
   }
 }
+
+export async function getSpotifyAlbums(query = 'top albums') {
+  const token = await getAccessToken();
+  const response = await fetch(
+    `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=album&limit=10`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error fetching albums from Spotify: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.albums.items.map((album) => ({
+    id: album.id,
+    title: album.name,
+    artist: album.artists.map((artist) => artist.name).join(', '),
+    image: album.images[0]?.url || 'https://via.placeholder.com/300',
+    spotifyAlbumId: album.id,
+  }));
+}
+
+export async function getSpotifyAlbum(albumId) {
+  const token = await getAccessToken();
+  const response = await fetch(
+    `https://api.spotify.com/v1/albums/${encodeURIComponent(albumId)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error fetching album from Spotify: ${response.status}`);
+  }
+
+  return response.json();
+}
