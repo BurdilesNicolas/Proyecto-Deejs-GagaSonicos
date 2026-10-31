@@ -2,17 +2,9 @@
     padding: 80px 20px;
     text-align: center;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(-45deg, #1900f8, #090a7a, #49006f, #8b00fd);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
     min-height: 90vh;
     color: white;
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .locales-header {
@@ -68,6 +60,23 @@
     object-fit: cover;
 }
 
+.local-image-credit {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    padding: 4px 7px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    font-size: 0.68rem;
+    text-decoration: none;
+}
+
+.local-image-credit:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
 .local-badge {
     position: absolute;
     top: 15px;
@@ -121,16 +130,20 @@
 
 .local-btn {
     display: block;
+    width: 100%;
     text-align: center;
     padding: 12px;
     background: #3d00cc;
     color: white;
+    border: 0;
     text-decoration: none;
     border-radius: 8px;
+    font: inherit;
     font-weight: 600;
     transition: background 0.3s ease;
     text-transform: uppercase;
     font-size: 0.85rem;
+    cursor: pointer;
 }
 
 .local-btn:hover {
