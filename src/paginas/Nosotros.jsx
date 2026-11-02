@@ -202,4 +202,189 @@ function Nosotros() {
           </p>
         </div>
 
-       
+        <div className="nosotros-equipo">
+          {integrantes.map((integrante, indice) => (
+            <article
+              className="nosotros-card nosotros-reveal"
+              key={integrante.id}
+              style={{
+                "--member-accent": integrante.color,
+                "--reveal-delay": `${indice * 90}ms`,
+              }}
+            >
+              <div className="nosotros-card__imagen">
+                <span className="nosotros-card__marco" />
+                <span className="nosotros-card__avatar" aria-hidden="true">
+                  <i className="bi bi-person-fill" />
+                </span>
+                <span className="nosotros-card__numero">
+                  0{integrante.id} <span>/ 04</span>
+                </span>
+              </div>
+              <div className="nosotros-card__contenido">
+                <span className="nosotros-card__rol">{integrante.rol}</span>
+                <h3>{integrante.nombre}</h3>
+                <p>{integrante.descripcion}</p>
+                <div
+                  className="nosotros-tags"
+                  aria-label="Habilidades principales"
+                >
+                  {integrante.habilidades.map((habilidad) => (
+                    <span key={habilidad}>{habilidad}</span>
+                  ))}
+                </div>
+                <button
+                  className="nosotros-card__boton"
+                  type="button"
+                  onClick={() => setIntegranteSeleccionado(integrante)}
+                  aria-label={`Ampliar información de ${integrante.nombre}`}
+                >
+                  Conocer su aporte
+                  <i className="bi bi-arrow-up-right" aria-hidden="true" />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="nosotros-historia" aria-labelledby="historia-titulo">
+        <div
+          className="nosotros-historia__visual nosotros-reveal"
+          aria-hidden="true"
+        >
+          <div className="nosotros-historia__disco">
+            <span>
+              <i className="bi bi-soundwave" />
+            </span>
+          </div>
+          <div className="nosotros-historia__etiqueta">
+            <i className="bi bi-heart-fill" />
+            <span>Hecho en equipo</span>
+          </div>
+        </div>
+        <div className="nosotros-historia__texto nosotros-reveal">
+          <span className="nosotros-kicker">
+            De una idea a un proyecto compartido
+          </span>
+          <h2 id="historia-titulo">Nuestra historia suena mejor en equipo.</h2>
+          <p>
+            Nos encontramos con ganas de aprender y de llevar una idea a la
+            práctica. La música fue el punto de partida; las ganas de crear una
+            experiencia útil, cuidada y cercana nos dieron un rumbo común.
+          </p>
+          <p>
+            Así nació este proyecto: un espacio para descubrir y disfrutar la
+            música en formatos físicos. Queremos que cada visita invite a
+            explorar, conectar con otros melómanos y encontrar algo que valga la
+            pena volver a escuchar.
+          </p>
+          <div className="nosotros-historia__meta">
+            <span>
+              <i className="bi bi-people" /> Cuatro aportes
+            </span>
+            <span>
+              <i className="bi bi-music-note-list" /> Una pasión compartida
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="nosotros-seccion nosotros-valores"
+        aria-labelledby="valores-titulo"
+      >
+        <div className="nosotros-encabezado nosotros-reveal">
+          <span className="nosotros-kicker">Lo que nos mueve</span>
+          <h2 id="valores-titulo">Nuestra forma de trabajar</h2>
+          <p>
+            Los valores que ponemos en práctica para avanzar, aprender y crear.
+          </p>
+        </div>
+        <div className="nosotros-valores__grid">
+          {valores.map((valor, indice) => (
+            <article
+              className="nosotros-valor nosotros-reveal"
+              key={valor.titulo}
+              style={{ "--reveal-delay": `${indice * 65}ms` }}
+            >
+              <span className="nosotros-valor__icono">
+                <i className={`bi ${valor.icono}`} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>{valor.titulo}</h3>
+                <p>{valor.texto}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="nosotros-cierre nosotros-reveal">
+        <span className="nosotros-cierre__icono" aria-hidden="true">
+          <i className="bi bi-vinyl-fill" />
+        </span>
+        <p className="nosotros-kicker">Una última nota</p>
+        <h2>“Las mejores ideas también se disfrutan en equipo.”</h2>
+        <p>Gracias por acompañarnos. Nos seguimos encontrando en la música.</p>
+        <Link className="nosotros-button nosotros-button--claro" to="/">
+          Volver a la página principal
+          <i className="bi bi-arrow-right" aria-hidden="true" />
+        </Link>
+      </section>
+
+      <dialog
+        className="nosotros-dialog"
+        ref={dialogRef}
+        onClose={cerrarDialogo}
+        aria-labelledby="nosotros-dialog-titulo"
+      >
+        {integranteSeleccionado && (
+          <div className="nosotros-dialog__contenido">
+            <button
+              className="nosotros-dialog__cerrar"
+              type="button"
+              onClick={() => dialogRef.current?.close()}
+              aria-label="Cerrar información"
+            >
+              <i className="bi bi-x-lg" aria-hidden="true" />
+            </button>
+            <span
+              className="nosotros-dialog__avatar"
+              style={{ "--member-accent": integranteSeleccionado.color }}
+              aria-hidden="true"
+            >
+              <i className="bi bi-person-fill" />
+            </span>
+            <span className="nosotros-card__rol">
+              {integranteSeleccionado.rol}
+            </span>
+            <h2 id="nosotros-dialog-titulo">{integranteSeleccionado.nombre}</h2>
+            <p className="nosotros-dialog__descripcion">
+              {integranteSeleccionado.descripcion}
+            </p>
+            <h3>Su aporte al proyecto</h3>
+            <ul>
+              {integranteSeleccionado.responsabilidades.map(
+                (responsabilidad) => (
+                  <li key={responsabilidad}>
+                    <i className="bi bi-check2" aria-hidden="true" />
+                    {responsabilidad}
+                  </li>
+                ),
+              )}
+            </ul>
+            <h3>Habilidades</h3>
+            <div className="nosotros-tags">
+              {integranteSeleccionado.habilidades.map((habilidad) => (
+                <span key={habilidad}>{habilidad}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </dialog>
+    </main>
+  );
+}
+
+export default Nosotros;
