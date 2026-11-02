@@ -8,6 +8,7 @@ import Locales from "./paginas/Locales";
 import Comunidad from "./paginas/Comunidad";
 import ProductoDetalle from "./paginas/ProductoDetalle";
 import ProductoSpotifyDetalle from "./paginas/ProductoSpotifyDetalle";
+import Nosotros from "./paginas/Nosotros";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/Perfil" element={<Perfil />} />
         <Route path="/Locales" element={<Locales />} />
         <Route path="/Comunidad" element={<Comunidad />} />
+        <Route path="/Nosotros" element={<Nosotros />} />
         <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
         <Route path="/Productos/:id" element={<ProductoDetalle />} />
       </Routes>
