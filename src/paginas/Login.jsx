@@ -1,19 +1,50 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import SelectorFoto from "../componentes/SelectorFoto";
 import "../estilos/Perfil.css";
 
-// Props opcionales (usadas desde Perfil.jsx):
-//  onLogin(correo, password) -> devuelve un texto de error, o null si todo salió bien
-//  onIrARegistro()           -> cambia a la vista de registro sin usar el router
 function Login({ onLogin, onIrARegistro }) {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e) => {
+  // Traducir errores de Firebase
+  const obtenerMensajeError = (codigo) => {
+    switch (codigo) {
+      case "auth/invalid-credential":
+      case "auth/user-not-found":
+      case "auth/wrong-password":
+        return "Correo o contraseña incorrectos.";
+
+      case "auth/invalid-email":
+        return "El correo electrónico no es válido.";
+
+      case "auth/too-many-requests":
+        return "Demasiados intentos. Inténtalo más tarde.";
+
+      case "auth/network-request-failed":
+        return "Error de conexión. Revisá tu internet.";
+
+      default:
+        return "No se pudo iniciar sesión. Intentá nuevamente.";
+    }
+  };
+
+  // Iniciar sesión con Firebase
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onLogin) setError(onLogin(correo, password) || "");
+    setError("");
+    setCargando(true);
+
+    try {
+      if (onLogin) {
+        await onLogin(correo, password);
+      }
+    } catch (error) {
+      setError(obtenerMensajeError(error.code));
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -21,19 +52,23 @@ function Login({ onLogin, onIrARegistro }) {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
-            {/* Tarjeta Contenedora */}
+
             <div className="card rounded-4 p-4 text-white auth-card">
               <div className="card-body">
+
                 {/* Cabecera del Login */}
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold text-white mb-1">¡Bienvenido!</h2>
+                  <h2 className="fw-bold text-white mb-1">
+                    ¡Bienvenido!
+                  </h2>
                   <p className="text-white-50 small mb-0">
                     Ingresa tus credenciales para continuar
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                  {/* Input de Email */}
+
+                  {/* Email */}
                   <div className="form-floating mb-3">
                     <input
                       type="email"
@@ -49,7 +84,7 @@ function Login({ onLogin, onIrARegistro }) {
                     </label>
                   </div>
 
-                  {/* Input de Contraseña */}
+                  {/* Contraseña */}
                   <div className="form-floating mb-3">
                     <input
                       type="password"
@@ -65,7 +100,12 @@ function Login({ onLogin, onIrARegistro }) {
                     </label>
                   </div>
 
-                  {error && <div className="auth-error mb-3">{error}</div>}
+                  {/* Mensaje de error */}
+                  {error && (
+                    <div className="auth-error mb-3">
+                      {error}
+                    </div>
+                  )}
 
                   {/* Recordarme y Olvido */}
                   <div className="row my-4 align-items-center">
@@ -94,18 +134,20 @@ function Login({ onLogin, onIrARegistro }) {
                     </div>
                   </div>
 
-                  {/* Botón de Ingreso */}
+                  {/* Botón de ingreso */}
                   <button
                     type="submit"
+                    disabled={cargando}
                     className="btn btn-light w-100 py-2 fw-bold text-uppercase shadow-sm mb-4 rounded-3 auth-btn-primary"
                   >
-                    Iniciar sesión
+                    {cargando ? "Ingresando..." : "Iniciar sesión"}
                   </button>
 
-                  {/* Registro y Redes Sociales */}
+                  {/* Registro y redes sociales */}
                   <div className="text-center">
                     <p className="small text-white-50 mb-4">
                       ¿No tienes una cuenta?
+
                       {onIrARegistro ? (
                         <button
                           type="button"
@@ -120,8 +162,7 @@ function Login({ onLogin, onIrARegistro }) {
                           className="auth-link fw-semibold"
                           aria-label="Registrarse"
                         >
-                          {" "}
-                          Registrarse
+                          {" "}Registrarse
                         </Link>
                       )}
                     </p>
@@ -133,17 +174,20 @@ function Login({ onLogin, onIrARegistro }) {
                       </span>
                     </div>
 
-                    {/* Botones de Redes Sociales con Íconos */}
+                    {/* Redes sociales */}
                     <div className="d-flex justify-content-center gap-2">
                       <button type="button" className="btn auth-social px-3" title="Google">
                         <i className="bi bi-google"></i>
                       </button>
+
                       <button type="button" className="btn auth-social px-3" title="Facebook">
                         <i className="bi bi-facebook"></i>
                       </button>
+
                       <button type="button" className="btn auth-social px-3" title="GitHub">
                         <i className="bi bi-github"></i>
                       </button>
+
                       <button type="button" className="btn auth-social px-3" title="Twitter">
                         <i className="bi bi-twitter-x"></i>
                       </button>
@@ -152,7 +196,7 @@ function Login({ onLogin, onIrARegistro }) {
                 </form>
               </div>
             </div>
-            {/* Fin Tarjeta */}
+
           </div>
         </div>
       </div>
