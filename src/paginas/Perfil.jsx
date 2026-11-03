@@ -81,7 +81,8 @@ function Perfil() {
     await guardarPerfil(credencial.user.uid, {
       nombre: nombre.trim(),
       apellido: apellido.trim(),
-      correo: email
+      correo: email,
+      rol: "usuario"
     });
   };
 
