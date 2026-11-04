@@ -105,8 +105,7 @@ function SelectorFoto({ value, onChange }) { //Función que recibe como props (p
       <small className="foto-ayuda d-block mt-2">
         JPG, PNG o WEBP · máximo {MAX_PESO_MB} MB
       </small>
-
-      {error && <div className="auth-error mt-2">{error}</div>} //Muestra un mensaje de error si hay un error al elegir o procesar la foto
+      {error && <div className="auth-error mt-2">{error}</div>}
     </div>
   );
 }
