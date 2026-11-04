@@ -9,11 +9,16 @@ import Comunidad from "./paginas/Comunidad";
 import ProductoDetalle from "./paginas/ProductoDetalle";
 import ProductoSpotifyDetalle from "./paginas/ProductoSpotifyDetalle";
 import Nosotros from "./paginas/Nosotros";
+import Admin from "./paginas/Admin";
+import AdminRoute from "./componentes/AdminRoute";
+import AdminUsuarios from "./paginas/admin/AdminUsuarios";
+
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/Inicio" element={<Inicio />} />
@@ -22,9 +27,16 @@ function App() {
         <Route path="/Locales" element={<Locales />} />
         <Route path="/Comunidad" element={<Comunidad />} />
         <Route path="/Nosotros" element={<Nosotros />} />
+
+        {/*Spotify*/}
         <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
         <Route path="/Productos/:id" element={<ProductoDetalle />} />
+
+        {/* Administración */}
+        <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
+        <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
       </Routes>
+
       <Footer />
     </BrowserRouter>
   );
