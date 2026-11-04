@@ -1,114 +1,352 @@
 /* ==========================================================
-   Estilos compartidos: login.jsx, Registro.jsx y Perfil.jsx
-   Requiere Bootstrap y Bootstrap Icons importados en la app.
+   Estilos compartidos: Login.jsx, Registro.jsx, Perfil.jsx y SelectorFoto.jsx
+   Bootstrap y Bootstrap Icons importados en la app.
    ========================================================== */
 
-:root {
-  --color-base: #5a12ff;      /* fondo de la página */
-  --color-tarjeta: #4a0dd6;   /* tarjeta, un tono más profundo */
-  --color-borde: rgba(255, 255, 255, 0.12);
-  --color-vidrio: rgba(255, 255, 255, 0.12);
-  --color-vidrio-hover: rgba(255, 255, 255, 0.24);
-}
-
-/* ---------- Página y tarjeta ---------- */
+/* ---------- Página (paleta + fondo) ---------- */
 .auth-page {
-  background-color: var(--color-base);
+  --acento: #5b4ee6;
+  --acento-hover: #7065f0;
+  --acento-2: #7a49e8;
+  --panel: rgba(8, 8, 40, 0.82);
+  --borde: rgba(255, 255, 255, 0.1);
+  --texto: #ffffff;
+  --texto-suave: rgba(255, 255, 255, 0.72);
+  --dorado: #ffc83d;
+  --vidrio: rgba(255, 255, 255, 0.08);
+  --vidrio-hover: rgba(255, 255, 255, 0.16);
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* --navbar-offset se define en Navbar.css */
+  padding: var(--navbar-offset, 100px) clamp(14px, 4vw, 32px) 64px;
+  color: var(--texto);
+  background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
 }
 
-.auth-card {
-  background-color: var(--color-tarjeta);
-  border: 1px solid var(--color-borde);
-  box-shadow: 0 20px 50px rgba(20, 0, 80, 0.45);
+.auth-suave {
+  color: var(--texto-suave);
+}
+
+/* ---------- Tarjeta de Login / Registro ---------- */
+.auth-contenedor {
+  width: 100%;
+  max-width: 460px;
+}
+
+.card.auth-card {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  color: var(--texto);
 }
 
 /* ---------- Formularios ---------- */
 .auth-input:focus,
-.perfil-input:focus,
-.auth-check:focus {
-  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.35);
+.perfil-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(112, 101, 240, 0.55);
 }
 
-.auth-check:focus {
-  border-color: #fff;
+.auth-check {
+  background-color: rgba(255, 255, 255, 0.9);
 }
-
+.auth-check:focus {
+  border-color: var(--acento-hover);
+  box-shadow: 0 0 0 0.25rem rgba(112, 101, 240, 0.45);
+}
 .auth-check:checked {
-  background-color: #1e0766;
-  border-color: #fff;
+  background-color: var(--acento);
+  border-color: var(--acento);
 }
 
 .auth-link {
-  color: #fff;
+  color: var(--texto);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .auth-link:hover {
-  color: #e4d9ff;
+  color: #cfc9ff;
 }
 
-/* Botón principal: blanco con texto del color base */
-.auth-btn-primary {
-  color: var(--color-base);
+/* Ojo para mostrar / ocultar la contraseña */
+.auth-ojo {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  z-index: 5;
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: #6c757d;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
 }
-.auth-btn-primary:hover,
-.auth-btn-primary:focus {
-  color: var(--color-base);
+.auth-ojo:hover,
+.auth-ojo:focus-visible {
+  color: var(--acento);
 }
 
-/* Texto sobre la línea "O ingresa con" */
-.auth-divider-text {
-  background-color: var(--color-tarjeta);
+/* Botón principal (violeta de acento) */
+.btn.auth-btn-primary {
+  background: var(--acento);
+  border: 1px solid var(--acento);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(91, 78, 230, 0.35);
+  transition: background 0.2s, transform 0.2s;
+}
+.btn.auth-btn-primary:hover,
+.btn.auth-btn-primary:focus-visible,
+.btn.auth-btn-primary:active {
+  background: var(--acento-hover);
+  border-color: var(--acento-hover);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
-/* Botones de redes sociales */
+/* Línea "O ingresa con" */
+.auth-divisor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+.auth-divisor::before,
+.auth-divisor::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Botones de redes sociales y botones secundarios "de vidrio" */
 .auth-social {
-  background: var(--color-vidrio);
+  background: var(--vidrio);
   border: 1px solid rgba(255, 255, 255, 0.25);
   color: #fff;
 }
 .auth-social:hover,
 .auth-social:focus {
-  background: var(--color-vidrio-hover);
+  background: var(--vidrio-hover);
   border-color: rgba(255, 255, 255, 0.45);
   color: #fff;
 }
 
-/* ---------- Perfil ---------- */
+/* Mensajes */
+.auth-error,
+.auth-ok {
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+.auth-error {
+  background: rgba(255, 120, 130, 0.15);
+  border: 1px solid rgba(255, 160, 170, 0.5);
+  color: #ffd0d4;
+}
+.auth-ok {
+  background: rgba(80, 200, 140, 0.15);
+  border: 1px solid rgba(120, 230, 170, 0.5);
+  color: #c9f5dd;
+}
+
+/* ---------- Selector de foto (registro y edición) ---------- */
+.foto-circulo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 112px;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--vidrio);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.foto-circulo:hover,
+.foto-circulo:focus-visible {
+  border-color: var(--dorado);
+  background: var(--vidrio-hover);
+}
+
+.foto-ayuda {
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}
+
+/* Foto siempre circular, sin deformarse ni salirse del contenedor */
+.foto-circulo img,
+.perfil-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ---------- Tarjeta de perfil ---------- */
+.perfil-tarjeta {
+  width: 100%;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+.perfil-lateral {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 28px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid var(--borde);
+}
+
 .perfil-avatar {
-  width: 88px;
-  height: 88px;
-  font-size: 1.9rem;
-  background-color: var(--color-vidrio);
-  border: 2px solid rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--acento), var(--acento-2));
+  border: 3px solid var(--dorado);
+}
+
+.perfil-nombre {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--texto);
+  word-break: break-word;
+}
+
+.perfil-insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--dorado);
+  background: rgba(255, 200, 61, 0.12);
+  border: 1px solid rgba(255, 200, 61, 0.35);
+}
+
+.perfil-acciones {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.perfil-principal {
+  min-width: 0;
+  padding: 40px;
+}
+
+.perfil-seccion-titulo {
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--texto);
 }
 
 .perfil-grupo {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--vidrio);
 }
 
 .perfil-fila {
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+}
+.perfil-fila + .perfil-fila {
+  border-top: 1px solid var(--borde);
 }
 
 .perfil-icono {
-  width: 40px;
-  height: 40px;
-  background: var(--color-vidrio);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(91, 78, 230, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
 .perfil-etiqueta {
-  font-size: 0.65rem;
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.perfil-valor {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--texto);
 }
 
 .perfil-link {
   color: #fff;
 }
 .perfil-link:hover {
-  color: #e4d9ff;
+  color: #cfc9ff;
+}
+
+.perfil-bloque-password {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  background: var(--vidrio);
+}
+
+.perfil-botones-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+.perfil-botones-form .btn {
+  flex: 1;
 }
 
 .btn-salir {
@@ -128,37 +366,36 @@
   background: transparent;
 }
 .btn-cancelar:hover {
-  background: var(--color-vidrio);
+  background: var(--vidrio-hover);
   color: #fff;
 }
 
-/* Mensajes de error en los formularios */
-.auth-error {
-  background: rgba(255, 120, 130, 0.15);
-  border: 1px solid rgba(255, 160, 170, 0.5);
-  color: #ffd0d4;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.85rem;
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+  .perfil-tarjeta {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  .perfil-principal {
+    padding: 32px 28px;
+  }
 }
- 
-/* Selector de foto (registro y edición) */
-.foto-circulo {
-  width: 88px;
-  height: 88px;
-  padding: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--color-vidrio);
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  color: #fff;
-}
-.foto-circulo:hover {
-  border-color: #fff;
-  background: var(--color-vidrio-hover);
-}
-.foto-circulo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+
+@media (max-width: 767.98px) {
+  .perfil-tarjeta {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+  }
+  .perfil-lateral {
+    padding: 32px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .perfil-avatar {
+    width: 128px;
+    height: 128px;
+    font-size: 2.6rem;
+  }
+  .perfil-principal {
+    padding: 28px 20px;
+  }
 }
