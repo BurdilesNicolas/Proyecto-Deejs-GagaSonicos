@@ -3,7 +3,9 @@ import {
   doc,
   setDoc,
   getDoc,
-  serverTimestamp
+  serverTimestamp,
+  collection,
+  getDocs
 } from "firebase/firestore";
 
 // Guardar los datos del perfil
@@ -26,4 +28,14 @@ export const obtenerPerfil = async (uid) => {
   }
 
   return null;
+};
+// Obtener todos los usuarios registrados
+export const obtenerUsuarios = async () => {
+  const referencia = collection(db, "usuarios");
+  const consulta = await getDocs(referencia);
+
+  return consulta.docs.map((documento) => ({
+    id: documento.id,
+    ...documento.data()
+  }));
 };

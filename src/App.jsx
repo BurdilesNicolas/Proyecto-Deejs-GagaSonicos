@@ -10,6 +10,8 @@ import ProductoDetalle from "./paginas/ProductoDetalle";
 import ProductoSpotifyDetalle from "./paginas/ProductoSpotifyDetalle";
 import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
+import AdminRoute from "./componentes/AdminRoute";
+
 
 function App() {
   return (
@@ -29,7 +31,7 @@ function App() {
         <Route path="/Productos/:id" element={<ProductoDetalle />} />
 
         {/* Administración */}
-        <Route path="/Admin" element={<Admin />} />
+        <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
       </Routes>
 
       <Footer />

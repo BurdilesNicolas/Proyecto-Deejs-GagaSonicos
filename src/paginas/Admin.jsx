@@ -1,4 +1,4 @@
-
+// Componente de la página de administración. Muestra un panel con opciones para administrar productos, usuarios y reseñas.
 function Admin() {
   return (
     <div className="container mt-5">
