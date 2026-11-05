@@ -1,0 +1,302 @@
+/*Gestión de usuarios: filtros y tabla.*/
+
+.usuarios-encabezado {
+  margin-bottom: 24px;
+}
+
+.usuarios-titulo {
+  margin: 0 0 6px;
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  color: var(--texto);
+}
+
+.usuarios-descripcion {
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+.usuarios-panel {
+  padding: 24px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+/*Herramientas*/
+.usuarios-herramientas {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 1.6fr) minmax(150px, 1fr) minmax(190px, 1fr) auto;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.usuarios-buscador {
+  position: relative;
+}
+.usuarios-buscador i {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: var(--texto-suave);
+  pointer-events: none;
+}
+.usuarios-buscador .usuarios-input {
+  padding-left: 40px;
+}
+
+.usuarios-input,
+.usuarios-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--vidrio);
+  color: var(--texto);
+  font-size: 0.95rem;
+  color-scheme: dark;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.usuarios-input::placeholder {
+  color: var(--texto-suave);
+}
+.usuarios-input:focus,
+.usuarios-select:focus {
+  outline: none;
+  border-color: var(--acento-hover);
+  box-shadow: 0 0 0 0.2rem rgba(112, 101, 240, 0.45);
+}
+.usuarios-select option {
+  background: #14144f;
+  color: #fff;
+}
+
+.usuarios-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--vidrio);
+  color: var(--texto);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.usuarios-btn:hover {
+  background: var(--vidrio-hover);
+}
+.usuarios-btn--acento {
+  background: rgba(91, 78, 230, 0.3);
+  border-color: rgba(112, 101, 240, 0.6);
+}
+.usuarios-btn--acento:hover {
+  background: var(--acento-hover);
+  border-color: var(--acento-hover);
+}
+
+/* Resumen */
+.usuarios-resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.usuarios-limpiar {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--texto);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.usuarios-limpiar:hover {
+  color: #cfc9ff;
+}
+
+/* Tabla */
+.usuarios-tabla-envoltorio {
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.usuarios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.usuarios-tabla th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--borde);
+}
+
+.usuarios-tabla td {
+  padding: 14px 18px;
+  color: var(--texto);
+  border-bottom: 1px solid var(--borde);
+  overflow-wrap: anywhere;
+}
+
+.usuarios-tabla tbody tr {
+  transition: background 0.15s;
+}
+.usuarios-tabla tbody tr:hover {
+  background: rgba(112, 101, 240, 0.12);
+}
+.usuarios-tabla tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.usuarios-sin-dato {
+  color: var(--texto-suave);
+}
+
+/* Etiquetas de rol */
+.rol-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.rol-badge--admin {
+  color: var(--dorado);
+  background: rgba(255, 200, 61, 0.12);
+  border-color: rgba(255, 200, 61, 0.4);
+}
+.rol-badge--usuario {
+  color: #cfc9ff;
+  background: rgba(91, 78, 230, 0.25);
+  border-color: rgba(112, 101, 240, 0.5);
+}
+.rol-badge--otro {
+  color: var(--texto-suave);
+  background: var(--vidrio);
+  border-color: var(--borde);
+}
+
+/* Estados: carga, error, vacío */
+.usuarios-estado {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--texto-suave);
+}
+.usuarios-estado > i {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 2rem;
+}
+.usuarios-estado--error {
+  color: #ffd0d4;
+}
+
+.usuarios-spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 14px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--acento-hover);
+  border-radius: 50%;
+  animation: usuarios-giro 0.8s linear infinite;
+}
+@keyframes usuarios-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .usuarios-herramientas {
+    grid-template-columns: 1fr 1fr;
+  }
+  .usuarios-buscador,
+  .usuarios-btn-orden {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .usuarios-herramientas {
+    grid-template-columns: 1fr;
+  }
+  .usuarios-panel {
+    padding: 16px;
+  }
+}
+
+/* En celulares cada fila de la tabla se convierte en una tarjeta, así nada se sale de la pantalla ni hace falta scroll horizontal. */
+@media (max-width: 640px) {
+  .usuarios-tabla thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .usuarios-tabla,
+  .usuarios-tabla tbody,
+  .usuarios-tabla tr,
+  .usuarios-tabla td {
+    display: block;
+    width: 100%;
+  }
+
+  .usuarios-tabla tr {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .usuarios-tabla tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .usuarios-tabla td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 16px;
+    border: 0;
+    text-align: right;
+  }
+
+  .usuarios-tabla td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--texto-suave);
+  }
+}

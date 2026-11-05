@@ -35,6 +35,13 @@ function App() {
         {/* Administración */}
         <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
+
+
+        { /* =======Rutas futuras de administración=========
+        <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
+        <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
+        */}
+
       </Routes>
 
       <Footer />

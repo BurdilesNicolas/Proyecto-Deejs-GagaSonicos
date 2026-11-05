@@ -1,9 +1,6 @@
-/* ==========================================================
-   Estilos compartidos: Login.jsx, Registro.jsx, Perfil.jsx y SelectorFoto.jsx
-   Bootstrap y Bootstrap Icons importados en la app.
-   ========================================================== */
+/*Estilos compartidos: Login.jsx, Registro.jsx, Perfil.jsx y SelectorFoto.jsx. Bootstrap y Bootstrap Icons importados en la app. */
 
-/* ---------- Página (paleta + fondo) ---------- */
+/* Paleta y fondo*/
 .auth-page {
   --acento: #5b4ee6;
   --acento-hover: #7065f0;
