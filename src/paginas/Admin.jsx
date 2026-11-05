@@ -11,7 +11,7 @@ import "../estilos/Admin.css";
 // Cuando una sección tenga su página, completa su "ruta" (y agrega la <Route>
 // en App.jsx). Mientras la ruta sea null, el botón queda deshabilitado para
 // no enviar al administrador a una página que no existe.
-const SECCIONES = [
+const SECCIONES = [ //Secciones del panel de administración para después renderizar las tarjetas de acceso a cada sección
   { //Seccion de productos
     clave: "productos",
     icono: "bi-disc",
@@ -102,7 +102,7 @@ function Admin() { //Página de administración principal
 
         {/* Tarjetas de acceso */}
         <div className="admin-grid">
-          {SECCIONES.map((seccion) => {
+          {SECCIONES.map((seccion) => { //Itera sobre las secciones definidas y renderiza una tarjeta para cada una
             const disponible = Boolean(seccion.ruta);
 
             return (
