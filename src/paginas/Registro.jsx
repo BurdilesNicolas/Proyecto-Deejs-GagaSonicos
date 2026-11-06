@@ -40,19 +40,21 @@ function Registro({ onRegistro, onIrALogin }) {
   };
 
   // Registrar usuario con Firebase
-  const handleSubmit = async (e) => { //Función asincrona que se ejecuta cuando el usuario hace click en el botón de registro.
+  const handleSubmit = async (e) => {
+    //Función asincrona que se ejecuta cuando el usuario hace click en el botón de registro.
     e.preventDefault();
     setError("");
     setCargando(true);
 
     try {
-      if (onRegistro) { //Llama a la función onRegistro con los datos del formulario si está definida. Esta función se encarga de registrar al usuario en Firebase y manejar la foto de perfil si se proporciona
+      if (onRegistro) {
+        //Llama a la función onRegistro con los datos del formulario si está definida. Esta función se encarga de registrar al usuario en Firebase y manejar la foto de perfil si se proporciona
         await onRegistro(
           inputNombre,
           inputApellido,
           inputCorreo,
           inputPassword,
-          inputFoto
+          inputFoto,
         );
       }
     } catch (error) {
@@ -62,12 +64,12 @@ function Registro({ onRegistro, onIrALogin }) {
     }
   };
 
-  return ( //Retorna el JSX del componente Registro que muestra un formulario de registro con campos para nombre, apellido, correo, contraseña y foto de perfil, así como botones para registrarse, iniciar sesión y redes sociales
+  return (
+    //Retorna el JSX del componente Registro que muestra un formulario de registro con campos para nombre, apellido, correo, contraseña y foto de perfil, así como botones para registrarse, iniciar sesión y redes sociales
     <div className="auth-page">
       <div className="auth-contenedor">
         <div className="card rounded-4 p-4 text-white auth-card">
           <div className="card-body">
-
             {/* Cabecera del Registro */}
             <div className="text-center mb-4">
               <h2 className="fw-bold text-white mb-1">Crea tu cuenta</h2>
@@ -77,10 +79,10 @@ function Registro({ onRegistro, onIrALogin }) {
             </div>
 
             <form onSubmit={handleSubmit}>
-
               {/* Foto de perfil (opcional) */}
               <div className="mb-4">
-                <SelectorFoto value={inputFoto} onChange={setInputFoto} /> {/* Muestra el componente SelectorFoto que permite al usuario elegir una foto de perfil y actualiza el estado inputFoto con la imagen procesada o vacía si se quita la foto */}
+                <SelectorFoto value={inputFoto} onChange={setInputFoto} />{" "}
+                {/* Muestra el componente SelectorFoto que permite al usuario elegir una foto de perfil y actualiza el estado inputFoto con la imagen procesada o vacía si se quita la foto */}
               </div>
 
               {/* Nombre y Apellido */}
@@ -171,13 +173,21 @@ function Registro({ onRegistro, onIrALogin }) {
                       htmlFor="registerTerms"
                     >
                       Acepto los{" "}
-                      <a href="#!" className="auth-link fw-semibold">
+                      <Link
+                        to="/Politicas#terminos"
+                        rel="noopener noreferrer"
+                        className="auth-link fw-semibold"
+                      >
                         Términos de servicio
-                      </a>{" "}
+                      </Link>{" "}
                       y la{" "}
-                      <a href="#!" className="auth-link fw-semibold">
+                      <Link
+                        to="/Politicas#privacidad"
+                        rel="noopener noreferrer"
+                        className="auth-link fw-semibold"
+                      >
                         Política de privacidad
-                      </a>
+                      </Link>
                     </label>
                   </div>
                 </div>
@@ -196,7 +206,6 @@ function Registro({ onRegistro, onIrALogin }) {
               <div className="text-center">
                 <p className="small auth-suave mb-4">
                   ¿Ya tienes una cuenta?
-
                   {onIrALogin ? ( //onIrALogin es una función que se pasa como prop desde Perfil.jsx y se ejecuta cuando el usuario hace click en el botón de iniciar sesión
                     <button
                       type="button"
@@ -205,9 +214,10 @@ function Registro({ onRegistro, onIrALogin }) {
                     >
                       Iniciar sesión
                     </button>
-                    ) : (
+                  ) : (
                     <Link to="/Login" className="auth-link fw-semibold">
-                      {" "}Iniciar sesión
+                      {" "}
+                      Iniciar sesión
                     </Link>
                   )}
                 </p>
@@ -218,16 +228,32 @@ function Registro({ onRegistro, onIrALogin }) {
 
                 {/* Redes sociales */}
                 <div className="d-flex justify-content-center gap-2">
-                  <button type="button" className="btn auth-social px-3" title="Google">
+                  <button
+                    type="button"
+                    className="btn auth-social px-3"
+                    title="Google"
+                  >
                     <i className="bi bi-google"></i>
                   </button>
-                  <button type="button" className="btn auth-social px-3" title="Facebook">
+                  <button
+                    type="button"
+                    className="btn auth-social px-3"
+                    title="Facebook"
+                  >
                     <i className="bi bi-facebook"></i>
                   </button>
-                  <button type="button" className="btn auth-social px-3" title="GitHub">
+                  <button
+                    type="button"
+                    className="btn auth-social px-3"
+                    title="GitHub"
+                  >
                     <i className="bi bi-github"></i>
                   </button>
-                  <button type="button" className="btn auth-social px-3" title="Twitter">
+                  <button
+                    type="button"
+                    className="btn auth-social px-3"
+                    title="Twitter"
+                  >
                     <i className="bi bi-twitter-x"></i>
                   </button>
                 </div>

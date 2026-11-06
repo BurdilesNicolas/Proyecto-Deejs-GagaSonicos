@@ -12,6 +12,7 @@ import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
+import Politicas from "./paginas/Politicas";
 
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
         <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
 
-
+        <Route path="/Politicas" element={<Politicas />} />
         { /* =======Rutas futuras de administración=========
         <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
         <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
