@@ -12,11 +12,8 @@ import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
-<<<<<<< HEAD
 import AdminReview from "./paginas/admin/AdminReview";
-=======
 import Politicas from "./paginas/Politicas";
->>>>>>> de83faa90868b5af1d43cd913ffd06b63a1e484d
 
 
 function App() {
