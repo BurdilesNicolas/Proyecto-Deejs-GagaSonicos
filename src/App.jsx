@@ -12,7 +12,11 @@ import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
+<<<<<<< HEAD
 import AdminReview from "./paginas/admin/AdminReview";
+=======
+import Politicas from "./paginas/Politicas";
+>>>>>>> de83faa90868b5af1d43cd913ffd06b63a1e484d
 
 
 function App() {
@@ -38,7 +42,7 @@ function App() {
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
         <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
 
-
+        <Route path="/Politicas" element={<Politicas />} />
         { /* =======Rutas futuras de administración=========
         <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
         */}
