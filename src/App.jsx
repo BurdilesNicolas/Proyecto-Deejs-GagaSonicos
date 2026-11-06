@@ -14,6 +14,8 @@ import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
 import Carrito from "./paginas/Carrito";
 import Wishlist from "./paginas/Wishlist";
+import AdminReview from "./paginas/admin/AdminReview";
+import Politicas from "./paginas/Politicas";
 
 
 function App() {
@@ -39,10 +41,10 @@ function App() {
         {/* Administración */}
         <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
-
-
-        { /* =======Rutas futuras de administración=========
         <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
+
+        <Route path="/Politicas" element={<Politicas />} />
+        { /* =======Rutas futuras de administración=========
         <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
         */}
 

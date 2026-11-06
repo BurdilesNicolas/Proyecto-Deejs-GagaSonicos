@@ -10,6 +10,7 @@
   --texto: #ffffff;
   --texto-suave: rgba(255, 255, 255, 0.72);
   --dorado: #ffc83d;
+  --verde: #15ff00;
   --vidrio: rgba(255, 255, 255, 0.08);
   --vidrio-hover: rgba(255, 255, 255, 0.16);
 
@@ -228,7 +229,7 @@
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, var(--acento), var(--acento-2));
-  border: 3px solid var(--dorado);
+  border: 3px solid var(--verde);
 }
 
 .perfil-nombre {

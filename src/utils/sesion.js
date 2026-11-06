@@ -1,44 +1,66 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../services/firebase'
+import { obtenerPerfil } from '../services/userService'
 
 /* ============================================================
-   SESIÓN (compartida con Perfil.jsx)
+   SESIÓN (Firebase Authentication + perfil en Firestore)
    ------------------------------------------------------------
-   Perfil.jsx guarda la sesión en localStorage con estas mismas
-   claves. Acá solo se LEE, para saber si hay un usuario con
-   cuenta y quién es.
+   Es la misma fuente de verdad que usa Perfil.jsx: el usuario
+   que inició sesión en Firebase y su documento en "usuarios".
    ============================================================ */
-const CLAVE_USUARIOS = 'usuarios'
-const CLAVE_SESION = 'sesionCorreo'
-const CLAVE_TOKEN = 'userToken'
-
-// Devuelve el usuario con sesión abierta, o null si no hay.
-export function obtenerUsuarioActual() {
-    try {
-        if (!localStorage.getItem(CLAVE_TOKEN)) return null
-        const correo = localStorage.getItem(CLAVE_SESION)
-        const usuarios = JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || []
-        return usuarios.find((u) => u.correo === correo) || null
-    } catch {
-        return null
-    }
-}
 
 // Nombre que se muestra públicamente: "Ana P." (nombre + inicial del apellido).
+// Si el perfil no tiene nombre, se usa la parte del correo antes de la @.
 export function nombrePublico(usuario) {
     const nombre = (usuario?.nombre || '').trim()
     const inicial = (usuario?.apellido || '').trim().charAt(0).toUpperCase()
-    return inicial ? `${nombre} ${inicial}.` : nombre || 'Usuario'
+
+    if (!nombre) return (usuario?.correo || '').split('@')[0] || 'Usuario'
+    return inicial ? `${nombre} ${inicial}.` : nombre
 }
 
-// Hook: usuario actual. Se actualiza si la sesión cambia en otra pestaña.
+// Hook: devuelve { cuenta, cargando }.
+//  - cargando: true hasta que Firebase confirma si hay sesión o no.
+//  - cuenta: { uid, correo, nombre, apellido, rol } o null si no hay sesión.
 export function useUsuarioActual() {
-    const [usuario, setUsuario] = useState(obtenerUsuarioActual)
+    const [estado, setEstado] = useState({ cuenta: null, cargando: true })
 
     useEffect(() => {
-        const alCambiar = () => setUsuario(obtenerUsuarioActual())
-        window.addEventListener('storage', alCambiar)
-        return () => window.removeEventListener('storage', alCambiar)
+        let activo = true
+
+        const cancelar = onAuthStateChanged(auth, async (usuario) => {
+            if (!usuario) {
+                if (activo) setEstado({ cuenta: null, cargando: false })
+                return
+            }
+
+            let perfil = null
+            try {
+                perfil = await obtenerPerfil(usuario.uid)
+            } catch (error) {
+                console.error('No se pudo leer el perfil:', error)
+            }
+
+            if (activo) {
+                setEstado({
+                    cuenta: {
+                        uid: usuario.uid,
+                        correo: usuario.email || '',
+                        nombre: perfil?.nombre || '',
+                        apellido: perfil?.apellido || '',
+                        rol: perfil?.rol || 'usuario',
+                    },
+                    cargando: false,
+                })
+            }
+        })
+
+        return () => {
+            activo = false
+            cancelar()
+        }
     }, [])
 
-    return usuario
+    return estado
 }
