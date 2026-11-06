@@ -290,6 +290,11 @@
   color: #ffffff;
 }
 
+.btn-wishlist.activo {
+  background-color: rgba(225, 29, 72, 0.12);
+  color: #e11d48;
+}
+
 /* Imagen: cuadrada siempre (como las portadas), a cualquier ancho de card.
    El recuadro gris se ve mientras no haya src. */
 .card-img {
