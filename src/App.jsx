@@ -12,6 +12,7 @@ import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
+import Carrito from "./paginas/Carrito";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/Locales" element={<Locales />} />
         <Route path="/Comunidad" element={<Comunidad />} />
         <Route path="/Nosotros" element={<Nosotros />} />
+        <Route path="Carrito" element={<Carrito />} />
 
         {/*Spotify*/}
         <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
