@@ -12,6 +12,7 @@ import Nosotros from "./paginas/Nosotros";
 import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
+import AdminReview from "./paginas/admin/AdminReview";
 
 
 function App() {
@@ -35,10 +36,10 @@ function App() {
         {/* Administración */}
         <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
+        <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
 
 
         { /* =======Rutas futuras de administración=========
-        <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
         <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
         */}
 

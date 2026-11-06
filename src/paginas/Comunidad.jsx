@@ -1,128 +1,84 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import '../estilos/Comunidad.css'
-import portada from '../assets/ProducutosImgs/IN RAINBOWS.jpg'
+import { productos } from '../data/Productos'
 import { useUsuarioActual, nombrePublico } from '../utils/sesion'
+import {
+    suscribirResenas,
+    crearResena,
+    eliminarResena,
+    alternarVotoResena,
+    suscribirRecomendaciones,
+    crearRecomendacion,
+    eliminarRecomendacion,
+    alternarVotoRecomendacion,
+} from '../services/comunidadService'
 
 /* ============================================================
    DATOS
    ------------------------------------------------------------
-   Esta lista replica la de productos.jsx. Cuando tengas los
-   productos reales, conviene moverla a un archivo compartido
-   (por ej. src/datos/productos.js) e importarla en las dos
-   páginas, así reseñas y catálogo nunca quedan desfasados.
+   Los productos salen de src/data/Productos.js (la misma lista
+   que usan el catálogo y la ficha), así las reseñas nunca quedan
+   desfasadas. Las reseñas y recomendaciones viven en Firestore.
    ============================================================ */
-const PRODUCTOS = [
-    { id: 1, nombre: 'Producto 1', imagen: portada },
-    { id: 2, nombre: 'Producto 2', imagen: portada },
-    { id: 3, nombre: 'Producto 3', imagen: portada },
-    { id: 4, nombre: 'Producto 4', imagen: portada },
-    { id: 5, nombre: 'Producto 5', imagen: portada },
-    { id: 6, nombre: 'Producto 6', imagen: portada },
-    { id: 7, nombre: 'Producto 7', imagen: portada },
-    { id: 8, nombre: 'Producto 8', imagen: portada },
-]
 
 // Tipos de recomendación (se usan en el filtro y en el formulario).
 const TIPOS = ['Vinilo', 'Cassette', 'CD', 'Artista', 'Equipo']
 
 const TEXTO_ESTRELLAS = { 1: 'Malo', 2: 'Regular', 3: 'Bueno', 4: 'Muy bueno', 5: 'Excelente' }
 
-const RESENAS_INICIALES = [
-    {
-        id: 1, productoId: 1, usuario: 'Ana Vinyl', calificacion: 5, fecha: '2026-09-28', util: 6, votado: false,
-        comentario: 'La edición suena impecable. La calidez del audio analógico realza muchísimo la producción del álbum y el packaging llegó perfecto.',
-    },
-    {
-        id: 2, productoId: 3, usuario: 'Diego_Tape', calificacion: 4, fecha: '2026-09-30', util: 3, votado: false,
-        comentario: 'Llegó en excelentes condiciones y bien protegido. Muy recomendado para coleccionistas.',
-    },
-    {
-        id: 3, productoId: 1, usuario: 'Lucía M.', calificacion: 4, fecha: '2026-10-02', util: 2, votado: false,
-        comentario: 'Gran sonido y buena relación precio-calidad. Le saco una estrella solo porque el envío tardó un poco más de lo previsto.',
-    },
-    {
-        id: 4, productoId: 5, usuario: 'Tomás R.', calificacion: 5, fecha: '2026-10-05', util: 4, votado: false,
-        comentario: 'Para los que disfrutamos del jazz, esta edición es una joya. Se nota el cuidado en el prensado.',
-    },
-    {
-        id: 5, productoId: 2, usuario: 'Sol', calificacion: 3, fecha: '2026-10-07', util: 1, votado: false,
-        comentario: 'Está bien, cumple lo que promete. Esperaba un poco más de detalle en la parte técnica de la descripción.',
-    },
-    {
-        id: 6, productoId: 7, usuario: 'Mati_OST', calificacion: 5, fecha: '2026-10-09', util: 5, votado: false,
-        comentario: 'Una banda sonora hermosa, ideal para escuchar de punta a punta. La calidad de impresión de la portada es de lo mejor que vi.',
-    },
-]
-
-const RECOMENDACIONES_INICIALES = [
-    {
-        id: 1, usuario: 'Ana Vinyl', tipo: 'Vinilo', titulo: 'Blonde – Frank Ocean', fecha: '2026-10-01', likes: 12, meGusta: false,
-        comentario: 'Un disco para escuchar de noche y sin interrupciones. En vinilo gana muchísimo, sobre todo las voces.',
-    },
-    {
-        id: 2, usuario: 'Diego_Tape', tipo: 'Cassette', titulo: 'channel ORANGE – Frank Ocean', fecha: '2026-10-03', likes: 7, meGusta: false,
-        comentario: 'Si recién empiezan a coleccionar cassettes, este es un gran primer paso: suena cálido y tiene mucha personalidad.',
-    },
-    {
-        id: 3, usuario: 'Lucía M.', tipo: 'Artista', titulo: 'Khruangbin', fecha: '2026-10-04', likes: 9, meGusta: false,
-        comentario: 'Psicodelia instrumental con groove. Perfecta para mates de tarde o para sumar a una playlist de fondo.',
-    },
-    {
-        id: 4, usuario: 'Tomás R.', tipo: 'Equipo', titulo: 'Tornamesa de tracción directa', fecha: '2026-10-06', likes: 5, meGusta: false,
-        comentario: 'Para empezar con vinilos vale la pena invertir en una buena púa antes que en parlantes caros. Se nota la diferencia.',
-    },
-    {
-        id: 5, usuario: 'Sol', tipo: 'CD', titulo: 'Kind of Blue – Miles Davis', fecha: '2026-10-08', likes: 8, meGusta: false,
-        comentario: 'Clásico absoluto. Si no escuchás jazz todavía, es la puerta de entrada ideal.',
-    },
-]
-
 /* ============================================================
    UTILIDADES
    ============================================================ */
 
-// Guarda el estado en localStorage para que sobreviva a un refresh.
-// Si el navegador no lo permite, simplemente funciona en memoria.
-function useAlmacenado(clave, inicial) {
-    const [valor, setValor] = useState(() => {
-        try {
-            const guardado = localStorage.getItem(clave)
-            return guardado ? JSON.parse(guardado) : inicial
-        } catch {
-            return inicial
-        }
-    })
-
-    useEffect(() => {
-        try {
-            localStorage.setItem(clave, JSON.stringify(valor))
-        } catch {
-            // sin almacenamiento disponible: se ignora
-        }
-    }, [clave, valor])
-
-    return [valor, setValor]
-}
-
-// Fecha local en formato AAAA-MM-DD (evita el desfase por UTC).
-function hoy() {
-    const d = new Date()
-    const mes = String(d.getMonth() + 1).padStart(2, '0')
-    const dia = String(d.getDate()).padStart(2, '0')
-    return `${d.getFullYear()}-${mes}-${dia}`
-}
-
-function formatearFecha(iso) {
-    return new Date(`${iso}T12:00:00`).toLocaleDateString('es-AR', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    })
+function formatearFecha(fecha) {
+    return fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 function buscarProducto(id) {
-    return PRODUCTOS.find((p) => p.id === id)
+    return productos.find((p) => p.id === id)
+}
+
+// Carga una colección de Firestore en tiempo real: { datos, cargando, error }.
+// "suscribir" tiene que ser una función estable (las del servicio lo son).
+function useColeccion(suscribir) {
+    const [estado, setEstado] = useState({ datos: [], cargando: true, error: '' })
+
+    useEffect(() => {
+        const cancelar = suscribir(
+            (datos) => setEstado({ datos, cargando: false, error: '' }),
+            (err) => {
+                console.error('Error al leer Firestore:', err)
+                setEstado({
+                    datos: [],
+                    cargando: false,
+                    error:
+                        err.code === 'permission-denied'
+                            ? 'Firestore rechazó la consulta por permisos. Revisá las reglas de seguridad.'
+                            : 'No pudimos cargar el contenido. Probá de nuevo en un momento.',
+                })
+            },
+        )
+        return cancelar
+    }, [suscribir])
+
+    return estado
+}
+
+// Mensaje temporal ("¡Gracias!…") que se borra solo a los 4 segundos.
+function useAviso() {
+    const [aviso, setAviso] = useState(null) // { texto, tipo: 'ok' | 'error' | 'info' }
+    const temporizador = useRef(null)
+
+    const mostrar = useCallback((texto, tipo = 'ok') => {
+        clearTimeout(temporizador.current)
+        setAviso({ texto, tipo })
+        temporizador.current = setTimeout(() => setAviso(null), 4000)
+    }, [])
+
+    useEffect(() => () => clearTimeout(temporizador.current), [])
+
+    return [aviso, mostrar]
 }
 
 /* ============================================================
@@ -132,11 +88,13 @@ function buscarProducto(id) {
 // Estrellas de solo lectura.
 function Estrellas({ valor }) {
     return (
-        <span className="cm-estrellas" role="img" aria-label={`${valor} de 5 estrellas`}>
+        <span className="cm-estrellas" role="img" aria-label={`${valor.toFixed(1)} de 5 estrellas`}>
             {[1, 2, 3, 4, 5].map((n) => (
-                <span key={n} className={n <= Math.round(valor) ? 'cm-estrella llena' : 'cm-estrella'} aria-hidden="true">
-                    ★
-                </span>
+                <i
+                    key={n}
+                    className={n <= Math.round(valor) ? 'bi bi-star-fill cm-estrella llena' : 'bi bi-star-fill cm-estrella'}
+                    aria-hidden="true"
+                ></i>
             ))}
         </span>
     )
@@ -160,7 +118,7 @@ function SelectorEstrellas({ valor, onChange }) {
                     onClick={() => onChange(n)}
                     onMouseEnter={() => setHover(n)}
                 >
-                    ★
+                    <i className="bi bi-star-fill" aria-hidden="true"></i>
                 </button>
             ))}
             {activo > 0 && <span className="cm-selector-texto">{TEXTO_ESTRELLAS[activo]}</span>}
@@ -171,7 +129,7 @@ function SelectorEstrellas({ valor, onChange }) {
 function Campo({ etiqueta, htmlFor, error, children, ancho }) {
     return (
         <div className={ancho ? `cm-campo ${ancho}` : 'cm-campo'}>
-            <label htmlFor={htmlFor}>{etiqueta}</label>
+            {htmlFor ? <label htmlFor={htmlFor}>{etiqueta}</label> : <span className="cm-label">{etiqueta}</span>}
             {children}
             {error && <span className="cm-error" role="alert">{error}</span>}
         </div>
@@ -186,11 +144,12 @@ function Avatar({ nombre }) {
 function AvisoSesion({ accion, onCerrar }) {
     return (
         <div className="cm-form cm-gate" role="alert">
+            <div className="cm-gate-icono"><i className="bi bi-person-lock" aria-hidden="true"></i></div>
             <h3 className="cm-form-titulo">Necesitás una cuenta</h3>
             <p className="cm-gate-texto">Para {accion} tenés que iniciar sesión o crear una cuenta.</p>
             <div className="cm-form-acciones">
                 <button type="button" className="cm-btn cm-btn-sec" onClick={onCerrar}>Ahora no</button>
-                <Link to="/Perfil" className="cm-btn cm-btn-prim cm-btn-link">Iniciar sesión / Registrarse</Link>
+                <Link to="/Perfil" className="cm-btn cm-btn-prim">Iniciar sesión / Registrarse</Link>
             </div>
         </div>
     )
@@ -217,9 +176,33 @@ function BotonEliminar({ onConfirmar, etiqueta }) {
             onClick={() => setConfirmando(true)}
             aria-label={etiqueta}
         >
-            Eliminar
+            <i className="bi bi-trash3" aria-hidden="true"></i> Eliminar
         </button>
     )
+}
+
+// Mensajes de estado de una lista: cargando / error.
+function EstadoLista({ cargando, error }) {
+    if (cargando) {
+        return (
+            <div className="cm-estado" role="status">
+                <div className="cm-spinner"></div>
+                Cargando...
+            </div>
+        )
+    }
+
+    return (
+        <div className="cm-estado cm-estado-error" role="alert">
+            <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
+            {error}
+        </div>
+    )
+}
+
+function Aviso({ aviso }) {
+    if (!aviso) return null
+    return <p className={`cm-aviso cm-aviso-${aviso.tipo}`} role="status">{aviso.texto}</p>
 }
 
 /* ============================================================
@@ -230,8 +213,10 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
     const [calificacion, setCalificacion] = useState(0)
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})
+    const [enviando, setEnviando] = useState(false)
+    const [errorEnvio, setErrorEnvio] = useState('')
 
-    const enviar = (e) => {
+    const enviar = async (e) => {
         e.preventDefault()
 
         const nuevos = {}
@@ -242,17 +227,21 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
         setErrores(nuevos)
         if (Object.keys(nuevos).length > 0) return
 
-        onPublicar({
-            id: Date.now(),
-            productoId: Number(productoId),
-            usuario: nombrePublico(cuenta),
-            autorCorreo: cuenta.correo,
-            calificacion,
-            comentario: comentario.trim(),
-            fecha: hoy(),
-            util: 0,
-            votado: false,
-        })
+        setEnviando(true)
+        setErrorEnvio('')
+
+        try {
+            await onPublicar({
+                productoId: Number(productoId),
+                calificacion,
+                comentario: comentario.trim(),
+            })
+            // Si salió bien, el formulario se cierra solo.
+        } catch (err) {
+            console.error('No se pudo publicar la reseña:', err)
+            setErrorEnvio('No pudimos publicar tu reseña. Probá de nuevo en un momento.')
+            setEnviando(false)
+        }
     }
 
     return (
@@ -269,8 +258,8 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
                         aria-invalid={!!errores.productoId}
                     >
                         <option value="">Seleccioná un producto</option>
-                        {PRODUCTOS.map((p) => (
-                            <option key={p.id} value={p.id}>{p.nombre}</option>
+                        {productos.map((p) => (
+                            <option key={p.id} value={p.id}>{p.nombre} · {p.artista}</option>
                         ))}
                     </select>
                 </Campo>
@@ -293,9 +282,13 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
                 </Campo>
             </div>
 
+            {errorEnvio && <p className="cm-aviso cm-aviso-error" role="alert">{errorEnvio}</p>}
+
             <div className="cm-form-acciones">
-                <button type="button" className="cm-btn cm-btn-sec" onClick={onCancelar}>Cancelar</button>
-                <button type="submit" className="cm-btn cm-btn-prim">Publicar reseña</button>
+                <button type="button" className="cm-btn cm-btn-sec" onClick={onCancelar} disabled={enviando}>Cancelar</button>
+                <button type="submit" className="cm-btn cm-btn-prim" disabled={enviando}>
+                    {enviando ? 'Publicando...' : 'Publicar reseña'}
+                </button>
             </div>
         </form>
     )
@@ -304,11 +297,13 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
 /* ============================================================
    SECCIÓN: RESEÑAS
    ============================================================ */
-function SeccionResenas({ cuenta, resenas, setResenas }) {
+function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
+    const { datos: resenas, cargando, error } = coleccion
+
     const [productoFiltro, setProductoFiltro] = useState(null) // null = todos
     const [orden, setOrden] = useState('recientes')
     const [formAbierto, setFormAbierto] = useState(false)
-    const [aviso, setAviso] = useState('')
+    const [aviso, mostrarAviso] = useAviso()
 
     const resenasFiltradas = useMemo(
         () => (productoFiltro ? resenas.filter((r) => r.productoId === productoFiltro) : resenas),
@@ -328,34 +323,54 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
 
     const lista = useMemo(() => {
         const copia = [...resenasFiltradas]
-        if (orden === 'mejor') return copia.sort((a, b) => b.calificacion - a.calificacion || b.id - a.id)
-        if (orden === 'peor') return copia.sort((a, b) => a.calificacion - b.calificacion || b.id - a.id)
-        if (orden === 'utiles') return copia.sort((a, b) => b.util - a.util || b.id - a.id)
-        return copia.sort((a, b) => b.fecha.localeCompare(a.fecha) || b.id - a.id)
+        const masNueva = (a, b) => b.fecha - a.fecha
+        if (orden === 'mejor') return copia.sort((a, b) => b.calificacion - a.calificacion || masNueva(a, b))
+        if (orden === 'peor') return copia.sort((a, b) => a.calificacion - b.calificacion || masNueva(a, b))
+        if (orden === 'utiles') return copia.sort((a, b) => b.votantes.length - a.votantes.length || masNueva(a, b))
+        return copia.sort(masNueva)
     }, [resenasFiltradas, orden])
 
     const cantidadPorProducto = (id) => resenas.filter((r) => r.productoId === id).length
 
-    const publicar = (nueva) => {
+    const publicar = async (datos) => {
         if (!cuenta) return // solo usuarios con cuenta pueden publicar
-        setResenas((prev) => [nueva, ...prev])
+
+        await crearResena({
+            ...datos,
+            autorUid: cuenta.uid,
+            autorNombre: nombrePublico(cuenta),
+            autorCorreo: cuenta.correo,
+        })
+
         setFormAbierto(false)
         setProductoFiltro(null)
         setOrden('recientes')
-        setAviso('¡Gracias! Tu reseña ya está publicada.')
-        setTimeout(() => setAviso(''), 4000)
+        mostrarAviso('¡Gracias! Tu reseña ya está publicada.')
     }
 
-    // Solo se puede borrar una reseña propia (se valida acá además de en la UI).
-    const eliminar = (id) => {
-        if (!cuenta) return
-        setResenas((prev) => prev.filter((r) => !(r.id === id && r.autorCorreo === cuenta.correo)))
+    // Solo se puede borrar una reseña propia (Firestore también lo valida con sus reglas).
+    const eliminar = async (id) => {
+        try {
+            await eliminarResena(id)
+            mostrarAviso('Tu reseña fue eliminada.')
+        } catch (err) {
+            console.error('No se pudo eliminar la reseña:', err)
+            mostrarAviso('No pudimos eliminar la reseña. Probá de nuevo.', 'error')
+        }
     }
 
-    const alternarUtil = (id) => {
-        setResenas((prev) =>
-            prev.map((r) => (r.id === id ? { ...r, votado: !r.votado, util: r.util + (r.votado ? -1 : 1) } : r)),
-        )
+    const alternarUtil = async (item) => {
+        if (!cuenta) {
+            mostrarAviso('Iniciá sesión para marcar una reseña como útil.', 'info')
+            return
+        }
+
+        try {
+            await alternarVotoResena(item.id, cuenta.uid, item.votantes.includes(cuenta.uid))
+        } catch (err) {
+            console.error('No se pudo registrar el voto:', err)
+            mostrarAviso('No pudimos registrar tu voto. Probá de nuevo.', 'error')
+        }
     }
 
     return (
@@ -378,7 +393,7 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
                     <ul className="cm-distribucion">
                         {resumen.distribucion.map((fila) => (
                             <li key={fila.estrellas}>
-                                <span className="cm-dist-label">{fila.estrellas} ★</span>
+                                <span className="cm-dist-label">{fila.estrellas} <i className="bi bi-star-fill" aria-hidden="true"></i></span>
                                 <span className="cm-dist-barra">
                                     <span className="cm-dist-relleno" style={{ width: `${fila.porcentaje}%` }} />
                                 </span>
@@ -396,15 +411,16 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
                             onClick={() => setProductoFiltro(null)}
                         >
                             Todos
+                            <span className="cm-filtro-cant">{resenas.length}</span>
                         </button>
                     </li>
-                    {PRODUCTOS.map((p) => (
+                    {productos.map((p) => (
                         <li key={p.id}>
                             <button
                                 className={productoFiltro === p.id ? 'cm-filtro activo' : 'cm-filtro'}
                                 onClick={() => setProductoFiltro(p.id)}
                             >
-                                {p.nombre}
+                                <span className="cm-filtro-nombre">{p.nombre}</span>
                                 <span className="cm-filtro-cant">{cantidadPorProducto(p.id)}</span>
                             </button>
                         </li>
@@ -419,8 +435,10 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
                         className="cm-btn cm-btn-prim"
                         onClick={() => setFormAbierto((abierto) => !abierto)}
                         aria-expanded={formAbierto}
+                        disabled={sesionCargando}
                     >
-                        {formAbierto ? 'Cerrar' : '+ Escribir reseña'}
+                        <i className={formAbierto ? 'bi bi-x-lg' : 'bi bi-plus-lg'} aria-hidden="true"></i>
+                        {formAbierto ? 'Cerrar' : 'Escribir reseña'}
                     </button>
 
                     <select
@@ -436,7 +454,7 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
                     </select>
                 </div>
 
-                {aviso && <p className="cm-aviso" role="status">{aviso}</p>}
+                <Aviso aviso={aviso} />
 
                 {formAbierto && (cuenta ? (
                     <FormularioResena
@@ -449,60 +467,75 @@ function SeccionResenas({ cuenta, resenas, setResenas }) {
                     <AvisoSesion accion="escribir una reseña" onCerrar={() => setFormAbierto(false)} />
                 ))}
 
-                <div className="cm-lista">
-                    {lista.map((item) => {
-                        const producto = buscarProducto(item.productoId)
-                        return (
-                            <article className="cm-card" key={item.id}>
-                                <header className="cm-resena-cab">
-                                    <div className="cm-miniatura">
-                                        {producto?.imagen && <img src={producto.imagen} alt="" />}
-                                    </div>
-                                    <div className="cm-resena-datos">
-                                        <h3 className="cm-card-titulo">{producto ? producto.nombre : 'Producto'}</h3>
-                                        <div className="cm-resena-meta">
-                                            <Estrellas valor={item.calificacion} />
-                                            <span className="cm-fecha">{formatearFecha(item.fecha)}</span>
+                {cargando || error ? (
+                    <EstadoLista cargando={cargando} error={error} />
+                ) : (
+                    <div className="cm-lista">
+                        {lista.map((item) => {
+                            const producto = buscarProducto(item.productoId)
+                            const votado = !!cuenta && item.votantes.includes(cuenta.uid)
+
+                            return (
+                                <article className="cm-card" key={item.id}>
+                                    <header className="cm-resena-cab">
+                                        <div className="cm-miniatura">
+                                            {producto?.imagen && <img src={producto.imagen} alt="" />}
                                         </div>
-                                    </div>
-                                </header>
+                                        <div className="cm-resena-datos">
+                                            <h3 className="cm-card-titulo">
+                                                {producto ? (
+                                                    <Link to={`/Productos/${producto.id}`}>{producto.nombre}</Link>
+                                                ) : (
+                                                    'Producto no disponible'
+                                                )}
+                                            </h3>
+                                            {producto && <span className="cm-artista">{producto.artista}</span>}
+                                            <div className="cm-resena-meta">
+                                                <Estrellas valor={item.calificacion} />
+                                                <span className="cm-fecha">{formatearFecha(item.fecha)}</span>
+                                            </div>
+                                        </div>
+                                    </header>
 
-                                <p className="cm-texto">{item.comentario}</p>
+                                    <p className="cm-texto">{item.comentario}</p>
 
-                                <footer className="cm-card-pie">
-                                    <span className="cm-autor">
-                                        <Avatar nombre={item.usuario} />
-                                        {item.usuario}
-                                    </span>
-                                    <span className="cm-acciones">
-                                        {cuenta && item.autorCorreo === cuenta.correo && (
-                                            <BotonEliminar
-                                                onConfirmar={() => eliminar(item.id)}
-                                                etiqueta="Eliminar mi reseña"
-                                            />
-                                        )}
-                                        <button
-                                            className={item.votado ? 'cm-btn-mini activo' : 'cm-btn-mini'}
-                                            onClick={() => alternarUtil(item.id)}
-                                            aria-pressed={item.votado}
-                                        >
-                                            Útil · {item.util}
-                                        </button>
-                                    </span>
-                                </footer>
-                            </article>
-                        )
-                    })}
+                                    <footer className="cm-card-pie">
+                                        <span className="cm-autor">
+                                            <Avatar nombre={item.autorNombre || '?'} />
+                                            {item.autorNombre}
+                                        </span>
+                                        <span className="cm-acciones">
+                                            {cuenta && item.autorUid === cuenta.uid && (
+                                                <BotonEliminar
+                                                    onConfirmar={() => eliminar(item.id)}
+                                                    etiqueta="Eliminar mi reseña"
+                                                />
+                                            )}
+                                            <button
+                                                className={votado ? 'cm-btn-mini activo' : 'cm-btn-mini'}
+                                                onClick={() => alternarUtil(item)}
+                                                aria-pressed={votado}
+                                            >
+                                                <i className={votado ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up'} aria-hidden="true"></i>
+                                                Útil · {item.votantes.length}
+                                            </button>
+                                        </span>
+                                    </footer>
+                                </article>
+                            )
+                        })}
 
-                    {lista.length === 0 && (
-                        <div className="cm-vacio">
-                            <p>Todavía no hay reseñas</p>
-                            <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)}>
-                                Sé el primero en opinar
-                            </button>
-                        </div>
-                    )}
-                </div>
+                        {lista.length === 0 && (
+                            <div className="cm-vacio">
+                                <i className="bi bi-chat-square-text" aria-hidden="true"></i>
+                                <p>Todavía no hay reseñas</p>
+                                <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)} disabled={sesionCargando}>
+                                    Sé el primero en opinar
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )
@@ -516,8 +549,10 @@ function FormularioRecomendacion({ cuenta, onPublicar, onCancelar }) {
     const [titulo, setTitulo] = useState('')
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})
+    const [enviando, setEnviando] = useState(false)
+    const [errorEnvio, setErrorEnvio] = useState('')
 
-    const enviar = (e) => {
+    const enviar = async (e) => {
         e.preventDefault()
 
         const nuevos = {}
@@ -527,17 +562,16 @@ function FormularioRecomendacion({ cuenta, onPublicar, onCancelar }) {
         setErrores(nuevos)
         if (Object.keys(nuevos).length > 0) return
 
-        onPublicar({
-            id: Date.now(),
-            usuario: nombrePublico(cuenta),
-            autorCorreo: cuenta.correo,
-            tipo,
-            titulo: titulo.trim(),
-            comentario: comentario.trim(),
-            fecha: hoy(),
-            likes: 0,
-            meGusta: false,
-        })
+        setEnviando(true)
+        setErrorEnvio('')
+
+        try {
+            await onPublicar({ tipo, titulo: titulo.trim(), comentario: comentario.trim() })
+        } catch (err) {
+            console.error('No se pudo publicar la recomendación:', err)
+            setErrorEnvio('No pudimos publicar tu recomendación. Probá de nuevo en un momento.')
+            setEnviando(false)
+        }
     }
 
     return (
@@ -580,9 +614,13 @@ function FormularioRecomendacion({ cuenta, onPublicar, onCancelar }) {
                 </Campo>
             </div>
 
+            {errorEnvio && <p className="cm-aviso cm-aviso-error" role="alert">{errorEnvio}</p>}
+
             <div className="cm-form-acciones">
-                <button type="button" className="cm-btn cm-btn-sec" onClick={onCancelar}>Cancelar</button>
-                <button type="submit" className="cm-btn cm-btn-prim">Publicar</button>
+                <button type="button" className="cm-btn cm-btn-sec" onClick={onCancelar} disabled={enviando}>Cancelar</button>
+                <button type="submit" className="cm-btn cm-btn-prim" disabled={enviando}>
+                    {enviando ? 'Publicando...' : 'Publicar'}
+                </button>
             </div>
         </form>
     )
@@ -591,37 +629,59 @@ function FormularioRecomendacion({ cuenta, onPublicar, onCancelar }) {
 /* ============================================================
    SECCIÓN: COMUNIDAD
    ============================================================ */
-function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
+function SeccionComunidad({ cuenta, sesionCargando, coleccion }) {
+    const { datos: recomendaciones, cargando, error } = coleccion
+
     const [tipoActivo, setTipoActivo] = useState(null) // null = todas
     const [formAbierto, setFormAbierto] = useState(false)
-    const [aviso, setAviso] = useState('')
+    const [aviso, mostrarAviso] = useAviso()
 
-    const lista = useMemo(() => {
-        const filtradas = tipoActivo ? recomendaciones.filter((r) => r.tipo === tipoActivo) : recomendaciones
-        return [...filtradas].sort((a, b) => b.fecha.localeCompare(a.fecha) || b.id - a.id)
-    }, [recomendaciones, tipoActivo])
+    // Firestore ya las trae de la más nueva a la más vieja.
+    const lista = useMemo(
+        () => (tipoActivo ? recomendaciones.filter((r) => r.tipo === tipoActivo) : recomendaciones),
+        [recomendaciones, tipoActivo],
+    )
 
     const cantidadPorTipo = (tipo) => recomendaciones.filter((r) => r.tipo === tipo).length
 
-    const publicar = (nueva) => {
+    const publicar = async (datos) => {
         if (!cuenta) return // solo usuarios con cuenta pueden publicar
-        setRecomendaciones((prev) => [nueva, ...prev])
+
+        await crearRecomendacion({
+            ...datos,
+            autorUid: cuenta.uid,
+            autorNombre: nombrePublico(cuenta),
+            autorCorreo: cuenta.correo,
+        })
+
         setFormAbierto(false)
         setTipoActivo(null)
-        setAviso('¡Gracias por recomendar! Ya está publicado.')
-        setTimeout(() => setAviso(''), 4000)
+        mostrarAviso('¡Gracias por recomendar! Ya está publicado.')
     }
 
-    // Solo se puede borrar una opinión propia (se valida acá además de en la UI).
-    const eliminar = (id) => {
-        if (!cuenta) return
-        setRecomendaciones((prev) => prev.filter((r) => !(r.id === id && r.autorCorreo === cuenta.correo)))
+    // Solo se puede borrar una opinión propia (Firestore también lo valida con sus reglas).
+    const eliminar = async (id) => {
+        try {
+            await eliminarRecomendacion(id)
+            mostrarAviso('Tu recomendación fue eliminada.')
+        } catch (err) {
+            console.error('No se pudo eliminar la recomendación:', err)
+            mostrarAviso('No pudimos eliminarla. Probá de nuevo.', 'error')
+        }
     }
 
-    const alternarLike = (id) => {
-        setRecomendaciones((prev) =>
-            prev.map((r) => (r.id === id ? { ...r, meGusta: !r.meGusta, likes: r.likes + (r.meGusta ? -1 : 1) } : r)),
-        )
+    const alternarLike = async (item) => {
+        if (!cuenta) {
+            mostrarAviso('Iniciá sesión para dar me gusta.', 'info')
+            return
+        }
+
+        try {
+            await alternarVotoRecomendacion(item.id, cuenta.uid, item.votantes.includes(cuenta.uid))
+        } catch (err) {
+            console.error('No se pudo registrar el me gusta:', err)
+            mostrarAviso('No pudimos registrar tu me gusta. Probá de nuevo.', 'error')
+        }
     }
 
     return (
@@ -654,7 +714,8 @@ function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
                 </ul>
 
                 <p className="cm-nota-chica">
-                    Recomendá lo que realmente escuchaste o usaste, y siempre con respeto. 🎶
+                    <i className="bi bi-music-note-beamed" aria-hidden="true"></i>
+                    Recomendá lo que realmente escuchaste o usaste, y siempre con respeto.
                 </p>
             </aside>
 
@@ -665,12 +726,14 @@ function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
                         className="cm-btn cm-btn-prim"
                         onClick={() => setFormAbierto((abierto) => !abierto)}
                         aria-expanded={formAbierto}
+                        disabled={sesionCargando}
                     >
-                        {formAbierto ? 'Cerrar' : '+ Hacer recomendación'}
+                        <i className={formAbierto ? 'bi bi-x-lg' : 'bi bi-plus-lg'} aria-hidden="true"></i>
+                        {formAbierto ? 'Cerrar' : 'Hacer recomendación'}
                     </button>
                 </div>
 
-                {aviso && <p className="cm-aviso" role="status">{aviso}</p>}
+                <Aviso aviso={aviso} />
 
                 {formAbierto && (cuenta ? (
                     <FormularioRecomendacion
@@ -682,51 +745,61 @@ function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
                     <AvisoSesion accion="publicar una opinión" onCerrar={() => setFormAbierto(false)} />
                 ))}
 
-                <div className="cm-lista">
-                    {lista.map((item) => (
-                        <article className="cm-card" key={item.id}>
-                            <header className="cm-reco-cab">
-                                <span className="cm-tag">{item.tipo}</span>
-                                <span className="cm-fecha">{formatearFecha(item.fecha)}</span>
-                            </header>
+                {cargando || error ? (
+                    <EstadoLista cargando={cargando} error={error} />
+                ) : (
+                    <div className="cm-lista">
+                        {lista.map((item) => {
+                            const meGusta = !!cuenta && item.votantes.includes(cuenta.uid)
 
-                            <h3 className="cm-card-titulo cm-reco-titulo">{item.titulo}</h3>
-                            <p className="cm-texto">{item.comentario}</p>
+                            return (
+                                <article className="cm-card" key={item.id}>
+                                    <header className="cm-reco-cab">
+                                        <span className="cm-tag">{item.tipo}</span>
+                                        <span className="cm-fecha">{formatearFecha(item.fecha)}</span>
+                                    </header>
 
-                            <footer className="cm-card-pie">
-                                <span className="cm-autor">
-                                    <Avatar nombre={item.usuario} />
-                                    {item.usuario}
-                                </span>
-                                <span className="cm-acciones">
-                                    {cuenta && item.autorCorreo === cuenta.correo && (
-                                        <BotonEliminar
-                                            onConfirmar={() => eliminar(item.id)}
-                                            etiqueta="Eliminar mi opinión"
-                                        />
-                                    )}
-                                    <button
-                                        className={item.meGusta ? 'cm-btn-mini activo' : 'cm-btn-mini'}
-                                        onClick={() => alternarLike(item.id)}
-                                        aria-pressed={item.meGusta}
-                                        aria-label={item.meGusta ? 'Quitar me gusta' : 'Me gusta'}
-                                    >
-                                        {item.meGusta ? '♥' : '♡'} {item.likes}
-                                    </button>
-                                </span>
-                            </footer>
-                        </article>
-                    ))}
+                                    <h3 className="cm-card-titulo cm-reco-titulo">{item.titulo}</h3>
+                                    <p className="cm-texto">{item.comentario}</p>
 
-                    {lista.length === 0 && (
-                        <div className="cm-vacio">
-                            <p>Todavía no hay opiniones</p>
-                            <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)}>
-                                Hacer la primera
-                            </button>
-                        </div>
-                    )}
-                </div>
+                                    <footer className="cm-card-pie">
+                                        <span className="cm-autor">
+                                            <Avatar nombre={item.autorNombre || '?'} />
+                                            {item.autorNombre}
+                                        </span>
+                                        <span className="cm-acciones">
+                                            {cuenta && item.autorUid === cuenta.uid && (
+                                                <BotonEliminar
+                                                    onConfirmar={() => eliminar(item.id)}
+                                                    etiqueta="Eliminar mi opinión"
+                                                />
+                                            )}
+                                            <button
+                                                className={meGusta ? 'cm-btn-mini activo' : 'cm-btn-mini'}
+                                                onClick={() => alternarLike(item)}
+                                                aria-pressed={meGusta}
+                                                aria-label={meGusta ? 'Quitar me gusta' : 'Me gusta'}
+                                            >
+                                                <i className={meGusta ? 'bi bi-heart-fill' : 'bi bi-heart'} aria-hidden="true"></i>
+                                                {item.votantes.length}
+                                            </button>
+                                        </span>
+                                    </footer>
+                                </article>
+                            )
+                        })}
+
+                        {lista.length === 0 && (
+                            <div className="cm-vacio">
+                                <i className="bi bi-music-note-list" aria-hidden="true"></i>
+                                <p>Todavía no hay opiniones</p>
+                                <button className="cm-btn cm-btn-sec" onClick={() => setFormAbierto(true)} disabled={sesionCargando}>
+                                    Hacer la primera
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )
@@ -737,51 +810,55 @@ function SeccionComunidad({ cuenta, recomendaciones, setRecomendaciones }) {
    ============================================================ */
 function Comunidad() {
     const [pestana, setPestana] = useState('resenas') // 'resenas' | 'comunidad'
-    const cuenta = useUsuarioActual() // null si no hay sesión iniciada
-    const [resenas, setResenas] = useAlmacenado('deejs_resenas', RESENAS_INICIALES)
-    const [recomendaciones, setRecomendaciones] = useAlmacenado('deejs_recomendaciones', RECOMENDACIONES_INICIALES)
+    const { cuenta, cargando: sesionCargando } = useUsuarioActual() // cuenta = null si no hay sesión
+    const resenas = useColeccion(suscribirResenas)
+    const recomendaciones = useColeccion(suscribirRecomendaciones)
 
     return (
         <div className="cm-page">
-            {/* BREADCRUMB */}
-            <div className="cm-breadcrumb">
-                <Link to="/">Inicio</Link>
-                <span> &gt; </span>
-                <span>Reseñas y comunidad</span>
-            </div>
-
-            {/* ENCABEZADO */}
-            <header className="cm-header">
-                <h1 className="cm-titulo">Reseñas y comunidad</h1>
-                <p className="cm-subtitulo">
-                    Opiná sobre los productos de la tienda y compartí tus recomendaciones con otros melómanos.
-                </p>
-
-                <div className="cm-tabs" role="tablist" aria-label="Secciones">
-                    <button
-                        role="tab"
-                        aria-selected={pestana === 'resenas'}
-                        className={pestana === 'resenas' ? 'cm-tab activo' : 'cm-tab'}
-                        onClick={() => setPestana('resenas')}
-                    >
-                        Reseñas
-                    </button>
-                    <button
-                        role="tab"
-                        aria-selected={pestana === 'comunidad'}
-                        className={pestana === 'comunidad' ? 'cm-tab activo' : 'cm-tab'}
-                        onClick={() => setPestana('comunidad')}
-                    >
-                        Comunidad
-                    </button>
+            <div className="cm-contenedor">
+                {/* BREADCRUMB */}
+                <div className="cm-breadcrumb">
+                    <Link to="/">Inicio</Link>
+                    <span> &gt; </span>
+                    <span>Reseñas y comunidad</span>
                 </div>
-            </header>
 
-            {pestana === 'resenas' ? (
-                <SeccionResenas cuenta={cuenta} resenas={resenas} setResenas={setResenas} />
-            ) : (
-                <SeccionComunidad cuenta={cuenta} recomendaciones={recomendaciones} setRecomendaciones={setRecomendaciones} />
-            )}
+                {/* ENCABEZADO */}
+                <header className="cm-header">
+                    <h1 className="cm-titulo">Reseñas y comunidad</h1>
+                    <p className="cm-subtitulo">
+                        Opiná sobre los productos de la tienda y compartí tus recomendaciones con otros melómanos.
+                    </p>
+
+                    <div className="cm-tabs" role="tablist" aria-label="Secciones">
+                        <button
+                            role="tab"
+                            aria-selected={pestana === 'resenas'}
+                            className={pestana === 'resenas' ? 'cm-tab activo' : 'cm-tab'}
+                            onClick={() => setPestana('resenas')}
+                        >
+                            <i className="bi bi-chat-square-text" aria-hidden="true"></i>
+                            Reseñas
+                        </button>
+                        <button
+                            role="tab"
+                            aria-selected={pestana === 'comunidad'}
+                            className={pestana === 'comunidad' ? 'cm-tab activo' : 'cm-tab'}
+                            onClick={() => setPestana('comunidad')}
+                        >
+                            <i className="bi bi-people" aria-hidden="true"></i>
+                            Comunidad
+                        </button>
+                    </div>
+                </header>
+
+                {pestana === 'resenas' ? (
+                    <SeccionResenas cuenta={cuenta} sesionCargando={sesionCargando} coleccion={resenas} />
+                ) : (
+                    <SeccionComunidad cuenta={cuenta} sesionCargando={sesionCargando} coleccion={recomendaciones} />
+                )}
+            </div>
         </div>
     )
 }

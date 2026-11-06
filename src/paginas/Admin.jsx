@@ -26,7 +26,7 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     titulo: "Reseñas",
     descripcion: "Consultá y administrá las reseñas publicadas",
     boton: "Administrar reseñas",
-    ruta: null, //Luca: cambia null por la ruta de reseñas cuando se haga la página de AdminReview.jsx"
+    ruta: "/Admin/Review",
   },
   {//Seccion de usuarios
     clave: "usuarios",
