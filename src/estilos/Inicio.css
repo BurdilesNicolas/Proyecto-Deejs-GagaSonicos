@@ -1,4 +1,5 @@
-*{
+.inicio-page,
+.inicio-page * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -9,16 +10,29 @@
 }
 
 .hero {
-    padding: 0 100px;
-    background-image: url('../assets/Fondo_Inicio.png');
+    padding: var(--navbar-offset, 100px) clamp(24px, 8vw, 120px) 48px;
+    background-image:
+        linear-gradient(90deg, rgba(5, 8, 20, 0.78) 0%, rgba(5, 8, 20, 0.38) 48%, rgba(5, 8, 20, 0.08) 100%),
+        url('../assets/Fondo_Inicio.png');
     background-size: cover;
-    background-position: center;
-    min-height: 60vh;
+    background-position: center 58%;
+    background-repeat: no-repeat;
+    background-color: #050814;
+    min-height: clamp(460px, 75svh, 780px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(5, 8, 20, 0.35), transparent 55%);
+    z-index: -1;
 }
 
 .hero-icons {
@@ -48,7 +62,8 @@
 
 .hero-title {
     color: rgb(255, 255, 255);
-    font-size: 4rem;
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1.05;
     text-align: left;
     margin-bottom: 20px;
     z-index: 2;
@@ -343,4 +358,16 @@
     transform: scale(1.05);
     box-shadow: 0 15px 25px rgba(0,0,0,0.3);
     background-color: #f0f0f0;
+}
+
+@media (max-width: 600px) {
+    .hero {
+        min-height: clamp(460px, 72svh, 620px);
+        padding: 140px 24px 40px;
+        background-position: center;
+    }
+
+    .hero-title {
+        font-size: clamp(2.75rem, 12vw, 4rem);
+    }
 }
