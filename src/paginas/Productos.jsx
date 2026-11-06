@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react'
 import '../estilos/Productos.css'
 import { useSearchParams } from 'react-router-dom'
 import { productos, normalizar } from '../data/Productos.js'
+import { useWishlist } from '../data/Wishlist'
 
 
 // Lista de categorías únicas, calculada a partir del array de arriba.
@@ -14,6 +15,8 @@ function formatearPrecio(numero) {
 }
 
 function Productos() {
+
+const { estaEnWishlist, alternar } = useWishlist()
   const [searchParams] = useSearchParams()
 const busqueda = searchParams.get('buscar') || ''
   const [categoriaActiva, setCategoriaActiva] = useState(null) // null = "todas"
@@ -128,7 +131,14 @@ const busqueda = searchParams.get('buscar') || ''
           <div className="grilla">
             {productosFiltrados.map((producto) => (
               <article className="card" key={producto.id}>
-                <button className="btn-wishlist" title="Agregar a la wishlist">♡</button>
+                <button
+  className={estaEnWishlist(producto.id) ? 'btn-wishlist activo' : 'btn-wishlist'}
+  aria-pressed={estaEnWishlist(producto.id)}
+  aria-label={estaEnWishlist(producto.id) ? 'Quitar de la wishlist' : 'Agregar a la wishlist'}
+  onClick={() => alternar(producto.id)}
+>
+  {estaEnWishlist(producto.id) ? '♥' : '♡'}
+</button>
 <Link to={`/Productos/${producto.id}`} className="card-link">
                 <div className="card-img">
                   {producto.imagen && (

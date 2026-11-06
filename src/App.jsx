@@ -13,6 +13,7 @@ import Admin from "./paginas/Admin";
 import AdminRoute from "./componentes/AdminRoute";
 import AdminUsuarios from "./paginas/admin/AdminUsuarios";
 import Carrito from "./paginas/Carrito";
+import Wishlist from "./paginas/Wishlist";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/Comunidad" element={<Comunidad />} />
         <Route path="/Nosotros" element={<Nosotros />} />
         <Route path="Carrito" element={<Carrito />} />
+        <Route path="Wishlist" element={<Wishlist />} />
 
         {/*Spotify*/}
         <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
