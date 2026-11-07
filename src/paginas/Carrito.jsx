@@ -7,7 +7,7 @@ import {
   quitarDelCarrito,
   vaciarCarrito,
   LIMITE_POR_PRODUCTO,
-} from '../data/carrito'
+} from '../data/Carrito'
 import '../estilos/Carrito.css'
 
 function formatearPrecio(numero) {
