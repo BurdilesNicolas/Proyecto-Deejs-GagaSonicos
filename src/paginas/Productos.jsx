@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useMemo, useEffect } from 'react'
 import '../estilos/Productos.css'
 import { useSearchParams } from 'react-router-dom'
 import { normalizar } from '../data/Productos.js'
 import { useWishlist } from '../data/Wishlist'
 import { suscribirProductos } from '../services/productosService'
+import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito'
+import { useUsuarioActual } from '../utils/sesion'
 
 function formatearPrecio(numero) {
   return Number(numero || 0).toLocaleString('es-AR')
@@ -12,6 +14,8 @@ function formatearPrecio(numero) {
 
 function Productos() {
   const { estaEnWishlist, alternar } = useWishlist()
+  const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const busqueda = searchParams.get('buscar') || ''
 
@@ -47,6 +51,34 @@ function Productos() {
     () => [...new Set(productos.map((p) => p.categoria).filter(Boolean))].sort(),
     [productos]
   )
+
+  function exigirSesion() {
+    if (cargandoSesion) return false
+    if (!cuenta) {
+      navigate('/Perfil')
+      return false
+    }
+    return true
+  }
+
+  function agregarFavorito(id) {
+    if (exigirSesion()) alternar(id)
+  }
+
+  function agregarCarrito(producto) {
+    if (!exigirSesion()) return
+    const formato = Array.isArray(producto.formatos)
+      ? producto.formatos.find((f) => Number(f.stock) > 0)
+      : null
+    if (Array.isArray(producto.formatos) && !formato) return
+    agregarAlCarrito({
+      id: producto.id,
+      formato: formato?.nombre || producto.formato || 'Edición estándar',
+      cantidad: 1,
+      maximo: Math.min(LIMITE_POR_PRODUCTO, Number(formato?.stock) || LIMITE_POR_PRODUCTO),
+    })
+    navigate('/Carrito')
+  }
 
   const productosFiltrados = useMemo(() => {
     let resultado = productos.filter((producto) => {
@@ -162,7 +194,7 @@ function Productos() {
                     className={estaEnWishlist(producto.id) ? 'btn-wishlist activo' : 'btn-wishlist'}
                     aria-pressed={estaEnWishlist(producto.id)}
                     aria-label={estaEnWishlist(producto.id) ? 'Quitar de la wishlist' : 'Agregar a la wishlist'}
-                    onClick={() => alternar(producto.id)}
+                    onClick={() => agregarFavorito(producto.id)}
                   >
                     {estaEnWishlist(producto.id) ? '♥' : '♡'}
                   </button>
@@ -175,8 +207,8 @@ function Productos() {
                     <p className="card-precio">${formatearPrecio(producto.precio)},00</p>
                   </Link>
                   <div className="card-acciones">
-                    <button className="btn-comprar">Comprar</button>
-                    <button className="btn-carrito">Carrito</button>
+                    <button className="btn-comprar" onClick={() => { if (exigirSesion()) navigate(`/Productos/${producto.id}`) }}>Comprar</button>
+                    <button className="btn-carrito" onClick={() => agregarCarrito(producto)}>Carrito</button>
                   </div>
                 </article>
               ))}

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { suscribirProductos } from '../services/productosService'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito.js'
-import { useWishlist } from '../data/Wishlist'
+import { useWishlist } from '../data/Wishlist.js'
 import '../estilos/ProductoDetalle.css'
 import '../estilos/FormatosAnimados.css'
+import { useUsuarioActual } from '../utils/sesion'
 
 function formatearPrecio(numero) {
   return `$${numero.toLocaleString('es-AR')},00`
@@ -94,6 +95,7 @@ function ProductoDetalle() {
 /* ---------- Contenido de la ficha ---------- */
 function DetalleProducto({ producto, productos }) {
   const navigate = useNavigate()
+  const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
 
   // Si el producto define "formatos", siempre se muestran los tres (Vinilo, CD, Cassette):
   // los que no estén cargados o tengan stock 0 aparecen deshabilitados como "Agotado".
@@ -185,7 +187,17 @@ function DetalleProducto({ producto, productos }) {
     return () => clearTimeout(timer)
   }, [aviso])
 
+  function exigirSesion() {
+    if (cargandoSesion) return false
+    if (!cuenta) {
+      navigate('/Perfil')
+      return false
+    }
+    return true
+  }
+
   function sumarAlCarrito() {
+    if (!exigirSesion()) return
     const agregadas = agregarAlCarrito({
       id: producto.id,
       formato: formato.nombre,
@@ -199,6 +211,7 @@ function DetalleProducto({ producto, productos }) {
   }
 
   function comprarYa() {
+    if (!exigirSesion()) return
     agregarAlCarrito({
       id: producto.id,
       formato: formato.nombre,
@@ -396,7 +409,7 @@ function DetalleProducto({ producto, productos }) {
                 type="button"
                 className={favorito ? 'detalle-favorito activo' : 'detalle-favorito'}
                 aria-pressed={favorito}
-                onClick={() => alternarWishlist(producto.id)}
+                onClick={() => { if (exigirSesion()) alternarWishlist(producto.id) }}
               >
                 {favorito ? '♥ En tu wishlist' : '♡ Agregar a la wishlist'}
               </button>
