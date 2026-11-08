@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { productos } from '../data/Productos'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito.js'
-import { useWishlist } from '../data/WishList.js'
+import { useWishlist } from '../data/Wishlist.js'
 import '../estilos/ProductoDetalle.css'
 import '../estilos/FormatosAnimados.css'
 

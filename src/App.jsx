@@ -34,7 +34,8 @@ function App() {
         <Route path="/Nosotros" element={<Nosotros />} />
         <Route path="Carrito" element={<Carrito />} />
         <Route path="Wishlist" element={<Wishlist />} />
-
+        <Route path="/Politicas" element={<Politicas />} />
+        
         {/*Spotify*/}
         <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
         <Route path="/Productos/:id" element={<ProductoDetalle />} />
@@ -45,7 +46,7 @@ function App() {
         <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
         <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
 
-        <Route path="/Politicas" element={<Politicas />} />
+        
 
       </Routes>
 
