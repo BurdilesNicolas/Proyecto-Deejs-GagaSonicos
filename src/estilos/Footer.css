@@ -63,8 +63,19 @@
   margin: 0;
 }
 
+.footer-section.links ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 10px;
+}
+
 .footer-section ul li {
   margin-bottom: 12px;
+}
+
+.footer-section.links ul li {
+  margin-bottom: 0;
 }
 
 .footer-section ul li a {
@@ -126,5 +137,11 @@
 
   .social-icons {
     justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer-section.links ul {
+    grid-template-columns: 1fr;
   }
 }

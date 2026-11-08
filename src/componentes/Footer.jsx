@@ -17,13 +17,34 @@ const Footer = () => {
           <h4>Enlaces Rápidos</h4>
           <ul>
             <li>
-              <Link to="/">Inicio</Link>
+              <Link to="/Inicio">Inicio</Link>
             </li>
             <li>
               <Link to="/Productos">Productos</Link>
             </li>
             <li>
+              <Link to="/Comunidad">Comunidad</Link>
+            </li>
+            <li>
+              <Link to="/Nosotros">Nosotros</Link>
+            </li>
+            <li>
+              <Link to="/Locales">Locales</Link>
+            </li>
+            <li>
+              <Link to="/Carrito">Carrito</Link>
+            </li>
+            <li>
+              <Link to="/Wishlist">Wishlist</Link>
+            </li>
+            <li>
+              <Link to="/Perfil">Mi cuenta</Link>
+            </li>
+            <li>
               <Link to="/Login">Login</Link>
+            </li>
+            <li>
+              <Link to="/Politicas">Políticas</Link>
             </li>
           </ul>
         </div>

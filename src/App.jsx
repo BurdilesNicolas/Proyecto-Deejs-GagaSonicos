@@ -39,6 +39,7 @@ function App() {
           <Route path="/Inicio" element={<Inicio />} />
           <Route path="/Productos" element={<Productos />} />
           <Route path="/Perfil" element={<Perfil />} />
+          <Route path="/Login" element={<Perfil />} />
           <Route path="/Locales" element={<Locales />} />
           <Route path="/Comunidad" element={<Comunidad />} />
           <Route path="/Nosotros" element={<Nosotros />} />
