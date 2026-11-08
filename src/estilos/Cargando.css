@@ -1,0 +1,73 @@
+/* Pantalla / indicador de carga (componente Cargando.jsx).
+   Hereda el color del texto de la página donde se use, así sirve sobre fondo claro y oscuro. */
+
+.cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  color: inherit;
+}
+
+/* Ocupa el área de contenido, por debajo del navbar fijo */
+.cargando--pagina {
+  min-height: 60vh;
+  padding: var(--navbar-offset, 100px) 20px 40px;
+}
+
+/* Dentro de un panel o sección */
+.cargando--bloque {
+  padding: 40px 16px;
+}
+
+/* Dentro de un botón o una línea de texto */
+.cargando--inline {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.cargando-texto {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.cargando-lento {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* El disco de vinilo: surcos + etiqueta violeta + un reflejo que, al girar, se nota */
+.cargando-disco {
+  display: block;
+  flex-shrink: 0;
+  width: 56px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background:
+    conic-gradient(transparent 0 18%, rgba(255, 255, 255, 0.2) 24%, transparent 30% 68%, rgba(255, 255, 255, 0.2) 74%, transparent 80%),
+    radial-gradient(circle, #5b4ee6 0 12%, #111111 13% 15%, transparent 16%),
+    repeating-radial-gradient(circle, #0a0a0a 0 2px, #1b1b1b 2px 3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: cargando-girar 1.2s linear infinite;
+}
+
+.cargando--inline .cargando-disco {
+  width: 16px;
+  box-shadow: none;
+}
+
+@keyframes cargando-girar {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Quien prefiere menos movimiento no ve el giro: queda el disco quieto y el texto */
+@media (prefers-reduced-motion: reduce) {
+  .cargando-disco {
+    animation: none;
+  }
+}
