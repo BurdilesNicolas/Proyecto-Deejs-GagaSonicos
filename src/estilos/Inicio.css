@@ -447,6 +447,77 @@
     gap: 16px;
 }
 
+.home-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.home-product-card {
+    min-width: 0;
+    padding: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 15px;
+    color: inherit;
+    background: linear-gradient(145deg, rgba(28, 29, 83, 0.72), rgba(19, 20, 58, 0.62));
+    text-decoration: none;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.home-product-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(119, 200, 255, 0.48);
+    color: inherit;
+    background: rgba(24, 47, 78, 0.84);
+}
+
+.home-product-card__image {
+    display: grid;
+    overflow: hidden;
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.home-product-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 250ms ease;
+}
+
+.home-product-card:hover .home-product-card__image img {
+    transform: scale(1.045);
+}
+
+.home-product-card h3 {
+    overflow: hidden;
+    margin: 14px 0 4px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-product-card__artist {
+    overflow: hidden;
+    margin: 0;
+    color: var(--home-muted) !important;
+    font-size: 0.82rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-product-card__price {
+    margin: 10px 0 0;
+    color: #77c8ff !important;
+    font-size: 0.96rem;
+    font-weight: 700;
+}
+
 .media-grid--search {
     margin-top: 28px;
 }
@@ -732,6 +803,10 @@
     .media-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    .home-products-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 700px) {
@@ -787,6 +862,11 @@
         gap: 12px;
     }
 
+    .home-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
     .media-card__info {
         padding-inline: 11px;
     }
@@ -823,8 +903,13 @@
 }
 
 @media (max-width: 420px) {
-    .media-grid {
+    .media-grid,
+    .home-products-grid {
         gap: 9px;
+    }
+
+    .home-product-card {
+        padding: 10px;
     }
 
     .media-card__info h3 {
