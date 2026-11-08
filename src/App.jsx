@@ -15,6 +15,7 @@ import AdminUsuarios from "./paginas/admin/AdminUsuarios";
 import Carrito from "./paginas/Carrito";
 import Wishlist from "./paginas/Wishlist";
 import AdminReview from "./paginas/admin/AdminReview";
+import AdminProductos from "./paginas/admin/AdminProductos";
 import Politicas from "./paginas/Politicas";
 
 
@@ -42,11 +43,9 @@ function App() {
         <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
         <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
         <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
+        <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
 
         <Route path="/Politicas" element={<Politicas />} />
-        { /* =======Rutas futuras de administración=========
-        <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
-        */}
 
       </Routes>
 

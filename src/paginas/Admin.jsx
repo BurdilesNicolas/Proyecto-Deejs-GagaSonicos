@@ -18,7 +18,7 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     titulo: "Productos",
     descripcion: "Gestioná el catálogo de productos de Deej's",
     boton: "Administrar productos",
-    ruta: null, //Rama: cambia null por la ruta de productos cuando se haga la página de AdminProductos.jsx"
+    ruta: "/Admin/Productos",
   },
   {//Seccion de reseñas
     clave: "resenas",
