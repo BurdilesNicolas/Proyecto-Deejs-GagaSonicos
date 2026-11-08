@@ -1,66 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/LOGO DEEJS 2.svg";
+import fotoNicolas from "../../Img/Integrantes/Nicolas Burdiles.png";
+import fotoMaximo from "../../Img/Integrantes/Maximo Maroa.png";
+import fotoRamiro from "../../Img/Integrantes/Ramiro Flores.png";
+import fotoLuca from "../../Img/Integrantes/Luca Kletzel.png";
 import "../estilos/Nosotros.css";
 
+// Fotos y encuadres individuales para mantener los rostros bien posicionados.
 const integrantes = [
   {
     id: 1,
-    nombre: "Integrante 01",
-    rol: "Coordinación y análisis",
+    nombre: "Nicolas Burdiles",
+    imagen: fotoNicolas,
+    posicion: "center 38%",
     color: "#b69cff",
-    descripcion:
-      "Perfil de ejemplo para reemplazar por una presentación breve de la persona y su aporte al equipo.",
-    habilidades: ["Organización", "Análisis", "Planificación"],
-    responsabilidades: [
-      "Coordinar tareas y prioridades del equipo.",
-      "Traducir las necesidades del proyecto en objetivos claros.",
-      "Acompañar el seguimiento y la revisión de avances.",
-    ],
   },
   {
     id: 2,
-    nombre: "Integrante 02",
-    rol: "Desarrollo frontend",
+    nombre: "Maximo Maroa",
+    imagen: fotoMaximo,
+    posicion: "center 24%",
     color: "#7dd9d0",
-    descripcion:
-      "Perfil de ejemplo para describir intereses, fortalezas y participación en el desarrollo.",
-    habilidades: ["HTML y CSS", "Diseño responsive", "Accesibilidad"],
-    responsabilidades: [
-      "Construir interfaces claras y adaptables.",
-      "Cuidar la consistencia visual de los componentes.",
-      "Probar la experiencia en distintos tamaños de pantalla.",
-    ],
   },
   {
     id: 3,
-    nombre: "Integrante 03",
-    rol: "Desarrollo y funcionalidad",
+    nombre: "Ramiro Flores",
+    imagen: fotoRamiro,
+    posicion: "center 36%",
     color: "#ffc47d",
-    descripcion:
-      "Perfil de ejemplo para sumar una descripción personal auténtica y fácilmente editable.",
-    habilidades: ["JavaScript", "Integración", "Resolución de problemas"],
-    responsabilidades: [
-      "Implementar interacciones y flujos de la aplicación.",
-      "Integrar componentes con los datos del proyecto.",
-      "Colaborar en la detección y resolución de errores.",
-    ],
   },
   {
     id: 4,
-    nombre: "Integrante 04",
-    rol: "Contenido y calidad",
+    nombre: "Luca Kletzel",
+    imagen: fotoLuca,
+    posicion: "center 24%",
     color: "#ff9eb5",
-    descripcion:
-      "Perfil de ejemplo para contar qué aporta esta persona al proyecto y al trabajo colectivo.",
-    habilidades: ["Comunicación", "Pruebas", "Documentación"],
-    responsabilidades: [
-      "Revisar contenidos y claridad de la información.",
-      "Validar recorridos y detalles de la experiencia.",
-      "Documentar acuerdos y aprendizajes del equipo.",
-    ],
   },
 ];
 
+// Principios que guían la colaboración y el trabajo del equipo.
 const valores = [
   {
     icono: "bi-people",
@@ -96,9 +75,8 @@ const valores = [
 
 function Nosotros() {
   const paginaRef = useRef(null);
-  const dialogRef = useRef(null);
-  const [integranteSeleccionado, setIntegranteSeleccionado] = useState(null);
 
+  // Revela los elementos a medida que entran en pantalla.
   useEffect(() => {
     const pagina = paginaRef.current;
     if (!pagina || !("IntersectionObserver" in window)) return undefined;
@@ -123,20 +101,9 @@ function Nosotros() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog || !integranteSeleccionado) return undefined;
-
-    dialog.showModal();
-    return () => {
-      if (dialog.open) dialog.close();
-    };
-  }, [integranteSeleccionado]);
-
-  const cerrarDialogo = () => setIntegranteSeleccionado(null);
-
   return (
     <main className="nosotros-page" ref={paginaRef}>
+      {/* Presentación del equipo y acceso directo a la lista de integrantes. */}
       <section className="nosotros-hero" aria-labelledby="nosotros-titulo">
         <div className="nosotros-hero__contenido">
           <span className="nosotros-eyebrow">
@@ -162,11 +129,10 @@ function Nosotros() {
 
         <div className="nosotros-hero__visual" aria-hidden="true">
           <div className="nosotros-visual__halo" />
-          <div className="nosotros-visual__vinilo">
-            <span className="nosotros-visual__centro">
-              <i className="bi bi-music-note-beamed" />
-            </span>
-          </div>
+          <div className="nosotros-visual__vinilo" />
+          <span className="nosotros-visual__centro">
+            <img src={logo} alt="" />
+          </span>
           <div className="nosotros-visual__orbit nosotros-visual__orbit--uno" />
           <div className="nosotros-visual__orbit nosotros-visual__orbit--dos" />
           <span className="nosotros-visual__persona nosotros-visual__persona--uno">
@@ -185,6 +151,7 @@ function Nosotros() {
         </div>
       </section>
 
+      {/* Tarjetas con datos editables y espacios reservados para las fotos de perfil. */}
       <section
         className="nosotros-seccion nosotros-integrantes"
         id="integrantes"
@@ -195,11 +162,7 @@ function Nosotros() {
             Las personas detrás del proyecto
           </span>
           <h2 id="integrantes-titulo">Cuatro miradas, un mismo objetivo</h2>
-          <p>
-            Cada integrante aporta una perspectiva distinta. Estos perfiles son
-            ejemplos editables: reemplazá nombres, textos y habilidades por los
-            datos reales del equipo.
-          </p>
+          <p>Conocé a las personas que forman parte de DEEJ&apos;S.</p>
         </div>
 
         <div className="nosotros-equipo">
@@ -213,41 +176,22 @@ function Nosotros() {
               }}
             >
               <div className="nosotros-card__imagen">
-                <span className="nosotros-card__marco" />
-                <span className="nosotros-card__avatar" aria-hidden="true">
-                  <i className="bi bi-person-fill" />
-                </span>
-                <span className="nosotros-card__numero">
-                  0{integrante.id} <span>/ 04</span>
-                </span>
+                <img
+                  className="nosotros-card__foto"
+                  src={integrante.imagen}
+                  alt={`Foto de ${integrante.nombre}`}
+                  style={{ objectPosition: integrante.posicion }}
+                />
               </div>
-              <div className="nosotros-card__contenido">
-                <span className="nosotros-card__rol">{integrante.rol}</span>
+              <div className="nosotros-card__nombre">
                 <h3>{integrante.nombre}</h3>
-                <p>{integrante.descripcion}</p>
-                <div
-                  className="nosotros-tags"
-                  aria-label="Habilidades principales"
-                >
-                  {integrante.habilidades.map((habilidad) => (
-                    <span key={habilidad}>{habilidad}</span>
-                  ))}
-                </div>
-                <button
-                  className="nosotros-card__boton"
-                  type="button"
-                  onClick={() => setIntegranteSeleccionado(integrante)}
-                  aria-label={`Ampliar información de ${integrante.nombre}`}
-                >
-                  Conocer su aporte
-                  <i className="bi bi-arrow-up-right" aria-hidden="true" />
-                </button>
               </div>
             </article>
           ))}
         </div>
       </section>
 
+      {/* Historia de cómo surgió la idea y qué busca ofrecer el proyecto. */}
       <section className="nosotros-historia" aria-labelledby="historia-titulo">
         <div
           className="nosotros-historia__visual nosotros-reveal"
@@ -290,6 +234,7 @@ function Nosotros() {
         </div>
       </section>
 
+      {/* Valores compartidos que orientan la forma de trabajar del equipo. */}
       <section
         className="nosotros-seccion nosotros-valores"
         aria-labelledby="valores-titulo"
@@ -320,6 +265,7 @@ function Nosotros() {
         </div>
       </section>
 
+      {/* Cierre de la página con un acceso para volver al inicio. */}
       <section className="nosotros-cierre nosotros-reveal">
         <span className="nosotros-cierre__icono" aria-hidden="true">
           <i className="bi bi-vinyl-fill" />
@@ -332,57 +278,6 @@ function Nosotros() {
           <i className="bi bi-arrow-right" aria-hidden="true" />
         </Link>
       </section>
-
-      <dialog
-        className="nosotros-dialog"
-        ref={dialogRef}
-        onClose={cerrarDialogo}
-        aria-labelledby="nosotros-dialog-titulo"
-      >
-        {integranteSeleccionado && (
-          <div className="nosotros-dialog__contenido">
-            <button
-              className="nosotros-dialog__cerrar"
-              type="button"
-              onClick={() => dialogRef.current?.close()}
-              aria-label="Cerrar información"
-            >
-              <i className="bi bi-x-lg" aria-hidden="true" />
-            </button>
-            <span
-              className="nosotros-dialog__avatar"
-              style={{ "--member-accent": integranteSeleccionado.color }}
-              aria-hidden="true"
-            >
-              <i className="bi bi-person-fill" />
-            </span>
-            <span className="nosotros-card__rol">
-              {integranteSeleccionado.rol}
-            </span>
-            <h2 id="nosotros-dialog-titulo">{integranteSeleccionado.nombre}</h2>
-            <p className="nosotros-dialog__descripcion">
-              {integranteSeleccionado.descripcion}
-            </p>
-            <h3>Su aporte al proyecto</h3>
-            <ul>
-              {integranteSeleccionado.responsabilidades.map(
-                (responsabilidad) => (
-                  <li key={responsabilidad}>
-                    <i className="bi bi-check2" aria-hidden="true" />
-                    {responsabilidad}
-                  </li>
-                ),
-              )}
-            </ul>
-            <h3>Habilidades</h3>
-            <div className="nosotros-tags">
-              {integranteSeleccionado.habilidades.map((habilidad) => (
-                <span key={habilidad}>{habilidad}</span>
-              ))}
-            </div>
-          </div>
-        )}
-      </dialog>
     </main>
   );
 }
