@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SpotifyCard from "../componentes/inicio/SpotifyCard";
+import { suscribirProductos } from "../services/productosService";
 import { searchSpotify } from "../services/spotify";
 import "../estilos/Inicio.css";
 
@@ -11,6 +12,11 @@ const SEARCH_TYPES = [
   { value: "all", label: "Todo" },
 ];
 
+function formatearPrecio(precio) {
+  return Number(precio || 0).toLocaleString("es-AR");
+}
+
+// Sección reutilizable para mostrar resultados de Spotify con el mismo formato.
 function MediaSection({ id, eyebrow, title, type, items, emptyMessage }) {
   return (
     <section className="home-section" id={id} aria-labelledby={`${id}-title`}>
@@ -34,6 +40,10 @@ function MediaSection({ id, eyebrow, title, type, items, emptyMessage }) {
 }
 
 function Inicio() {
+  // Estado del contenido inicial y de la búsqueda del usuario.
+  const [productos, setProductos] = useState([]);
+  const [productosLoading, setProductosLoading] = useState(true);
+  const [productosError, setProductosError] = useState("");
   const [homeContent, setHomeContent] = useState({
     tracks: [],
     artists: [],
@@ -49,6 +59,23 @@ function Inicio() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
 
+  // Mantiene sincronizados los productos destacados con el catálogo de Firestore.
+  useEffect(() => {
+    return suscribirProductos(
+      (datos) => {
+        setProductos(datos.slice(0, 4));
+        setProductosError("");
+        setProductosLoading(false);
+      },
+      (error) => {
+        console.error("Error al cargar productos destacados:", error);
+        setProductosError("No se pudieron cargar los productos. Revisá la conexión e intentá nuevamente.");
+        setProductosLoading(false);
+      }
+    );
+  }, []);
+
+  // Carga en paralelo las selecciones iniciales; discovery mezcla tres tipos de contenido.
   useEffect(() => {
     let active = true;
     Promise.all([
@@ -78,11 +105,13 @@ function Inicio() {
         if (active) setHomeLoading(false);
       });
 
+    // Evita actualizar el estado si el componente se desmontó antes de recibir respuesta.
     return () => {
       active = false;
     };
   }, []);
 
+  // Ejecuta la búsqueda, normaliza sus resultados y gestiona los estados de carga y error.
   async function handleSearch(event) {
     event.preventDefault();
     if (!searchQuery.trim()) return;
@@ -109,6 +138,7 @@ function Inicio() {
 
   return (
     <main className="inicio-page">
+      {/* Presentación principal con accesos al explorador y a la tienda. */}
       <section className="home-hero" aria-labelledby="home-hero-title">
         <div className="home-hero__content">
           <p className="home-hero__eyebrow">
@@ -162,25 +192,9 @@ function Inicio() {
         </div>
       </section>
 
-      <section className="spotify-connect" aria-label="Catálogo de Spotify">
-        <div className="spotify-connect__copy">
-          <span className="spotify-connect__icon">
-            <i className="bi bi-music-note-list" aria-hidden="true" />
-          </span>
-          <div>
-            <h2>Catálogo musical</h2>
-            <p>
-              Temas, artistas y álbumes disponibles desde Spotify, sin iniciar sesión.
-            </p>
-          </div>
-        </div>
-        <span className="spotify-connect__status">
-          <span className="spotify-connect__status-dot" />
-          API pública
-        </span>
-      </section>
 
       <div className="home-content">
+        {/* Buscador interactivo con filtro por tipo de contenido. */}
         <section className="home-section home-search" id="explorador" aria-labelledby="search-title">
           <div className="home-section__heading">
             <div>
@@ -218,6 +232,7 @@ function Inicio() {
               {searchLoading ? "Buscando…" : "Buscar"}
             </button>
           </form>
+          {/* Mensajes de estado y resultados devueltos por la búsqueda. */}
           {searchError && <p className="home-feedback home-feedback--error" role="alert">{searchError}</p>}
           {searchLoading && <p className="home-feedback" role="status">Buscando en Spotify…</p>}
           {searchSubmitted && !searchLoading && !searchError && searchResults.length === 0 && (
@@ -232,6 +247,47 @@ function Inicio() {
           )}
         </section>
 
+        {/* Muestra una selección del catálogo de la tienda con acceso a cada detalle. */}
+        <section className="home-section" aria-labelledby="featured-products-title">
+          <div className="home-section__heading">
+            <div>
+              <p className="home-eyebrow">Disponibles en la tienda</p>
+              <h2 id="featured-products-title">Productos destacados</h2>
+            </div>
+            <Link className="home-button home-button--secondary" to="/Productos">
+              Ver todos
+            </Link>
+          </div>
+          {productosLoading && (
+            <p className="home-feedback" role="status">Cargando productos…</p>
+          )}
+          {productosError && (
+            <p className="home-feedback home-feedback--error" role="alert">{productosError}</p>
+          )}
+          {!productosLoading && !productosError && productos.length > 0 && (
+            <div className="home-products-grid">
+              {productos.map((producto) => (
+                <Link
+                  className="home-product-card"
+                  key={producto.id}
+                  to={`/Productos/${producto.id}`}
+                >
+                  <div className="home-product-card__image">
+                    {producto.imagen && <img src={producto.imagen} alt={producto.nombre} />}
+                  </div>
+                  <h3>{producto.nombre}</h3>
+                  <p className="home-product-card__artist">{producto.artista}</p>
+                  <p className="home-product-card__price">${formatearPrecio(producto.precio)},00</p>
+                </Link>
+              ))}
+            </div>
+          )}
+          {!productosLoading && !productosError && productos.length === 0 && (
+            <p className="home-empty">Todavía no hay productos para mostrar.</p>
+          )}
+        </section>
+
+        {/* Estado de la carga inicial y selecciones destacadas de Spotify. */}
         {homeLoading && (
           <p className="home-feedback home-feedback--loading" role="status">
             <span className="home-spinner" /> Cargando selecciones desde Spotify…
@@ -239,6 +295,7 @@ function Inicio() {
         )}
         {homeError && <p className="home-feedback home-feedback--error" role="alert">{homeError}</p>}
 
+        {/* Se muestran las secciones solo cuando terminó la carga inicial sin errores. */}
         {!homeLoading && !homeError && (
           <>
             <MediaSection
@@ -288,6 +345,7 @@ function Inicio() {
           </>
         )}
 
+        {/* Presentación breve de la tienda y acceso a sus productos. */}
         <section className="home-about" id="nosotros" aria-labelledby="about-title">
           <div className="home-about__icon"><i className="bi bi-soundwave" aria-hidden="true" /></div>
           <div>
