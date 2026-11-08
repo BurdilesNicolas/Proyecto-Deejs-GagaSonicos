@@ -37,7 +37,7 @@ function suscribirse(avisar) {
 // Si el producto está en la wishlist lo saca; si no está, lo agrega
 export function alternarWishlist(id) {
   const ids = leerIds(leerTexto())
-  const nuevos = ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]
+  const nuevos = ids.some((x) => String(x) === String(id)) ? ids.filter((x) => String(x) !== String(id)) : [...ids, id]
   try {
     localStorage.setItem(CLAVE, JSON.stringify(nuevos))
   } catch {
@@ -53,7 +53,7 @@ export function useWishlist() {
 
   return {
     ids,
-    estaEnWishlist: (id) => ids.includes(id),
+    estaEnWishlist: (id) => ids.some((x) => String(x) === String(id)),
     alternar: alternarWishlist,
   }
 }

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { productos } from '../data/Productos'
+import { suscribirProductos } from '../services/productosService'
+import { useUsuarioActual } from '../utils/sesion'
 import {
   leerCarrito,
   cambiarCantidad,
@@ -17,12 +18,20 @@ function formatearPrecio(numero) {
 function Carrito() {
   // Se lee de localStorage al abrir; después el estado se actualiza con cada cambio
   const [items, setItems] = useState(leerCarrito)
+  const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
+  const [productos, setProductos] = useState([])
+  const [cargandoProductos, setCargandoProductos] = useState(true)
   const [mensaje, setMensaje] = useState('')
+
+  useEffect(() => suscribirProductos((datos) => { setProductos(datos); setCargandoProductos(false) }, (error) => {
+    console.error('Error al cargar productos del carrito:', error)
+    setCargandoProductos(false)
+  }), [])
 
   // Une cada ítem guardado (id + formato + cantidad) con los datos del producto
   const lineas = items
     .map((item) => {
-      const producto = productos.find((p) => p.id === item.id)
+      const producto = productos.find((p) => String(p.id) === String(item.id))
       if (!producto) return null
       const infoFormato = producto.formatos?.find((f) => f.nombre === item.formato)
       const precio = infoFormato ? infoFormato.precio : producto.precio
@@ -57,6 +66,10 @@ function Carrito() {
       'Esta versión todavía no procesa pagos: el próximo paso es conectar un medio de pago.'
     )
   }
+
+  if (cargandoSesion || cargandoProductos) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
+
+  if (!cuenta) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Iniciá sesión para agregar productos y consultar tu carrito.</p><Link to="/Perfil" className="carrito-btn">Iniciar sesión</Link></div></div>
 
   return (
     <div className="pagina-carrito">

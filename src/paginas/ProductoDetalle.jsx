@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { productos } from '../data/Productos'
+import { suscribirProductos } from '../services/productosService'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito.js'
 import { useWishlist } from '../data/Wishlist.js'
 import '../estilos/ProductoDetalle.css'
 import '../estilos/FormatosAnimados.css'
+import { useUsuarioActual } from '../utils/sesion'
 
 function formatearPrecio(numero) {
   return `$${numero.toLocaleString('es-AR')},00`
@@ -35,19 +36,50 @@ function tipoDeFormato(nombre) {
 /* ---------- Página: busca el producto según la URL (/Productos/3) ---------- */
 function ProductoDetalle() {
   const { id } = useParams()
-  const producto = productos.find((p) => String(p.id) === id)
+  const [productos, setProductos] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [errorCarga, setErrorCarga] = useState(false)
+
+  // Consulta Firestore igual que el catálogo y escucha cambios en tiempo real.
+  useEffect(() => {
+    const cancelar = suscribirProductos(
+      (datos) => {
+        setProductos(datos)
+        setCargando(false)
+        setErrorCarga(false)
+      },
+      (error) => {
+        console.error('Error al cargar el detalle del producto:', error)
+        setCargando(false)
+        setErrorCarga(true)
+      }
+    )
+    return cancelar
+  }, [])
+
+  const producto = productos.find((p) => String(p.id) === String(id))
 
   // Al cambiar de producto (por ejemplo desde "También te puede gustar") se vuelve arriba
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [id])
 
-  if (!producto) {
+  if (cargando) {
     return (
       <div className="pagina-detalle">
         <div className="detalle-contenedor detalle-vacio">
-          <h1>No encontramos ese producto</h1>
-          <p>Puede que ya no esté disponible.</p>
+          <h1>Cargando producto...</h1>
+        </div>
+      </div>
+    )
+  }
+
+  if (errorCarga || !producto) {
+    return (
+      <div className="pagina-detalle">
+        <div className="detalle-contenedor detalle-vacio">
+          <h1>{errorCarga ? 'No se pudo cargar el producto' : 'No encontramos ese producto'}</h1>
+          <p>{errorCarga ? 'Revisá tu conexión e intentá nuevamente.' : 'Puede que ya no esté disponible.'}</p>
           <Link to="/Productos" className="detalle-btn detalle-btn-principal">
             Volver a productos
           </Link>
@@ -57,12 +89,13 @@ function ProductoDetalle() {
   }
 
   // key: al cambiar de producto, el formato y la cantidad elegidos arrancan de cero
-  return <DetalleProducto key={producto.id} producto={producto} />
+  return <DetalleProducto key={producto.id} producto={producto} productos={productos} />
 }
 
 /* ---------- Contenido de la ficha ---------- */
-function DetalleProducto({ producto }) {
+function DetalleProducto({ producto, productos }) {
   const navigate = useNavigate()
+  const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
 
   // Si el producto define "formatos", siempre se muestran los tres (Vinilo, CD, Cassette):
   // los que no estén cargados o tengan stock 0 aparecen deshabilitados como "Agotado".
@@ -154,7 +187,17 @@ function DetalleProducto({ producto }) {
     return () => clearTimeout(timer)
   }, [aviso])
 
+  function exigirSesion() {
+    if (cargandoSesion) return false
+    if (!cuenta) {
+      navigate('/Perfil')
+      return false
+    }
+    return true
+  }
+
   function sumarAlCarrito() {
+    if (!exigirSesion()) return
     const agregadas = agregarAlCarrito({
       id: producto.id,
       formato: formato.nombre,
@@ -168,6 +211,7 @@ function DetalleProducto({ producto }) {
   }
 
   function comprarYa() {
+    if (!exigirSesion()) return
     agregarAlCarrito({
       id: producto.id,
       formato: formato.nombre,
@@ -365,7 +409,7 @@ function DetalleProducto({ producto }) {
                 type="button"
                 className={favorito ? 'detalle-favorito activo' : 'detalle-favorito'}
                 aria-pressed={favorito}
-                onClick={() => alternarWishlist(producto.id)}
+                onClick={() => { if (exigirSesion()) alternarWishlist(producto.id) }}
               >
                 {favorito ? '♥ En tu wishlist' : '♡ Agregar a la wishlist'}
               </button>
