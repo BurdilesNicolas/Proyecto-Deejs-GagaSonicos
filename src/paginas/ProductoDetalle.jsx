@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { productos } from '../data/Productos'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito.js'
+import { useWishlist } from '../data/Wishlist.js'
 import '../estilos/ProductoDetalle.css'
 import '../estilos/FormatosAnimados.css'
 
@@ -95,7 +96,8 @@ function DetalleProducto({ producto }) {
 
   const [formatoActivo, setFormatoActivo] = useState(primerDisponible)
   const [cantidadElegida, setCantidadElegida] = useState(1)
-  const [favorito, setFavorito] = useState(false)
+  const { estaEnWishlist, alternar: alternarWishlist } = useWishlist()
+  const favorito = estaEnWishlist(producto.id)
   const [aviso, setAviso] = useState(null) // { tipo: 'ok' | 'parcial' | 'limite', hora }
 
   const formato = formatos[formatoActivo]
@@ -363,7 +365,7 @@ function DetalleProducto({ producto }) {
                 type="button"
                 className={favorito ? 'detalle-favorito activo' : 'detalle-favorito'}
                 aria-pressed={favorito}
-                onClick={() => setFavorito(!favorito)}
+                onClick={() => alternarWishlist(producto.id)}
               >
                 {favorito ? '♥ En tu wishlist' : '♡ Agregar a la wishlist'}
               </button>
