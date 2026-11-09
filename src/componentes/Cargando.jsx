@@ -1,7 +1,7 @@
 // Pantalla / indicador de carga reutilizable. Un disco de vinilo girando con un texto.
 //
 // modo:
-//   'pagina' -> ocupa el área de contenido (el navbar y el footer siguen visibles)
+//   'pagina' -> cubre toda la pantalla, incluidos el navbar y el footer
 //   'bloque' -> dentro de un panel o sección
 //   'inline' -> dentro de un botón o una línea de texto
 // texto:   mensaje que se muestra junto al disco

@@ -1,9 +1,10 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense, useLayoutEffect, useRef, useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./componentes/Navbar";
 import Footer from "./componentes/Footer";
 import AdminRoute from "./componentes/AdminRoute";
 import Cargando from "./componentes/Cargando";
+import { DURACION_MINIMA_CARGA_MS } from "./utils/tiempoCarga";
 
 // Recorrido principal de compra: se descarga junto con la app.
 import Inicio from "./paginas/Inicio";
@@ -12,8 +13,7 @@ import ProductoDetalle from "./paginas/ProductoDetalle";
 import Carrito from "./paginas/Carrito";
 import Wishlist from "./paginas/Wishlist";
 
-// Páginas secundarias y de administración: el navegador las descarga recién cuando alguien entra,
-// así el primer arranque es más liviano. Cada una tiene que seguir teniendo "export default".
+// Páginas secundarias y de administración se descargan recién al entrar en ellas.
 const Perfil = lazy(() => import("./paginas/Perfil"));
 const Locales = lazy(() => import("./paginas/Locales"));
 const Comunidad = lazy(() => import("./paginas/Comunidad"));
@@ -26,14 +26,40 @@ const AdminReview = lazy(() => import("./paginas/admin/AdminReview"));
 const AdminProductos = lazy(() => import("./paginas/admin/AdminProductos"));
 
 
-function App() {
+function ContenidoApp() {
+  const { pathname } = useLocation();
+  const rutaAnterior = useRef(pathname);
+  const temporizador = useRef(null);
+  const [cargandoRuta, setCargandoRuta] = useState(false);
+  const esRutaAdmin = /^\/admin(?:\/|$)/i.test(pathname);
+
+  useLayoutEffect(() => {
+    if (rutaAnterior.current === pathname) {
+      return;
+    }
+
+    rutaAnterior.current = pathname;
+    window.clearTimeout(temporizador.current);
+    if (!/^\/admin(?:\/|$)/i.test(pathname)) {
+      setCargandoRuta(false);
+      temporizador.current = null;
+      return;
+    }
+
+    setCargandoRuta(true);
+    temporizador.current = window.setTimeout(() => {
+      setCargandoRuta(false);
+      temporizador.current = null;
+    }, DURACION_MINIMA_CARGA_MS);
+  }, [pathname]);
+
+  useLayoutEffect(() => () => window.clearTimeout(temporizador.current), []);
+
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
 
-      {/* Mientras se descarga una página, la pantalla de carga ocupa solo el área de contenido:
-          el navbar y el footer siguen visibles. */}
-      <Suspense fallback={<Cargando modo="pagina" />}>
+      <Suspense fallback={esRutaAdmin ? <Cargando modo="pagina" retraso={0} /> : null}>
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/Inicio" element={<Inicio />} />
@@ -60,6 +86,17 @@ function App() {
       </Suspense>
 
       <Footer />
+      {esRutaAdmin && cargandoRuta && (
+        <Cargando modo="pagina" texto="Cargando página..." retraso={0} />
+      )}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <ContenidoApp />
     </BrowserRouter>
   );
 }
