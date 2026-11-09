@@ -1,10 +1,11 @@
 import { lazy, Suspense, useLayoutEffect, useRef, useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import Navbar from "./componentes/Navbar";
 import Footer from "./componentes/Footer";
 import AdminRoute from "./componentes/AdminRoute";
 import Cargando from "./componentes/Cargando";
 import { DURACION_MINIMA_CARGA_MS } from "./utils/tiempoCarga";
+import audioGato from "./assets/audio/Gatomeme.mp3";
 
 // Recorrido principal de compra: se descarga junto con la app.
 import Inicio from "./paginas/Inicio";
@@ -82,6 +83,7 @@ function ContenidoApp() {
           <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
           <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
           <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
+          <Route path="*" element={<RutaInexistente pathname={pathname} />} />
         </Routes>
       </Suspense>
 
@@ -90,6 +92,39 @@ function ContenidoApp() {
         <Cargando modo="pagina" texto="Cargando página..." retraso={0} />
       )}
     </>
+  );
+}
+
+function RutaInexistente({ pathname }) {
+  return (
+    <main className="cargando cargando--pagina error-ruta">
+      <span className="error-ruta-codigo">Error 404</span>
+      <h1 className="error-ruta-titulo">Crack, rompiste la página</h1>
+      <img
+        className="error-ruta-gato"
+        src="https://media1.tenor.com/m/0Kr4YkG5ZdgAAAAC/shake-my-hand-shake-hand.gif"
+        alt="GIF de un gato aplaudiendo"
+      />
+      <p className="error-ruta-mensaje">
+        No pudimos encontrar la página <span className="error-ruta-path">{pathname}</span>.
+      </p>
+      <audio className="error-ruta-audio" src={audioGato} autoPlay loop controls>
+        Tu navegador no puede reproducir el audio.
+      </audio>
+      <nav className="error-ruta-enlaces" aria-label="Enlaces del meme">
+        <a
+          className="error-ruta-enlace"
+          href="https://tenor.com/es/view/shake-my-hand-shake-hand-shake-hands-ai-cat-clapping-hands-gif-15036103406822974936"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ver GIF del gato
+        </a>
+      </nav>
+      <Link className="error-ruta-enlace" to="/">
+        Volver al inicio
+      </Link>
+    </main>
   );
 }
 
