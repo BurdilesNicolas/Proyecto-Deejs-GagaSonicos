@@ -166,7 +166,6 @@ function Productos() {
                   onChange={(e) => setPrecioHasta(e.target.value)}
                 />
               </div>
-              <SeccionMerch busqueda={busqueda} />
             </div>
           </div>
         </aside>
@@ -222,6 +221,7 @@ function Productos() {
           )}
         </div>
       </div>
+      <SeccionMerch busqueda={busqueda} />
     </div>
   )
 }
