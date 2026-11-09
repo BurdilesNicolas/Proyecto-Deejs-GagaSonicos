@@ -7,6 +7,7 @@ import { useWishlist } from '../data/Wishlist'
 import { suscribirProductos } from '../services/productosService'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito'
 import { useUsuarioActual } from '../utils/sesion'
+import SeccionMerch from '../componentes/SeccionMerch'
 
 function formatearPrecio(numero) {
   return Number(numero || 0).toLocaleString('es-AR')
@@ -108,6 +109,14 @@ function Productos() {
         <Link to="/">Inicio</Link>
         <span> &gt; </span>
         <span>Productos</span>
+      </div>
+
+      <div className="acceso-merch">
+        <a className="boton-acceso-merch" href="#merch">
+          <i className="bi bi-bag" aria-hidden="true"></i>
+          Ver merch oficial
+          <i className="bi bi-arrow-down" aria-hidden="true"></i>
+        </a>
       </div>
 
       <div className="layout-productos">
@@ -220,6 +229,7 @@ function Productos() {
           )}
         </div>
       </div>
+      <SeccionMerch busqueda={busqueda} />
     </div>
   )
 }

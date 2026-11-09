@@ -20,6 +20,14 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     boton: "Administrar productos",
     ruta: "/Admin/Productos",
   },
+  {
+    clave: "merch",
+    icono: "bi-bag",
+    titulo: "Merch",
+    descripcion: "Gestioná indumentaria y accesorios de la tienda",
+    boton: "Administrar merch",
+    ruta: "/Admin/Merch",
+  },
   {//Seccion de reseñas
     clave: "resenas",
     icono: "bi-chat-square-text",

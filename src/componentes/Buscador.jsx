@@ -2,44 +2,61 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { normalizar } from '../data/Productos'
 import { suscribirProductos } from '../services/productosService'
+import { suscribirMerch } from '../services/merchService'
 import '../estilos/Buscador.css'
 
 function Buscador() {
   const [abierto, setAbierto] = useState(false)
   const [consulta, setConsulta] = useState('')
   const [productos, setProductos] = useState([])
-  const [cargando, setCargando] = useState(true)
+  const [merch, setMerch] = useState([])
+  const [cargandoProductos, setCargandoProductos] = useState(true)
+  const [cargandoMerch, setCargandoMerch] = useState(true)
   const [error, setError] = useState(false)
   const contenedorRef = useRef(null)
   const inputRef = useRef(null)
   const navigate = useNavigate()
 
   const texto = consulta.trim()
+  const cargando = cargandoProductos || cargandoMerch
 
   useEffect(() => {
-    const cancelar = suscribirProductos(
+    const cancelarProductos = suscribirProductos(
       (datos) => {
         setProductos(datos)
-        setCargando(false)
-        setError(false)
+        setCargandoProductos(false)
       },
       (err) => {
         console.error('Error al cargar productos para la búsqueda:', err)
         setError(true)
-        setCargando(false)
+        setCargandoProductos(false)
+      }
+    )
+    const cancelarMerch = suscribirMerch(
+      (datos) => {
+        setMerch(datos)
+        setCargandoMerch(false)
+      },
+      (err) => {
+        console.error('Error al cargar merch para la búsqueda:', err)
+        setError(true)
+        setCargandoMerch(false)
       }
     )
 
-    return cancelar
+    return () => {
+      cancelarProductos()
+      cancelarMerch()
+    }
   }, [])
 
   // Máximo 5 sugerencias, buscando en nombre y artista
   const resultados =
     texto === ''
       ? []
-      : productos
+      : [...productos, ...merch.map((articulo) => ({ ...articulo, tipo: 'merch' }))]
           .filter((p) =>
-            normalizar(`${p.nombre} ${p.artista || ''}`).includes(normalizar(texto))
+        normalizar(`${p.nombre} ${p.artista || ''} ${p.tipo === 'merch' ? `${p.categoria || ''} ${p.descripcion || ''}` : ''}`).includes(normalizar(texto))
           )
           .slice(0, 5)
 
@@ -106,14 +123,14 @@ function Buscador() {
             <>
               <ul className="buscador-resultados">
                 {resultados.map((p) => (
-                  <li key={p.id}>
+                  <li key={`${p.tipo || 'producto'}-${p.id}`}>
                     <button className="buscador-item" onClick={() => irAResultados(p.nombre)}>
                       <div className="buscador-thumb">
                         {p.imagen && <img src={p.imagen} alt="" />}
                       </div>
                       <div className="buscador-info">
                         <span className="buscador-nombre">{p.nombre}</span>
-                        <span className="buscador-artista">de {p.artista}</span>
+                        {p.artista && <span className="buscador-artista">de {p.artista}</span>}
                         <span className="buscador-tipo">{p.categoria}</span>
                       </div>
                     </button>

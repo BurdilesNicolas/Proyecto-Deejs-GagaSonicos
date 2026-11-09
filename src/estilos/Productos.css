@@ -103,6 +103,37 @@
   color: #ffffff;
 }
 
+.acceso-merch {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 1200px;
+  margin: 14px auto 0;
+  padding: 0 clamp(14px, 4vw, 20px);
+}
+
+.boton-acceso-merch {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(196, 189, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(91, 78, 230, 0.28);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.boton-acceso-merch:hover {
+  transform: translateY(-1px);
+  border-color: #c4bdff;
+  background: rgba(112, 101, 240, 0.45);
+  color: #fff;
+}
+
 /* ===== LAYOUT: SIDEBAR + CONTENIDO ===== */
 .layout-productos {
   display: grid;
@@ -405,6 +436,10 @@
 @media (max-width: 800px) {
   .layout-productos {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .acceso-merch {
+    justify-content: center;
   }
 
   .sidebar {
