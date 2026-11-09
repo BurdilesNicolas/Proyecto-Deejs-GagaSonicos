@@ -1,16 +1,14 @@
 .nosotros-page {
   --nosotros-fondo: #0b0b30;
-  --nosotros-panel: rgba(18, 19, 65, 0.78);
+  --nosotros-panel: rgba(8, 8, 40, 0.82);
   --nosotros-texto: #fff;
-  --nosotros-suave: #c4c5dc;
-  --nosotros-acento: #77c8ff;
+  --nosotros-suave: rgba(255, 255, 255, 0.72);
+  --nosotros-acento: #5b4ee6;
   --nosotros-linea: rgba(255, 255, 255, 0.12);
   width: 100%;
   overflow: hidden;
   color: var(--nosotros-texto);
-  background:
-    radial-gradient(ellipse at 50% 32%, rgba(52, 48, 155, 0.28), transparent 44%),
-    var(--nosotros-fondo);
+  background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
   text-align: left;
 }
 
@@ -77,8 +75,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #8de5d8;
-  box-shadow: 0 0 15px rgba(141, 229, 216, 0.8);
+  background: #7a49e8;
+  box-shadow: 0 0 15px rgba(122, 73, 232, 0.8);
 }
 
 .nosotros-hero h1 {
@@ -114,8 +112,8 @@
   border: 1px solid rgba(183, 163, 255, 0.4);
   border-radius: 999px;
   color: #fff;
-  background: linear-gradient(110deg, #5c55d9, #8361db);
-  box-shadow: 0 12px 35px rgba(73, 55, 169, 0.35);
+  background: linear-gradient(110deg, #5b4ee6, #7a49e8);
+  box-shadow: 0 12px 35px rgba(91, 78, 230, 0.35);
   font-size: 0.91rem;
   font-weight: 700;
   text-decoration: none;
@@ -124,15 +122,15 @@
 
 .nosotros-button:hover {
   color: #fff;
-  background: linear-gradient(110deg, #6d66ee, #9575ed);
-  box-shadow: 0 15px 40px rgba(92, 75, 211, 0.45);
+  background: linear-gradient(110deg, #7065f0, #5b4ee6);
+  box-shadow: 0 15px 40px rgba(91, 78, 230, 0.45);
   transform: translateY(-2px);
 }
 
 .nosotros-button:focus-visible,
 .nosotros-card__boton:focus-visible,
 .nosotros-dialog__cerrar:focus-visible {
-  outline: 3px solid #a7e8ff;
+  outline: 3px solid #7065f0;
   outline-offset: 4px;
 }
 
@@ -166,7 +164,7 @@
   width: 75%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(87, 94, 217, 0.24), rgba(71, 66, 166, 0.05) 64%, transparent 70%);
+  background: radial-gradient(circle, rgba(91, 78, 230, 0.24), rgba(71, 66, 166, 0.05) 64%, transparent 70%);
   filter: blur(2px);
 }
 
@@ -440,7 +438,7 @@
   padding: clamp(70px, 9vw, 120px) max(9vw, calc((100vw - 1120px) / 2));
   border-block: 1px solid rgba(255, 255, 255, 0.055);
   background:
-    radial-gradient(ellipse at 26% 50%, rgba(61, 58, 160, 0.22), transparent 40%),
+    radial-gradient(ellipse at 26% 50%, rgba(91, 78, 230, 0.22), transparent 40%),
     rgba(255, 255, 255, 0.018);
 }
 
