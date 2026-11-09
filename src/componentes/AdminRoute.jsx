@@ -5,45 +5,40 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import { auth } from "../services/firebase";
 import { obtenerPerfil } from "../services/userService";
+import Cargando from "./Cargando";
+import { esperarDuracionMinima } from "../utils/tiempoCarga";
 
 function AdminRoute({ children }) {
   const [cargando, setCargando] = useState(true);
   const [esAdmin, setEsAdmin] = useState(false);
 
   useEffect(() => {
+    const inicio = Date.now();
     const cancelar = onAuthStateChanged(auth, async (usuario) => {
+      let usuarioEsAdmin = false;
+
       if (!usuario) {
-        setEsAdmin(false);
-        setCargando(false);
-        return;
+        usuarioEsAdmin = false;
+      } else {
+        try {
+          const perfil = await obtenerPerfil(usuario.uid);
+          usuarioEsAdmin = perfil?.rol === "admin";
+        } catch (error) {
+          console.error("Error verificando administrador:", error);
+        }
       }
 
-      try {
-        const perfil = await obtenerPerfil(usuario.uid);
-        setEsAdmin(perfil?.rol === "admin");
-      } catch (error) {
-        console.error("Error verificando administrador:", error);
-        setEsAdmin(false);
-      }
-
+      setEsAdmin(usuarioEsAdmin);
+      await esperarDuracionMinima(inicio);
       setCargando(false);
     });
 
     return () => cancelar();
   }, []);
 
-if (cargando) {
-  return ( //Luego añadir una pantalla de carga.
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="text-center">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-        <p className="mt-3">Verificando permisos...</p>
-      </div>
-    </div>
-  );
-}
+  if (cargando) {
+    return <Cargando modo="pagina" texto="Verificando permisos..." retraso={0} />;
+  }
 
   if (!esAdmin) {
     return <Navigate to="/Perfil" replace />;
