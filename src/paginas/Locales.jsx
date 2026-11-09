@@ -1,121 +1,121 @@
 import "../estilos/Locales.css";
 
 function Locales() {
+  // Comercios musicales verificados en Neuquén Capital.
   const locales = [
     {
       id: 1,
-      nombre: "Club Neon Center",
-      direccion: "Av. Principal 123, Centro",
-      estado: "Súper Activo",
-      horario: "18:00 - 04:00",
-      evento: "Neon Night Fever - Viernes 22:00h",
-      descripcion: "El epicentro de la luz y el sonido en el corazón de la ciudad. Especialistas en Tech-House.",
-      imagen: "https://images.unsplash.com/photo-1514525253361-bee8718a74a9?auto=format&fit=crop&w=600&q=80"
+      nombre: "Casa Bonelli",
+      direccion: "Jujuy 385, Neuquén Capital",
+      categoria: "Instrumentos y audio",
+      especialidad: "Instrumentos musicales, sonido e iluminación profesional.",
+      imagen: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=800&q=80",
+      mapa: "https://www.google.com/maps/search/?api=1&query=Casa+Bonelli%2C+Jujuy+385%2C+Neuqu%C3%A9n",
+      mapaIncrustado: "https://maps.google.com/maps?q=Casa+Bonelli%2C+Jujuy+385%2C+Neuqu%C3%A9n&output=embed"
     },
     {
       id: 2,
-      nombre: "Vibe North Lounge",
-      direccion: "Calle Norte 456, Sector 2",
-      estado: "Abierto",
-      horario: "16:00 - 02:00",
-      evento: "Sunset Chill Session - Sábado 19:00h",
-      descripcion: "Elegancia, confort y ritmos profundos para mentes sofisticadas. Ideal para Deep House.",
-      imagen: "https://images.unsplash.com/photo-1571266028246-75c77bc6783f?auto=format&fit=crop&w=600&q=80"
+      nombre: "Todo Música",
+      direccion: "Av. Argentina 261, Neuquén Capital",
+      categoria: "Instrumentos y audio",
+      especialidad: "Instrumentos, audio y equipamiento para músicos.",
+      imagen: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80",
+      mapa: "https://www.google.com/maps/search/?api=1&query=Todo+M%C3%BAsica%2C+Avenida+Argentina+261%2C+Neuqu%C3%A9n",
+      mapaIncrustado: "https://maps.google.com/maps?q=Todo+M%C3%BAsica%2C+Avenida+Argentina+261%2C+Neuqu%C3%A9n&output=embed"
     },
     {
       id: 3,
-      nombre: "Sonic South Base",
-      direccion: "Bulevar del Sur 789, Zona Industrial",
-      estado: "En Preparación",
-      horario: "Próximamente",
-      evento: "Gran Apertura: Sonic Boom - Dic 2026",
-      descripcion: "El bunker del sonido industrial. Preparando la mayor potencia acústica de la región.",
-      imagen: "https://images.unsplash.com/photo-1470225620780-dba8ba36b42c?auto=format&fit=crop&w=600&q=80"
+      nombre: "Prowatt",
+      direccion: "Pte. Sarmiento 595, Neuquén Capital",
+      categoria: "Audio e iluminación",
+      especialidad: "Equipos de audio, sonido, luces, accesorios y electrónica.",
+      imagen: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=800&q=80",
+      mapa: "https://www.google.com/maps/search/?api=1&query=Prowatt%2C+Presidente+Sarmiento+595%2C+Neuqu%C3%A9n",
+      mapaIncrustado: "https://maps.google.com/maps?q=Prowatt%2C+Presidente+Sarmiento+595%2C+Neuqu%C3%A9n&output=embed"
     },
     {
       id: 4,
-      nombre: "Electric East",
-      direccion: "Av. del Sol 101, Este",
-      estado: "Abierto",
-      horario: "20:00 - 05:00",
-      evento: "Electro-Flash Night - Jueves 21:00h",
-      descripcion: "Energía eléctrica y beats frenéticos. El hogar del EDM y Future House.",
-      imagen: "https://images.unsplash.com/photo-1516450360452-937a4b327e7f?auto=format&fit=crop&w=600&q=80"
+      nombre: "Disquería Almendra",
+      direccion: "M. Láinez 185, Neuquén Capital",
+      categoria: "Disquería",
+      especialidad: "Vinilos, CDs y casetes para coleccionar y descubrir música.",
+      imagen: "https://images.unsplash.com/photo-1461360228754-6e81c478b882?auto=format&fit=crop&w=800&q=80",
+      mapa: "https://www.google.com/maps/search/?api=1&query=Disquer%C3%ADa+Almendra%2C+M.+L%C3%A1inez+185%2C+Neuqu%C3%A9n",
+      mapaIncrustado: "https://maps.google.com/maps?q=Disquer%C3%ADa+Almendra%2C+M.+L%C3%A1inez+185%2C+Neuqu%C3%A9n&output=embed"
     },
   ];
 
   return (
     <div className="locales-page">
+      {/* Presentación principal de la página de locales. */}
       <header className="locales-header">
         <h1 className="locales-title">Nuestros Locales</h1>
-        <p className="locales-subtitle">Siente la vibración de GagaSonicos en cada rincón</p>
+        <p className="locales-subtitle">Descubrí tiendas de música e instrumentos en Neuquén Capital</p>
       </header>
 
+      {/* Crea una tarjeta por cada local usando sus datos como contenido. */}
       <div className="locales-grid">
         {locales.map((local) => (
           <div key={local.id} className="local-card">
+            {/* La imagen y el estado identifican visualmente cada sede. */}
             <div className="local-image-container">
-              <span className="local-badge">{local.estado}</span>
-              <img src={local.imagen} alt={local.nombre} className="local-image" />
+              <span className="local-badge">{local.categoria}</span>
+              <img src={local.imagen} alt={`${local.categoria}, imagen ilustrativa`} className="local-image" />
+            </div>
+            {/* Cada iframe centra el mapa en la dirección del comercio. */}
+            <div className="local-map">
+              <iframe
+                src={local.mapaIncrustado}
+                title={`Mapa de ubicación de ${local.nombre}`}
+                loading="lazy"
+                frameBorder="0"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
             <div className="local-info">
               <div className="local-name">{local.nombre}</div>
+              {/* Dirección y productos destacados de cada comercio. */}
               <div className="local-details">
-                <span>📍</span> {local.direccion}
-              </div>
-              <div className="local-details">
-                <span>⏰</span> {local.horario}
+                <i className="bi bi-geo-alt-fill" aria-hidden="true" />
+                <span>{local.direccion}</span>
               </div>
               <div className="local-event">
-                <strong>Próximo:</strong> {local.evento}
+                <strong>Encontrás:</strong> {local.especialidad}
               </div>
-              <p className="local-desc">{local.descripcion}</p>
-              <a href={`#local-${local.id}`} className="local-btn">
-                Ver Experiencia
+              <p className="local-desc">Imagen ilustrativa del rubro.</p>
+              {/* Abre la ubicación individual del comercio en Google Maps. */}
+              <a href={local.mapa} className="local-btn" target="_blank" rel="noreferrer">
+                Ver ubicación
+                <i className="bi bi-box-arrow-up-right" aria-hidden="true" />
               </a>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Categorías de productos disponibles en los comercios del listado. */}
       <section className="locales-about">
-        <h2 className="about-title">Sobre nuestra red de locales</h2>
+        <h2 className="about-title">Música para cada experiencia</h2>
         <p className="about-text">
-          En GagaSonicos, no solo ofrecemos música, creamos espacios de conexión. Cada uno de nuestros locales
-          ha sido diseñado para brindar una experiencia sensorial completa, combinando la mejor acústica
-          con un diseño vanguardista. Desde el corazón del centro hasta las zonas industriales más disruptivas,
-          nuestras sedes están equipadas con tecnología de sonido de última generación para asegurar que
-          cada beat se sienta en el alma.
+          Cada tarjeta incluye un mapa para que puedas localizar el comercio y planear tu visita.
         </p>
-        <div style={{ width: "100%" }}>
-          <iframe
-            width="100%"
-            height="600"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=Lanin%202020,%20neuquen+(Zizou)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-            title="Google Maps"
-          >
-            <a href="https://www.mapsdirections.info/calcular-la-poblacion-en-un-mapa/">Estimar la población</a>
-          </iframe>
-        </div>
+        {/* Rubros que se pueden encontrar en los comercios del listado. */}
         <div className="about-features">
           <div className="feature-item">
-            <span className="feature-icon">🔊</span>
-            <strong className="feature-label">Sonido Hi-Fi</strong>
-            <p className="feature-desc">Acústica profesional en cada sala.</p>
+            <i className="bi bi-volume-up-fill feature-icon" aria-hidden="true" />
+            <strong className="feature-label">Instrumentos</strong>
+            <p className="feature-desc">Guitarras, teclados y otros instrumentos musicales.</p>
           </div>
           <div className="feature-item">
-            <span className="feature-icon">✨</span>
-            <strong className="feature-label">Ambiente VIP</strong>
-            <p className="feature-desc">Espacios exclusivos y confort total.</p>
+            <i className="bi bi-speaker-fill feature-icon" aria-hidden="true" />
+            <strong className="feature-label">Audio e iluminación</strong>
+            <p className="feature-desc">Equipos, accesorios y luces para sonido profesional.</p>
           </div>
           <div className="feature-item">
-            <span className="feature-icon">⚡</span>
-            <strong className="feature-label">Energía Pura</strong>
-            <p className="feature-desc">La mejor vibra de la ciudad.</p>
+            <i className="bi bi-vinyl-fill feature-icon" aria-hidden="true" />
+            <strong className="feature-label">Música física</strong>
+            <p className="feature-desc">Discos, vinilos y casetes para coleccionar.</p>
           </div>
         </div>
       </section>
