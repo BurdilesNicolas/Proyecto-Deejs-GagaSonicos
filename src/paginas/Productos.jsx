@@ -111,6 +111,14 @@ function Productos() {
         <span>Productos</span>
       </div>
 
+      <div className="acceso-merch">
+        <a className="boton-acceso-merch" href="#merch">
+          <i className="bi bi-bag" aria-hidden="true"></i>
+          Ver merch oficial
+          <i className="bi bi-arrow-down" aria-hidden="true"></i>
+        </a>
+      </div>
+
       <div className="layout-productos">
         {/* SIDEBAR DE FILTROS */}
         <aside className="sidebar-filtros">
