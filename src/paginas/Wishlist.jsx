@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useWishlist } from '../data/Wishlist'
 import { suscribirProductos } from '../services/productosService'
 import { useUsuarioActual } from '../utils/sesion'
@@ -10,9 +10,8 @@ function formatearPrecio(numero) {
 }
 
 function Wishlist() {
-  const { ids, alternar } = useWishlist()
+  const { ids, alternar, cargando: cargandoWishlist, error: errorWishlist } = useWishlist()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
-  const navigate = useNavigate()
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
 
@@ -23,13 +22,14 @@ function Wishlist() {
 
   const favoritos = ids.map((id) => productos.find((p) => String(p.id) === String(id))).filter(Boolean)
 
-  if (cargandoSesion || cargando) return <div className="pagina-wishlist"><div className="wishlist-contenedor"><h1 className="wishlist-titulo">Tu wishlist</h1><p>Cargando...</p></div></div>
+  if (cargandoSesion || cargandoWishlist || cargando) return <div className="pagina-wishlist"><div className="wishlist-contenedor"><h1 className="wishlist-titulo">Tu wishlist</h1><p>Cargando...</p></div></div>
 
   if (!cuenta) return <div className="pagina-wishlist"><div className="wishlist-contenedor"><h1 className="wishlist-titulo">Tu wishlist</h1><p>Iniciá sesión para guardar y consultar tus favoritos.</p><Link to="/Perfil" className="wishlist-btn">Iniciar sesión</Link></div></div>
 
   return (
     <div className="pagina-wishlist"><div className="wishlist-contenedor">
       <h1 className="wishlist-titulo">Tu wishlist</h1>
+      {errorWishlist && <p role="alert">{errorWishlist}</p>}
       <p className="wishlist-sub">{favoritos.length === 1 ? '1 disco guardado' : `${favoritos.length} discos guardados`}</p>
       {favoritos.length === 0 ? <div className="wishlist-vacio"><p>Todavía no guardaste ningún disco.</p><Link to="/Productos" className="wishlist-btn">Ver productos</Link></div> :
         <ul className="wishlist-grilla">{favoritos.map((p) => <li key={p.id} className="wishlist-card">
@@ -38,7 +38,7 @@ function Wishlist() {
           {p.artista && <span className="wishlist-artista">{p.artista}</span>}
           <span className="wishlist-precio">{formatearPrecio(p.precio)}</span>
           <div className="wishlist-acciones"><Link to={`/Productos/${p.id}`} className="wishlist-btn">Ver disco</Link>
-            <button type="button" className="wishlist-quitar" aria-label={`Quitar ${p.nombre} de la wishlist`} onClick={() => alternar(p.id)}>Quitar</button></div>
+            <button type="button" className="wishlist-quitar" aria-label={`Quitar ${p.nombre} de la wishlist`} onClick={() => alternar(p.id).catch((error) => console.error('No se pudo actualizar la wishlist:', error))}>Quitar</button></div>
         </li>)}</ul>}
     </div></div>
   )

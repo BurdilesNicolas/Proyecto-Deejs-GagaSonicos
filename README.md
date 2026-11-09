@@ -32,3 +32,22 @@ Inicio consulta canciones, artistas y álbumes con Spotify Web API usando el flu
 5. En Vercel, definí `SPOTIFY_CLIENT_ID` y `SPOTIFY_CLIENT_SECRET` como variables de entorno del servidor para cada entorno de despliegue. No las prefijes con `VITE_`.
 
 La API usa el endpoint oficial de búsqueda y no solicita acceso a la cuenta ni usa endpoints de recomendaciones. Spotify puede limitar las aplicaciones en Development Mode; revisá los permisos y restricciones vigentes en el Dashboard de tu aplicación.
+
+## Carrito y wishlist por cuenta
+
+El carrito y la wishlist se guardan en Firestore, separados por UID, en:
+
+- `usuarios/{uid}/preferencias/carrito`
+- `usuarios/{uid}/preferencias/wishlist`
+
+Para habilitarlos, integrá esta regla dentro de `match /databases/{database}/documents` y publicá las reglas. Cada persona autenticada solo puede leer y modificar sus propios documentos:
+
+```firestore
+match /usuarios/{uid}/preferencias/{documento} {
+  allow read, write: if request.auth != null
+    && request.auth.uid == uid
+    && documento in ['carrito', 'wishlist'];
+}
+```
+
+La primera vez que una cuenta inicia sesión, los datos locales anteriores se migran a sus documentos si todavía no existen. Los datos no se comparten entre cuentas.

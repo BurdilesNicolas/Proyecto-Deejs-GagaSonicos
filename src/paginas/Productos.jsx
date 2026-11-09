@@ -14,7 +14,7 @@ function formatearPrecio(numero) {
 }
 
 function Productos() {
-  const { estaEnWishlist, alternar } = useWishlist()
+  const { estaEnWishlist, alternar, error: errorWishlist } = useWishlist()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -62,23 +62,32 @@ function Productos() {
     return true
   }
 
-  function agregarFavorito(id) {
-    if (exigirSesion()) alternar(id)
+  async function agregarFavorito(id) {
+    if (!exigirSesion()) return
+    try {
+      await alternar(id)
+    } catch (error) {
+      console.error('No se pudo actualizar la wishlist:', error)
+    }
   }
 
-  function agregarCarrito(producto) {
+  async function agregarCarrito(producto) {
     if (!exigirSesion()) return
     const formato = Array.isArray(producto.formatos)
       ? producto.formatos.find((f) => Number(f.stock) > 0)
       : null
     if (Array.isArray(producto.formatos) && !formato) return
-    agregarAlCarrito({
-      id: producto.id,
-      formato: formato?.nombre || producto.formato || 'Edición estándar',
-      cantidad: 1,
-      maximo: Math.min(LIMITE_POR_PRODUCTO, Number(formato?.stock) || LIMITE_POR_PRODUCTO),
-    })
-    navigate('/Carrito')
+    try {
+      await agregarAlCarrito({
+        id: producto.id,
+        formato: formato?.nombre || producto.formato || 'Edición estándar',
+        cantidad: 1,
+        maximo: Math.min(LIMITE_POR_PRODUCTO, Number(formato?.stock) || LIMITE_POR_PRODUCTO),
+      })
+      navigate('/Carrito')
+    } catch (error) {
+      console.error('No se pudo agregar el producto al carrito:', error)
+    }
   }
 
   const productosFiltrados = useMemo(() => {
@@ -118,6 +127,7 @@ function Productos() {
           <i className="bi bi-arrow-down" aria-hidden="true"></i>
         </a>
       </div>
+      {errorWishlist && <p className="sin-resultados" role="alert">{errorWishlist}</p>}
 
       <div className="layout-productos">
         {/* SIDEBAR DE FILTROS */}

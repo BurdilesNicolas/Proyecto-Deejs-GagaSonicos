@@ -50,7 +50,7 @@ function SeccionMerch({ busqueda = "" }) {
     ) || variantes.find((variante) => Number(variante.stock) > 0) || variantes[0];
   }
 
-  function comprar(articulo) {
+  async function comprar(articulo) {
     if (cargandoSesion) return;
     if (!cuenta) {
       navigate("/Perfil");
@@ -59,14 +59,19 @@ function SeccionMerch({ busqueda = "" }) {
     const variante = obtenerVariante(articulo);
     if (!variante || Number(variante.stock) <= 0) return;
 
-    const agregadas = agregarAlCarrito({
-      id: articulo.id,
-      formato: etiquetaVariante(variante),
-      tipo: "merch",
-      cantidad: 1,
-      maximo: Math.min(LIMITE_POR_PRODUCTO, Number(variante.stock)),
-    });
-    setAviso(agregadas ? `${articulo.nombre} agregado al carrito.` : "Ya alcanzaste el máximo permitido de ese artículo.");
+    try {
+      const agregadas = await agregarAlCarrito({
+        id: articulo.id,
+        formato: etiquetaVariante(variante),
+        tipo: "merch",
+        cantidad: 1,
+        maximo: Math.min(LIMITE_POR_PRODUCTO, Number(variante.stock)),
+      });
+      setAviso(agregadas ? `${articulo.nombre} agregado al carrito.` : "Ya alcanzaste el máximo permitido de ese artículo.");
+    } catch (error) {
+      console.error("No se pudo agregar merch al carrito:", error);
+      setAviso("No se pudo guardar el artículo en tu carrito. Intentá nuevamente.");
+    }
   }
 
   return (
