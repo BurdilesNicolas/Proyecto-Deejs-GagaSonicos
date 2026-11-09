@@ -1,16 +1,37 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { productos, normalizar } from '../data/Productos'
+import { normalizar } from '../data/Productos'
+import { suscribirProductos } from '../services/productosService'
 import '../estilos/Buscador.css'
 
 function Buscador() {
   const [abierto, setAbierto] = useState(false)
   const [consulta, setConsulta] = useState('')
+  const [productos, setProductos] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState(false)
   const contenedorRef = useRef(null)
   const inputRef = useRef(null)
   const navigate = useNavigate()
 
   const texto = consulta.trim()
+
+  useEffect(() => {
+    const cancelar = suscribirProductos(
+      (datos) => {
+        setProductos(datos)
+        setCargando(false)
+        setError(false)
+      },
+      (err) => {
+        console.error('Error al cargar productos para la búsqueda:', err)
+        setError(true)
+        setCargando(false)
+      }
+    )
+
+    return cancelar
+  }, [])
 
   // Máximo 5 sugerencias, buscando en nombre y artista
   const resultados =
@@ -107,7 +128,13 @@ function Buscador() {
           )}
 
           {texto !== '' && resultados.length === 0 && (
-            <p className="buscador-vacio">Sin resultados para “{texto}”</p>
+            <p className="buscador-vacio">
+              {cargando
+                ? 'Cargando productos...'
+                : error
+                  ? 'No se pudieron cargar los productos.'
+                  : `Sin resultados para “${texto}”`}
+            </p>
           )}
         </div>
       )}
