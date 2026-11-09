@@ -47,6 +47,80 @@
   opacity: 0.7;
 }
 
+.error-ruta {
+  gap: 18px;
+}
+
+.error-ruta-codigo {
+  color: #fff;
+  font-size: clamp(4rem, 14vw, 8rem);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.error-ruta-titulo {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.error-ruta-gato {
+  width: min(320px, 75vw);
+  aspect-ratio: 11 / 9;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.error-ruta-mensaje {
+  max-width: 90vw;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.error-ruta-path {
+  overflow-wrap: anywhere;
+  color: #fff;
+}
+
+.error-ruta-enlace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: #5b4ee6;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.error-ruta-audio {
+  width: min(360px, 85vw);
+}
+
+.error-ruta-enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.error-ruta-enlace:hover {
+  background: #7065f0;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.error-ruta-enlace:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
 /* El disco de vinilo: surcos + etiqueta violeta + un reflejo que, al girar, se nota */
 .cargando-disco {
   display: block;
