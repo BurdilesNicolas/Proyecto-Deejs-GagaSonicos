@@ -11,10 +11,18 @@
   color: inherit;
 }
 
-/* Ocupa el área de contenido, por debajo del navbar fijo */
+/* Cubre toda la pantalla, incluidos el navbar y el footer */
 .cargando--pagina {
-  min-height: 60vh;
-  padding: var(--navbar-offset, 100px) 20px 40px;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 20px;
+  background: linear-gradient(180deg, #2b2fc9 0%, #1b1a82 40%, #0b0b30 100%);
+  color: #f5f2ff;
 }
 
 /* Dentro de un panel o sección */
@@ -43,7 +51,7 @@
 .cargando-disco {
   display: block;
   flex-shrink: 0;
-  width: 56px;
+  width: 140px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background:
@@ -61,13 +69,13 @@
 
 @keyframes cargando-girar {
   to {
-    rotate: 360deg;
+    transform: rotate(360deg);
   }
 }
 
-/* Quien prefiere menos movimiento no ve el giro: queda el disco quieto y el texto */
+/* Quien prefiere menos movimiento ve el disco girar más despacio */
 @media (prefers-reduced-motion: reduce) {
   .cargando-disco {
-    animation: none;
+    animation-duration: 3s;
   }
 }
