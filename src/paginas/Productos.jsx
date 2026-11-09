@@ -7,6 +7,7 @@ import { useWishlist } from '../data/Wishlist'
 import { suscribirProductos } from '../services/productosService'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito'
 import { useUsuarioActual } from '../utils/sesion'
+import SeccionMerch from '../componentes/SeccionMerch'
 
 function formatearPrecio(numero) {
   return Number(numero || 0).toLocaleString('es-AR')
@@ -165,6 +166,7 @@ function Productos() {
                   onChange={(e) => setPrecioHasta(e.target.value)}
                 />
               </div>
+              <SeccionMerch busqueda={busqueda} />
             </div>
           </div>
         </aside>

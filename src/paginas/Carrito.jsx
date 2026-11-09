@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { suscribirProductos } from '../services/productosService'
+import { suscribirMerch } from '../services/merchService'
 import { useUsuarioActual } from '../utils/sesion'
 import {
   leerCarrito,
@@ -20,40 +21,63 @@ function Carrito() {
   const [items, setItems] = useState(leerCarrito)
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
   const [productos, setProductos] = useState([])
+  const [merch, setMerch] = useState([])
   const [cargandoProductos, setCargandoProductos] = useState(true)
+  const [cargandoMerch, setCargandoMerch] = useState(true)
   const [mensaje, setMensaje] = useState('')
 
-  useEffect(() => suscribirProductos((datos) => { setProductos(datos); setCargandoProductos(false) }, (error) => {
-    console.error('Error al cargar productos del carrito:', error)
-    setCargandoProductos(false)
-  }), [])
+  useEffect(() => {
+    const cancelarProductos = suscribirProductos((datos) => {
+      setProductos(datos)
+      setCargandoProductos(false)
+    }, (error) => {
+      console.error('Error al cargar productos del carrito:', error)
+      setCargandoProductos(false)
+    })
+    const cancelarMerch = suscribirMerch((datos) => {
+      setMerch(datos)
+      setCargandoMerch(false)
+    }, (error) => {
+      console.error('Error al cargar merch del carrito:', error)
+      setCargandoMerch(false)
+    })
+    return () => {
+      cancelarProductos()
+      cancelarMerch()
+    }
+  }, [])
 
   // Une cada ítem guardado (id + formato + cantidad) con los datos del producto
   const lineas = items
     .map((item) => {
-      const producto = productos.find((p) => String(p.id) === String(item.id))
+      const tipo = item.tipo || 'producto'
+      const catalogo = tipo === 'merch' ? merch : productos
+      const producto = catalogo.find((p) => String(p.id) === String(item.id))
       if (!producto) return null
       const infoFormato = producto.formatos?.find((f) => f.nombre === item.formato)
+      const varianteMerch = tipo === 'merch'
+        ? producto.variantes?.find((variante) => [variante.talle, variante.color].filter(Boolean).join(' / ') === item.formato)
+        : null
       const precio = infoFormato ? infoFormato.precio : producto.precio
-      const stock = infoFormato?.stock
+      const stock = tipo === 'merch' ? varianteMerch?.stock : infoFormato?.stock
       // Máximo de esa línea: el límite general o el stock del formato, lo que sea menor
       const maximo = Math.max(
         1,
         Math.min(LIMITE_POR_PRODUCTO, typeof stock === 'number' ? stock : LIMITE_POR_PRODUCTO)
       )
-      return { ...item, producto, precio, maximo }
+      return { ...item, tipo, producto, precio, maximo }
     })
     .filter(Boolean)
 
   const unidades = lineas.reduce((acc, l) => acc + l.cantidad, 0)
   const total = lineas.reduce((acc, l) => acc + l.precio * l.cantidad, 0)
 
-  function cambiar(id, formato, nuevaCantidad, maximo) {
-    setItems(cambiarCantidad(id, formato, nuevaCantidad, maximo))
+  function cambiar(id, formato, nuevaCantidad, maximo, tipo) {
+    setItems(cambiarCantidad(id, formato, nuevaCantidad, maximo, tipo))
   }
 
-  function quitar(id, formato) {
-    setItems(quitarDelCarrito(id, formato))
+  function quitar(id, formato, tipo) {
+    setItems(quitarDelCarrito(id, formato, tipo))
   }
 
   function vaciar() {
@@ -67,7 +91,7 @@ function Carrito() {
     )
   }
 
-  if (cargandoSesion || cargandoProductos) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
+  if (cargandoSesion || cargandoProductos || cargandoMerch) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
 
   if (!cuenta) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Iniciá sesión para agregar productos y consultar tu carrito.</p><Link to="/Perfil" className="carrito-btn">Iniciar sesión</Link></div></div>
 
@@ -87,17 +111,17 @@ function Carrito() {
           <div className="carrito-layout">
 
             <ul className="carrito-lista">
-              {lineas.map(({ producto, formato, cantidad, precio, maximo }) => (
-                <li key={`${producto.id}-${formato}`} className="carrito-item">
-                  <Link to={`/Productos/${producto.id}`} className="carrito-img">
+              {lineas.map(({ producto, formato, cantidad, precio, maximo, tipo }) => (
+                <li key={`${tipo}-${producto.id}-${formato}`} className="carrito-item">
+                  <Link to={tipo === 'merch' ? '/Productos#merch' : `/Productos/${producto.id}`} className="carrito-img">
                     {producto.imagen && <img src={producto.imagen} alt="" />}
                   </Link>
 
                   <div className="carrito-datos">
-                    <Link to={`/Productos/${producto.id}`} className="carrito-nombre">
+                    <Link to={tipo === 'merch' ? '/Productos#merch' : `/Productos/${producto.id}`} className="carrito-nombre">
                       {producto.nombre}
                     </Link>
-                    {producto.artista && (
+                    {producto.artista && tipo !== 'merch' && (
                       <span className="carrito-artista">{producto.artista}</span>
                     )}
                     <span className="carrito-formato">{formato}</span>
@@ -110,7 +134,7 @@ function Carrito() {
                         type="button"
                         aria-label="Restar una unidad"
                         disabled={cantidad <= 1}
-                        onClick={() => cambiar(producto.id, formato, cantidad - 1, maximo)}
+                        onClick={() => cambiar(producto.id, formato, cantidad - 1, maximo, tipo)}
                       >
                         −
                       </button>
@@ -120,7 +144,7 @@ function Carrito() {
                         aria-label="Sumar una unidad"
                         title={cantidad >= maximo ? `Máximo ${maximo} por producto` : undefined}
                         disabled={cantidad >= maximo}
-                        onClick={() => cambiar(producto.id, formato, cantidad + 1, maximo)}
+                        onClick={() => cambiar(producto.id, formato, cantidad + 1, maximo, tipo)}
                       >
                         +
                       </button>
@@ -134,7 +158,7 @@ function Carrito() {
                       type="button"
                       className="carrito-quitar"
                       aria-label={`Quitar ${producto.nombre} del carrito`}
-                      onClick={() => quitar(producto.id, formato)}
+                      onClick={() => quitar(producto.id, formato, tipo)}
                     >
                       Quitar
                     </button>

@@ -25,6 +25,7 @@ const Admin = lazy(() => import("./paginas/Admin"));
 const AdminUsuarios = lazy(() => import("./paginas/admin/AdminUsuarios"));
 const AdminReview = lazy(() => import("./paginas/admin/AdminReview"));
 const AdminProductos = lazy(() => import("./paginas/admin/AdminProductos"));
+const AdminMerch = lazy(() => import("./paginas/admin/AdminMerch"));
 
 
 function ContenidoApp() {
@@ -83,6 +84,7 @@ function ContenidoApp() {
           <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
           <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
           <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
+          <Route path="/Admin/Merch" element={<AdminRoute> <AdminMerch /> </AdminRoute>} />
           <Route path="*" element={<RutaInexistente pathname={pathname} />} />
         </Routes>
       </Suspense>

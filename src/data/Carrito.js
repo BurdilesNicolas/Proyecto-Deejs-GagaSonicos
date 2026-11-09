@@ -32,9 +32,11 @@ function guardarCarrito(items) {
 
 // Devuelve cuántas unidades se agregaron de verdad (0 si ya estaba en el máximo).
 // "maximo" permite bajar el límite cuando el stock de ese formato es menor.
-export function agregarAlCarrito({ id, formato, cantidad = 1, maximo = LIMITE_POR_PRODUCTO }) {
+export function agregarAlCarrito({ id, formato, tipo = 'producto', cantidad = 1, maximo = LIMITE_POR_PRODUCTO }) {
   const items = leerCarrito()
-  const existente = items.find((i) => i.id === id && i.formato === formato)
+  const existente = items.find((i) =>
+    i.id === id && i.formato === formato && (i.tipo || 'producto') === tipo
+  )
   const actual = existente ? existente.cantidad : 0
   const agregadas = Math.max(0, Math.min(cantidad, maximo - actual))
 
@@ -43,24 +45,26 @@ export function agregarAlCarrito({ id, formato, cantidad = 1, maximo = LIMITE_PO
   if (existente) {
     existente.cantidad = actual + agregadas
   } else {
-    items.push({ id, formato, cantidad: agregadas })
+    items.push({ id, formato, cantidad: agregadas, ...(tipo !== 'producto' && { tipo }) })
   }
   guardarCarrito(items)
   return agregadas
 }
 
-export function cambiarCantidad(id, formato, cantidad, maximo = LIMITE_POR_PRODUCTO) {
+export function cambiarCantidad(id, formato, cantidad, maximo = LIMITE_POR_PRODUCTO, tipo = 'producto') {
   const items = leerCarrito().map((i) =>
-    i.id === id && i.formato === formato
+    i.id === id && i.formato === formato && (i.tipo || 'producto') === tipo
       ? { ...i, cantidad: Math.max(1, Math.min(cantidad, maximo)) }
       : i
   )
   return guardarCarrito(items)
 }
 
-export function quitarDelCarrito(id, formato) {
+export function quitarDelCarrito(id, formato, tipo = 'producto') {
   return guardarCarrito(
-    leerCarrito().filter((i) => !(i.id === id && i.formato === formato))
+    leerCarrito().filter((i) =>
+      !(i.id === id && i.formato === formato && (i.tipo || 'producto') === tipo)
+    )
   )
 }
 
