@@ -6,6 +6,7 @@ import { suscribirMerch } from '../services/merchService'
 import '../estilos/Buscador.css'
 
 function Buscador() {
+  // abierto y consulta controlan el panel desplegable y el texto que se está buscando.
   const [abierto, setAbierto] = useState(false)
   const [consulta, setConsulta] = useState('')
   const [productos, setProductos] = useState([])
@@ -20,6 +21,8 @@ function Buscador() {
   const texto = consulta.trim()
   const cargando = cargandoProductos || cargandoMerch
 
+  // Cada catálogo tiene su propia suscripción: así un fallo de lectura queda registrado
+  // y los cambios de productos o merch se reflejan en las sugerencias sin recargar.
   useEffect(() => {
     const cancelarProductos = suscribirProductos(
       (datos) => {
@@ -50,7 +53,8 @@ function Buscador() {
     }
   }, [])
 
-  // Máximo 5 sugerencias, buscando en nombre y artista
+  // Busca en discos por nombre/artista y en merch también por categoría/descripción.
+  // Se muestran como máximo cinco coincidencias en el menú desplegable.
   const resultados =
     texto === ''
       ? []
@@ -60,7 +64,7 @@ function Buscador() {
           )
           .slice(0, 5)
 
-  // Cerrar al hacer click afuera o apretar Escape
+  // Cierra el panel cuando se hace clic fuera del buscador o se presiona Escape.
   useEffect(() => {
     function cerrarAfuera(e) {
       if (contenedorRef.current && !contenedorRef.current.contains(e.target)) {
@@ -78,12 +82,13 @@ function Buscador() {
     }
   }, [])
 
-  // Poner el cursor en el input apenas se abre
+  // Al abrir el panel, enfoca el campo para que se pueda escribir inmediatamente.
   useEffect(() => {
     if (abierto) inputRef.current?.focus()
   }, [abierto])
 
   function irAResultados(busqueda) {
+    // Comparte la búsqueda con la página de productos, que filtra discos y merch.
     navigate(`/Productos?buscar=${encodeURIComponent(busqueda)}`)
     setAbierto(false)
   }
@@ -93,6 +98,8 @@ function Buscador() {
     if (texto) irAResultados(texto)
   }
 
+  // El botón abre el panel; dentro se escriben consultas, eligen sugerencias
+  // o se navega a todos los resultados encontrados.
   return (
     <div className="buscador" ref={contenedorRef}>
       <button
@@ -119,6 +126,7 @@ function Buscador() {
             />
           </form>
 
+          {/* Las sugerencias conservan la categoría para distinguir merch y música. */}
           {texto !== '' && resultados.length > 0 && (
             <>
               <ul className="buscador-resultados">
@@ -144,6 +152,7 @@ function Buscador() {
             </>
           )}
 
+          {/* El mensaje diferencia entre carga pendiente, error de Firestore y cero coincidencias. */}
           {texto !== '' && resultados.length === 0 && (
             <p className="buscador-vacio">
               {cargando

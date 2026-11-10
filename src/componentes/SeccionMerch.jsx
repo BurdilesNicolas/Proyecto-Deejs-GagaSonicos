@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from "../data/Carrito";
 import { normalizar } from "../data/Productos";
 import { suscribirMerch } from "../services/merchService";
@@ -7,6 +8,7 @@ import { useUsuarioActual } from "../utils/sesion";
 import "../estilos/Merch.css";
 
 function etiquetaVariante(variante) {
+  // Usa una etiqueta consistente para seleccionar la variante y guardarla en el carrito.
   return [variante.talle, variante.color].filter(Boolean).join(" / ");
 }
 
@@ -15,6 +17,7 @@ function formatearPrecio(numero) {
 }
 
 function SeccionMerch({ busqueda = "" }) {
+  // Se conserva en estado el inventario y la variante seleccionada por artículo.
   const [articulos, setArticulos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -23,6 +26,8 @@ function SeccionMerch({ busqueda = "" }) {
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual();
   const navigate = useNavigate();
 
+  // Escucha el catálogo público de merch para que las altas y cambios de Administración
+  // se vean en esta sección sin tener que recargar la página.
   useEffect(() => suscribirMerch(
     (datos) => {
       setArticulos(datos);
@@ -36,6 +41,7 @@ function SeccionMerch({ busqueda = "" }) {
     }
   ), []);
 
+  // Reutiliza la búsqueda del navbar para filtrar nombre, categoría y descripción del merch.
   const articulosFiltrados = articulos.filter((articulo) =>
     !busqueda.trim() || normalizar(
       `${articulo.nombre || ""} ${articulo.categoria || ""} ${articulo.descripcion || ""}`
@@ -44,6 +50,8 @@ function SeccionMerch({ busqueda = "" }) {
 
   function obtenerVariante(articulo) {
     const variantes = articulo.variantes ?? [];
+    // Si el usuario eligió una combinación agotada, se selecciona otra disponible;
+    // si no queda ninguna, se conserva la primera para mostrar que está agotada.
     return variantes.find((variante) =>
       etiquetaVariante(variante) === variantesSeleccionadas[articulo.id] &&
       Number(variante.stock) > 0
@@ -51,6 +59,7 @@ function SeccionMerch({ busqueda = "" }) {
   }
 
   async function comprar(articulo) {
+    // Solo una cuenta autenticada puede guardar una línea de merch en su carrito.
     if (cargandoSesion) return;
     if (!cuenta) {
       navigate("/Perfil");
@@ -74,6 +83,8 @@ function SeccionMerch({ busqueda = "" }) {
     }
   }
 
+  // La sección muestra estados de carga/error y una tarjeta por artículo con
+  // precio, selector de variante y compra limitada por stock real.
   return (
     <section className="seccion-merch" id="merch">
       <header className="merch-encabezado">
@@ -85,6 +96,7 @@ function SeccionMerch({ busqueda = "" }) {
       {aviso && <p className="merch-aviso" role="status">{aviso}</p>}
       {cargando && <p className="merch-estado">Cargando merch...</p>}
       {error && <p className="merch-estado" role="alert">{error}</p>}
+      {/* El texto vacío distingue catálogo aún sin artículos de una búsqueda sin coincidencias. */}
       {!cargando && !error && articulosFiltrados.length === 0 && (
         <p className="merch-estado">
           {articulos.length === 0
@@ -93,6 +105,7 @@ function SeccionMerch({ busqueda = "" }) {
         </p>
       )}
 
+      {/* Cada tarjeta deja elegir entre variantes en stock antes de agregar el artículo. */}
       {!cargando && !error && articulosFiltrados.length > 0 && (
         <div className="merch-grilla">
           {articulosFiltrados.map((articulo) => {
@@ -101,12 +114,14 @@ function SeccionMerch({ busqueda = "" }) {
             const sinStock = !variante || Number(variante.stock) <= 0;
             return (
               <article className="merch-card" key={articulo.id}>
-                <div className="merch-imagen">
-                  {articulo.imagen && <img src={articulo.imagen} alt={articulo.nombre} loading="lazy" />}
-                  <span className="merch-badge">{articulo.categoria}</span>
-                </div>
+                <Link to={`/Merch/${articulo.id}`} className="merch-enlace-detalle" aria-label={`Ver detalle de ${articulo.nombre}`}>
+                  <div className="merch-imagen">
+                    {articulo.imagen && <img src={articulo.imagen} alt={articulo.nombre} loading="lazy" />}
+                    <span className="merch-badge">{articulo.categoria}</span>
+                  </div>
+                </Link>
                 <div className="merch-info">
-                  <h3>{articulo.nombre}</h3>
+                  <h3><Link to={`/Merch/${articulo.id}`} className="merch-nombre-enlace">{articulo.nombre}</Link></h3>
                   {articulo.descripcion && <p className="merch-descripcion">{articulo.descripcion}</p>}
                   <p className="merch-precio">${formatearPrecio(articulo.precio)},00</p>
 
@@ -129,6 +144,7 @@ function SeccionMerch({ busqueda = "" }) {
                     </label>
                   )}
                   {variantes.length === 0 && <p className="merch-stock">Sin variantes disponibles</p>}
+                  <Link to={`/Merch/${articulo.id}`} className="merch-ver-detalle">Ver detalle</Link>
                   <button type="button" className="merch-comprar" disabled={sinStock || cargandoSesion} onClick={() => comprar(articulo)}>
                     {sinStock ? "Agotado" : "Agregar al carrito"}
                   </button>

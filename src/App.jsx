@@ -11,6 +11,7 @@ import audioGato from "./assets/audio/Gatomeme.mp3";
 import Inicio from "./paginas/Inicio";
 import Productos from "./paginas/Productos";
 import ProductoDetalle from "./paginas/ProductoDetalle";
+import MerchDetalle from "./paginas/MerchDetalle";
 import Carrito from "./paginas/Carrito";
 import Wishlist from "./paginas/Wishlist";
 
@@ -78,6 +79,7 @@ function ContenidoApp() {
           {/*Spotify*/}
           <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
           <Route path="/Productos/:id" element={<ProductoDetalle />} />
+          <Route path="/Merch/:id" element={<MerchDetalle />} />
 
           {/* Administración */}
           <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />

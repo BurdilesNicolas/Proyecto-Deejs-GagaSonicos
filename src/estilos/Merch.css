@@ -84,6 +84,33 @@
   object-fit: cover;
 }
 
+.merch-enlace-detalle {
+  display: block;
+}
+
+.merch-nombre-enlace {
+  color: inherit;
+  text-decoration: none;
+}
+
+.merch-nombre-enlace:hover {
+  color: #c4bdff;
+}
+
+.merch-ver-detalle {
+  margin: 0 0 10px;
+  color: #c4bdff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.merch-ver-detalle:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 .merch-badge {
   position: absolute;
   top: 12px;

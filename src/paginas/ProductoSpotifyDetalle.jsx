@@ -5,9 +5,13 @@ import '../estilos/ProductoDetalle.css'
 
 function ProductoSpotifyDetalle() {
   const { spotifyAlbumId } = useParams()
+  // album contiene la respuesta de Spotify; error permite mostrar una alternativa
+  // si la API no encuentra el álbum o no está disponible.
   const [album, setAlbum] = useState(null)
   const [error, setError] = useState('')
 
+  // Consulta Spotify al cambiar el ID de la ruta. La bandera activo evita que
+  // una respuesta tardía de una navegación anterior modifique la pantalla actual.
   useEffect(() => {
     let activo = true
     setAlbum(null)
@@ -62,6 +66,8 @@ function ProductoSpotifyDetalle() {
     ['Sello', album.label],
   ].filter(([, value]) => value)
 
+  // Antes de mostrar la ficha se devuelven pantallas específicas para carga o error.
+  // Con éxito se presentan portada, artistas, metadatos y reproductor oficial.
   return (
     <div className="pagina-detalle">
       <div className="detalle-contenedor">
@@ -71,6 +77,7 @@ function ProductoSpotifyDetalle() {
           <span>{album.name}</span>
         </nav>
 
+        {/* El hero combina el arte del álbum con el enlace y reproductor de Spotify. */}
         <section className="detalle-hero">
           <div className="detalle-visual">
             <div className="detalle-portada-wrap">
@@ -115,6 +122,7 @@ function ProductoSpotifyDetalle() {
           </div>
         </section>
 
+        {/* Los metadatos faltantes se omiten para dejar una ficha compacta. */}
         <details className="detalle-acordeon" open>
           <summary>Información del álbum</summary>
           <div className="detalle-acordeon-contenido">
