@@ -4,11 +4,11 @@ import { suscribirProductos } from '../services/productosService'
 import { suscribirMerch } from '../services/merchService'
 import { useUsuarioActual } from '../utils/sesion'
 import {
-  leerCarrito,
   cambiarCantidad,
   quitarDelCarrito,
   vaciarCarrito,
   LIMITE_POR_PRODUCTO,
+  useCarrito,
 } from '../data/Carrito'
 import '../estilos/Carrito.css'
 
@@ -17,8 +17,7 @@ function formatearPrecio(numero) {
 }
 
 function Carrito() {
-  // Se lee de localStorage al abrir; después el estado se actualiza con cada cambio
-  const [items, setItems] = useState(leerCarrito)
+  const { items, cargando: cargandoCarrito, error: errorCarrito } = useCarrito()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
   const [productos, setProductos] = useState([])
   const [merch, setMerch] = useState([])
@@ -72,17 +71,32 @@ function Carrito() {
   const unidades = lineas.reduce((acc, l) => acc + l.cantidad, 0)
   const total = lineas.reduce((acc, l) => acc + l.precio * l.cantidad, 0)
 
-  function cambiar(id, formato, nuevaCantidad, maximo, tipo) {
-    setItems(cambiarCantidad(id, formato, nuevaCantidad, maximo, tipo))
+  async function cambiar(id, formato, nuevaCantidad, maximo, tipo) {
+    try {
+      await cambiarCantidad(id, formato, nuevaCantidad, maximo, tipo)
+    } catch (error) {
+      console.error('No se pudo actualizar el carrito:', error)
+      setMensaje('No se pudo actualizar el carrito. Revisá tu conexión e intentá otra vez.')
+    }
   }
 
-  function quitar(id, formato, tipo) {
-    setItems(quitarDelCarrito(id, formato, tipo))
+  async function quitar(id, formato, tipo) {
+    try {
+      await quitarDelCarrito(id, formato, tipo)
+    } catch (error) {
+      console.error('No se pudo quitar el artículo del carrito:', error)
+      setMensaje('No se pudo quitar el artículo. Intentá nuevamente.')
+    }
   }
 
-  function vaciar() {
-    setItems(vaciarCarrito())
+  async function vaciar() {
     setMensaje('')
+    try {
+      await vaciarCarrito()
+    } catch (error) {
+      console.error('No se pudo vaciar el carrito:', error)
+      setMensaje('No se pudo vaciar el carrito. Intentá nuevamente.')
+    }
   }
 
   function finalizar() {
@@ -91,7 +105,7 @@ function Carrito() {
     )
   }
 
-  if (cargandoSesion || cargandoProductos || cargandoMerch) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
+  if (cargandoSesion || cargandoCarrito || cargandoProductos || cargandoMerch) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
 
   if (!cuenta) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Iniciá sesión para agregar productos y consultar tu carrito.</p><Link to="/Perfil" className="carrito-btn">Iniciar sesión</Link></div></div>
 
@@ -99,6 +113,7 @@ function Carrito() {
     <div className="pagina-carrito">
       <div className="carrito-contenedor">
         <h1 className="carrito-titulo">Tu carrito</h1>
+        {errorCarrito && <p className="carrito-mensaje" role="alert">{errorCarrito}</p>}
 
         {lineas.length === 0 ? (
           <div className="carrito-vacio">

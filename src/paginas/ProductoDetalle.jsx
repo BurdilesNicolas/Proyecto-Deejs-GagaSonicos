@@ -129,9 +129,9 @@ function DetalleProducto({ producto, productos }) {
 
   const [formatoActivo, setFormatoActivo] = useState(primerDisponible)
   const [cantidadElegida, setCantidadElegida] = useState(1)
-  const { estaEnWishlist, alternar: alternarWishlist } = useWishlist()
+  const { estaEnWishlist, alternar: alternarWishlist, error: errorWishlist } = useWishlist()
   const favorito = estaEnWishlist(producto.id)
-  const [aviso, setAviso] = useState(null) // { tipo: 'ok' | 'parcial' | 'limite', hora }
+  const [aviso, setAviso] = useState(null)
 
   const formato = formatos[formatoActivo]
 
@@ -196,29 +196,48 @@ function DetalleProducto({ producto, productos }) {
     return true
   }
 
-  function sumarAlCarrito() {
+  async function sumarAlCarrito() {
     if (!exigirSesion()) return
-    const agregadas = agregarAlCarrito({
-      id: producto.id,
-      formato: formato.nombre,
-      cantidad,
-      maximo: limite,
-    })
-    let tipo = 'ok'
-    if (agregadas === 0) tipo = 'limite'
-    else if (agregadas < cantidad) tipo = 'parcial'
-    setAviso({ tipo, hora: Date.now() })
+    try {
+      const agregadas = await agregarAlCarrito({
+        id: producto.id,
+        formato: formato.nombre,
+        cantidad,
+        maximo: limite,
+      })
+      let tipo = 'ok'
+      if (agregadas === 0) tipo = 'limite'
+      else if (agregadas < cantidad) tipo = 'parcial'
+      setAviso({ tipo })
+    } catch (error) {
+      console.error('No se pudo agregar el producto al carrito:', error)
+      setAviso({ tipo: 'error' })
+    }
   }
 
-  function comprarYa() {
+  async function comprarYa() {
     if (!exigirSesion()) return
-    agregarAlCarrito({
-      id: producto.id,
-      formato: formato.nombre,
-      cantidad,
-      maximo: limite,
-    })
-    navigate('/carrito')
+    try {
+      await agregarAlCarrito({
+        id: producto.id,
+        formato: formato.nombre,
+        cantidad,
+        maximo: limite,
+      })
+      navigate('/carrito')
+    } catch (error) {
+      console.error('No se pudo agregar el producto al carrito:', error)
+      setAviso({ tipo: 'error' })
+    }
+  }
+
+  async function cambiarWishlist() {
+    if (!exigirSesion()) return
+    try {
+      await alternarWishlist(producto.id)
+    } catch (error) {
+      console.error('No se pudo actualizar la wishlist:', error)
+    }
   }
 
   return (
@@ -409,7 +428,7 @@ function DetalleProducto({ producto, productos }) {
                 type="button"
                 className={favorito ? 'detalle-favorito activo' : 'detalle-favorito'}
                 aria-pressed={favorito}
-                onClick={() => { if (exigirSesion()) alternarWishlist(producto.id) }}
+                onClick={cambiarWishlist}
               >
                 {favorito ? '♥ En tu wishlist' : '♡ Agregar a la wishlist'}
               </button>
@@ -432,6 +451,8 @@ function DetalleProducto({ producto, productos }) {
                     <Link to="/carrito">Ver carrito</Link>
                   </>
                 )}
+                {aviso?.tipo === 'error' && 'No se pudo guardar el cambio. Revisá tu conexión e intentá nuevamente.'}
+                {errorWishlist && <span role="alert">{errorWishlist}</span>}
               </p>
             </div>
 
