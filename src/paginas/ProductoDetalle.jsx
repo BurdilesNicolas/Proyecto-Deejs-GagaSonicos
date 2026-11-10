@@ -18,9 +18,12 @@ function extraerSpotifyId(valor) {
   return coincidencia ? coincidencia[1] : valor.trim()
 }
 
-// Los tres formatos que se pueden elegir, en este orden
+// Orden estándar de opciones que se muestra en cada ficha. Si un formato no
+// está cargado en Firestore, igual se presenta para indicar que está agotado.
 const NOMBRES_FORMATO = ['Vinilo', 'CD', 'Cassette']
 
+// Simplifica el texto para que la clasificación de formato no dependa de tildes
+// ni de mayúsculas, por ejemplo al reconocer "Casete" y "Cassette".
 function normalizar(texto) {
   return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }
@@ -36,6 +39,7 @@ function tipoDeFormato(nombre) {
 /* ---------- Página: busca el producto según la URL (/Productos/3) ---------- */
 function ProductoDetalle() {
   const { id } = useParams()
+  // La ficha se alimenta de la misma colección en tiempo real que el catálogo.
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [errorCarga, setErrorCarga] = useState(false)
@@ -88,7 +92,8 @@ function ProductoDetalle() {
     )
   }
 
-  // key: al cambiar de producto, el formato y la cantidad elegidos arrancan de cero
+  // Cambiar la key desmonta la ficha anterior y reinicia formato y cantidad
+  // cuando se navega de un producto a otro sin recargar la aplicación.
   return <DetalleProducto key={producto.id} producto={producto} productos={productos} />
 }
 
@@ -97,6 +102,7 @@ function DetalleProducto({ producto, productos }) {
   const navigate = useNavigate()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
 
+  // Convierte los datos guardados en Firestore en opciones uniformes para la interfaz.
   // Si el producto define "formatos", siempre se muestran los tres (Vinilo, CD, Cassette):
   // los que no estén cargados o tengan stock 0 aparecen deshabilitados como "Agotado".
   // Si no define "formatos", se usa una sola edición con el precio base.
@@ -124,9 +130,11 @@ function DetalleProducto({ producto, productos }) {
         },
       ]
 
-  // Arranca en el primer formato disponible
+  // La selección inicial queda en el primer formato con stock, si existe.
   const primerDisponible = Math.max(0, formatos.findIndex((f) => f.disponible))
 
+  // formatoActivo controla la opción física seleccionada; cantidadElegida es
+  // limitada más abajo por stock y por el máximo permitido por compra.
   const [formatoActivo, setFormatoActivo] = useState(primerDisponible)
   const [cantidadElegida, setCantidadElegida] = useState(1)
   const { estaEnWishlist, alternar: alternarWishlist, error: errorWishlist } = useWishlist()
@@ -135,6 +143,7 @@ function DetalleProducto({ producto, productos }) {
 
   const formato = formatos[formatoActivo]
 
+  // La cantidad disponible respeta tanto el stock real como el máximo permitido por compra.
   // Límite de unidades: el general (2) o el stock de ese formato, lo que sea menor
   const limite = formato.disponible
     ? Math.min(
@@ -144,6 +153,7 @@ function DetalleProducto({ producto, productos }) {
     : 0
   const cantidad = Math.max(1, Math.min(cantidadElegida, limite || 1))
 
+  // El mensaje informa si hay pocas unidades o si aplica el límite general.
   let nota = null
   if (formato.disponible) {
     if (typeof formato.stock === 'number' && formato.stock < LIMITE_POR_PRODUCTO) {
@@ -159,7 +169,7 @@ function DetalleProducto({ producto, productos }) {
   const descripcion =
     producto.descripcion || 'Pronto vamos a sumar la descripción de este disco.'
 
-  // Datos de la ficha técnica: lo que no esté cargado, no se muestra
+  // Se arma una ficha técnica compacta y se omiten los campos que el producto no tenga.
   const ficha = [
     ['Artista', producto.artista],
     ['Año', producto.anio],
@@ -174,13 +184,13 @@ function DetalleProducto({ producto, productos }) {
     ],
   ].filter(([, valor]) => valor)
 
-  // Primero los de la misma categoría, después el resto. Máximo 4.
+  // Se priorizan productos de la misma categoría y se limita la recomendación a cuatro.
   const relacionados = [
     ...productos.filter((p) => p.id !== producto.id && p.categoria === producto.categoria),
     ...productos.filter((p) => p.id !== producto.id && p.categoria !== producto.categoria),
   ].slice(0, 4)
 
-  // El aviso se esconde solo a los 3,5 segundos
+  // Los mensajes de carrito se limpian automáticamente para no quedar obsoletos.
   useEffect(() => {
     if (aviso === null) return
     const timer = setTimeout(() => setAviso(null), 3500)
@@ -196,6 +206,8 @@ function DetalleProducto({ producto, productos }) {
     return true
   }
 
+  // Agrega formato y cantidad seleccionados al carrito de la cuenta y distingue
+  // entre agregado completo, parcial y límite alcanzado.
   async function sumarAlCarrito() {
     if (!exigirSesion()) return
     try {
@@ -240,6 +252,8 @@ function DetalleProducto({ producto, productos }) {
     }
   }
 
+  // La ficha combina el arte animado del formato, información comercial,
+  // controles de compra, wishlist y el reproductor oficial de Spotify.
   return (
     <div className="pagina-detalle">
       <div className="detalle-contenedor">
@@ -255,7 +269,7 @@ function DetalleProducto({ producto, productos }) {
 
         <section className="detalle-hero">
 
-          {/* IZQUIERDA: formato + portada con el vinilo / CD / cassette asomando */}
+          {/* IZQUIERDA: selector de formato y portada con una representación visual del soporte. */}
           <div className="detalle-visual">
             {tieneFormatos ? (
               <div className="detalle-formato" role="group" aria-label="Elegir formato">
@@ -330,7 +344,7 @@ function DetalleProducto({ producto, productos }) {
             </div>
           </div>
 
-          {/* DERECHA: datos de compra + reproductor de Spotify */}
+          {/* DERECHA: información del álbum, disponibilidad, acciones y reproductor Spotify. */}
           <div className="detalle-panel">
             <div className="detalle-info">
               <h1 className="detalle-titulo">“{producto.nombre}”</h1>
@@ -472,7 +486,7 @@ function DetalleProducto({ producto, productos }) {
           </div>
         </section>
 
-        {/* DESCRIPCIÓN (sacá "open" si querés que arranque cerrada) */}
+        {/* La descripción incluye también los metadatos técnicos disponibles del álbum. */}
         <details className="detalle-acordeon" open>
           <summary>Descripción</summary>
           <div className="detalle-acordeon-contenido">
@@ -488,7 +502,7 @@ function DetalleProducto({ producto, productos }) {
           </div>
         </details>
 
-        {/* TAMBIÉN TE PUEDE GUSTAR */}
+        {/* Recomendaciones que ayudan a seguir navegando por el catálogo. */}
         {relacionados.length > 0 && (
           <details className="detalle-acordeon" open>
             <summary>También te puede gustar</summary>

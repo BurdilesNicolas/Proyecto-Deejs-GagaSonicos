@@ -17,6 +17,8 @@ function formatearPrecio(numero) {
 }
 
 function Carrito() {
+  // useCarrito entrega los ítems de la cuenta actual y mantiene esta pantalla
+  // sincronizada cuando el usuario cambia el carrito desde otra parte.
   const { items, cargando: cargandoCarrito, error: errorCarrito } = useCarrito()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
   const [productos, setProductos] = useState([])
@@ -25,6 +27,8 @@ function Carrito() {
   const [cargandoMerch, setCargandoMerch] = useState(true)
   const [mensaje, setMensaje] = useState('')
 
+  // Las líneas del carrito solo almacenan IDs; se escuchan ambos catálogos
+  // para resolver los datos actuales de discos y merch.
   useEffect(() => {
     const cancelarProductos = suscribirProductos((datos) => {
       setProductos(datos)
@@ -46,7 +50,9 @@ function Carrito() {
     }
   }, [])
 
-  // Une cada ítem guardado (id + formato + cantidad) con los datos del producto
+  // Completa cada línea con su producto, variante, precio y stock actual.
+  // El campo tipo permite consultar la colección correcta y evitar confundir un
+  // artículo de merch con un disco que tenga el mismo ID.
   const lineas = items
     .map((item) => {
       const tipo = item.tipo || 'producto'
@@ -59,7 +65,8 @@ function Carrito() {
         : null
       const precio = infoFormato ? infoFormato.precio : producto.precio
       const stock = tipo === 'merch' ? varianteMerch?.stock : infoFormato?.stock
-      // Máximo de esa línea: el límite general o el stock del formato, lo que sea menor
+      // La cantidad disponible para esta línea nunca puede superar ni el límite
+      // general de compra ni el stock vigente de la variante seleccionada.
       const maximo = Math.max(
         1,
         Math.min(LIMITE_POR_PRODUCTO, typeof stock === 'number' ? stock : LIMITE_POR_PRODUCTO)
@@ -71,6 +78,8 @@ function Carrito() {
   const unidades = lineas.reduce((acc, l) => acc + l.cantidad, 0)
   const total = lineas.reduce((acc, l) => acc + l.precio * l.cantidad, 0)
 
+  // Cada acción guarda el nuevo estado en el carrito de la cuenta. Si Firestore
+  // rechaza el cambio, se conserva el error en pantalla y se registra en consola.
   async function cambiar(id, formato, nuevaCantidad, maximo, tipo) {
     try {
       await cambiarCantidad(id, formato, nuevaCantidad, maximo, tipo)
@@ -100,13 +109,17 @@ function Carrito() {
   }
 
   function finalizar() {
+    // El sitio todavía no procesa pagos; se informa el estado en vez de simular una compra.
     setMensaje(
       'Esta versión todavía no procesa pagos: el próximo paso es conectar un medio de pago.'
     )
   }
 
+  // Se espera a que estén listos sesión, carrito y catálogos para poder calcular
+  // correctamente nombre, precio, variante y stock de cada línea.
   if (cargandoSesion || cargandoCarrito || cargandoProductos || cargandoMerch) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Cargando...</p></div></div>
 
+  // Las compras y el carrito son personales, por eso se requiere iniciar sesión.
   if (!cuenta) return <div className="pagina-carrito"><div className="carrito-contenedor"><h1 className="carrito-titulo">Tu carrito</h1><p>Iniciá sesión para agregar productos y consultar tu carrito.</p><Link to="/Perfil" className="carrito-btn">Iniciar sesión</Link></div></div>
 
   return (
@@ -125,6 +138,7 @@ function Carrito() {
         ) : (
           <div className="carrito-layout">
 
+            {/* Cada fila ofrece controles de cantidad, subtotal y eliminación individual. */}
             <ul className="carrito-lista">
               {lineas.map(({ producto, formato, cantidad, precio, maximo, tipo }) => (
                 <li key={`${tipo}-${producto.id}-${formato}`} className="carrito-item">
@@ -182,6 +196,7 @@ function Carrito() {
               ))}
             </ul>
 
+            {/* El resumen calcula el total desde las líneas ya unidas con sus precios actuales. */}
             <aside className="carrito-resumen">
               <h2>Resumen</h2>
               <dl>

@@ -44,6 +44,16 @@ import {
     TIPOS_RECOMENDACION as TIPOS, // lista de tipos: Vinilo, Cassette, CD, Artista, Equipo
 } from '../services/comunidadService'
 // Escucha en tiempo real el catálogo de productos de Firestore.
+    suscribirResenas,
+    crearResena,
+    eliminarResena,
+    alternarVotoResena,
+    suscribirRecomendaciones,
+    crearRecomendacion,
+    eliminarRecomendacion,
+    alternarVotoRecomendacion,
+    TIPOS_RECOMENDACION as TIPOS,
+} from '../services/comunidadService'
 import { suscribirProductos } from '../services/productosService'
 
 /* ============================================================
@@ -278,6 +288,10 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
     // true cuando ya terminó de cargar y la base no tiene ningún producto.
     const sinProductos = !productosCargando && productos.length === 0
     const [calificacion, setCalificacion] = useState(0) // 0 = todavía sin elegir
+    const [productoId, setProductoId] = useState(productoInicial ? String(productoInicial) : '')
+    const productoElegido = productos.find((p) => mismoProducto(p.id, productoId))
+    const sinProductos = !productosCargando && productos.length === 0
+    const [calificacion, setCalificacion] = useState(0)
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})          // errores de validación por campo
     const [enviando, setEnviando] = useState(false)     // true mientras se guarda en Firestore
@@ -332,6 +346,8 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
                         disabled={productosCargando || sinProductos}
                     >
                         {/* Primera opción: cambia según el estado de la carga. */}
+                        disabled={productosCargando || sinProductos}
+                    >
                         <option value="">
                             {productosCargando
                                 ? 'Cargando productos...'
@@ -351,6 +367,8 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
                     {productosError && <span className="cm-error" role="alert">{productosError}</span>}
 
                     {/* Vista previa del producto elegido: portada, nombre y artista. */}
+                    {productosError && <span className="cm-error" role="alert">{productosError}</span>}
+
                     {productoElegido && (
                         <div className="cm-producto-elegido">
                             {productoElegido.imagen && <img src={productoElegido.imagen} alt="" />}
@@ -409,6 +427,9 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion, catalogo }) {
     const { datos: productos, cargando: productosCargando, error: productosError } = catalogo
 
     // Busca un producto por id (sirve para mostrar su nombre e imagen en cada reseña).
+    const { datos: resenas, cargando, error } = coleccion
+    const { datos: productos, cargando: productosCargando, error: productosError } = catalogo
+
     const buscarProducto = (id) => productos.find((p) => mismoProducto(p.id, id))
 
     const [productoFiltro, setProductoFiltro] = useState(null) // null = todos

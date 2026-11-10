@@ -87,6 +87,11 @@
   margin-bottom: 16px;
 }
 
+/* Variante con un filtro menos (la usa AdminRecomendacion) */
+.rv-herramientas--tres {
+  grid-template-columns: minmax(220px, 1.6fr) minmax(150px, 1fr) minmax(150px, 1fr);
+}
+
 .rv-buscador {
   position: relative;
 }
@@ -358,6 +363,44 @@
   color: #ffffff;
 }
 
+/* Recomendaciones: etiqueta de tipo, título + texto y me gusta */
+.rv-tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border: 1px solid rgba(112, 101, 240, 0.5);
+  border-radius: 999px;
+  background: rgba(91, 78, 230, 0.25);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #cfc9ff;
+  white-space: nowrap;
+}
+
+.rv-reco {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+.rv-reco .rv-comentario {
+  min-width: 0;
+}
+
+.rv-megusta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--texto);
+}
+.rv-megusta i,
+.rv-stat-valor .rv-stat-corazon {
+  color: #ff7a9a;
+}
+.rv-stat-valor .rv-stat-corazon {
+  font-size: 1.1rem;
+}
+
 /* Estados: carga, error, vacío */
 .rv-estado {
   padding: 48px 16px;
@@ -496,7 +539,8 @@
 
 /* Responsive */
 @media (max-width: 1100px) {
-  .rv-herramientas {
+  .rv-herramientas,
+  .rv-herramientas--tres {
     grid-template-columns: 1fr 1fr;
   }
   .rv-buscador {
@@ -505,7 +549,8 @@
 }
 
 @media (max-width: 575.98px) {
-  .rv-herramientas {
+  .rv-herramientas,
+  .rv-herramientas--tres {
     grid-template-columns: 1fr;
   }
   .rv-panel {
@@ -586,6 +631,12 @@
   .rv-comentario {
     min-width: 0;
     max-width: none;
+    text-align: right;
+  }
+
+  .rv-reco {
+    min-width: 0;
+    align-items: flex-end;
     text-align: right;
   }
 
