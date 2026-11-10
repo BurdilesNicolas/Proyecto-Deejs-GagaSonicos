@@ -2,7 +2,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react' // hooks de React
 import { Link } from 'react-router-dom'                                    // enlaces entre páginas
 import '../estilos/Comunidad.css'                                          // estilos de esta página (clases "cm-")
-import { productos } from '../data/Productos'                              // lista de productos (archivo local)
 import { useUsuarioActual, nombrePublico } from '../utils/sesion'          // usuario logueado y su nombre público
 import {
     suscribirResenas,           // escucha las reseñas en tiempo real
@@ -13,23 +12,9 @@ import {
     crearRecomendacion,         // guarda una recomendación
     eliminarRecomendacion,      // borra una recomendación
     alternarVotoRecomendacion,  // agrega/quita el "Me gusta"
+    TIPOS_RECOMENDACION as TIPOS, // lista de tipos: Vinilo, Cassette, CD, Artista, Equipo
 } from '../services/comunidadService'                                      // funciones que hablan con Firestore
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
-import '../estilos/Comunidad.css'
-import { useUsuarioActual, nombrePublico } from '../utils/sesion'
-import {
-    suscribirResenas,
-    crearResena,
-    eliminarResena,
-    alternarVotoResena,
-    suscribirRecomendaciones,
-    crearRecomendacion,
-    eliminarRecomendacion,
-    alternarVotoRecomendacion,
-    TIPOS_RECOMENDACION as TIPOS,
-} from '../services/comunidadService'
-import { suscribirProductos } from '../services/productosService'
+import { suscribirProductos } from '../services/productosService'          // escucha los productos de Firestore en tiempo real
 
 /* ============================================================
    DATOS
@@ -39,9 +24,6 @@ import { suscribirProductos } from '../services/productosService'
    así que la lista del formulario siempre está al día. Las
    reseñas y recomendaciones también viven en Firestore.
    ============================================================ */
-
-// Tipos de recomendación (se usan en el filtro y en el formulario).
-const TIPOS = ['Vinilo', 'Cassette', 'CD', 'Artista', 'Equipo']
 
 // Palabra que acompaña a cada cantidad de estrellas.
 const TEXTO_ESTRELLAS = { 1: 'Malo', 2: 'Regular', 3: 'Bueno', 4: 'Muy bueno', 5: 'Excelente' }
@@ -55,9 +37,6 @@ function formatearFecha(fecha) {
     return fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-// Devuelve el producto que tiene ese id (o undefined si no existe).
-function buscarProducto(id) {
-    return productos.find((p) => p.id === id)
 // Los ids de producto pueden ser números (catálogo original) o texto (productos
 // nuevos): se comparan siempre como texto para que funcionen los dos.
 function mismoProducto(a, b) {
@@ -250,15 +229,14 @@ function Aviso({ aviso }) {
 /* ============================================================
    FORMULARIO DE RESEÑA
    ============================================================ */
-function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
+function FormularioResena({ cuenta, productos, productosCargando, productosError, productoInicial, onPublicar, onCancelar }) {
     // Producto elegido (texto, porque así lo devuelve el <select>). Si venías filtrando, ya aparece elegido.
     const [productoId, setProductoId] = useState(productoInicial ? String(productoInicial) : '')
-    const [calificacion, setCalificacion] = useState(0) // 0 = sin elegir
-function FormularioResena({ cuenta, productos, productosCargando, productosError, productoInicial, onPublicar, onCancelar }) {
-    const [productoId, setProductoId] = useState(productoInicial ? String(productoInicial) : '')
+    // Producto completo (nombre, imagen...) a partir del id elegido.
     const productoElegido = productos.find((p) => mismoProducto(p.id, productoId))
+    // true si ya terminó de cargar y la base no tiene productos.
     const sinProductos = !productosCargando && productos.length === 0
-    const [calificacion, setCalificacion] = useState(0)
+    const [calificacion, setCalificacion] = useState(0) // 0 = sin elegir
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})          // errores de validación por campo
     const [enviando, setEnviando] = useState(false)     // true mientras se guarda
@@ -283,7 +261,6 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
 
         try {
             await onPublicar({
-                productoId: Number(productoId), // convierte el texto del <select> a número
                 productoId: productoElegido.id, // se guarda con su tipo original (número o texto)
                 calificacion,
                 comentario: comentario.trim(),
@@ -303,15 +280,16 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
             <p className="cm-publicando">Publicando como <strong>{nombrePublico(cuenta)}</strong></p>
 
             <div className="cm-form-grid">
-                {/* Producto: lista con los productos de Productos.js. */}
+                {/* Producto: lista con los productos de Firestore. */}
                 <Campo etiqueta="Producto" htmlFor="rs-producto" error={errores.productoId} ancho="completo">
                     <select
                         id="rs-producto"
                         value={productoElegido ? productoId : ''}
                         onChange={(e) => setProductoId(e.target.value)}
                         aria-invalid={!!errores.productoId}
-                        disabled={productosCargando || sinProductos}
+                        disabled={productosCargando || sinProductos} // bloqueado mientras carga o si no hay productos
                     >
+                        {/* Primera opción: cambia según el estado de la carga. */}
                         <option value="">
                             {productosCargando
                                 ? 'Cargando productos...'
@@ -319,6 +297,7 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
                                     ? 'No hay productos disponibles'
                                     : 'Seleccioná un producto'}
                         </option>
+                        {/* Una opción por producto: "NOMBRE · Artista". */}
                         {productos.map((p) => (
                             <option key={p.id} value={p.id}>
                                 {p.nombre}{p.artista ? ` · ${p.artista}` : ''}
@@ -326,8 +305,10 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
                         ))}
                     </select>
 
+                    {/* Si falló la carga de productos, se avisa acá. */}
                     {productosError && <span className="cm-error" role="alert">{productosError}</span>}
 
+                    {/* Vista previa del producto elegido. */}
                     {productoElegido && (
                         <div className="cm-producto-elegido">
                             {productoElegido.imagen && <img src={productoElegido.imagen} alt="" />}
@@ -376,12 +357,13 @@ function FormularioResena({ cuenta, productos, productosCargando, productosError
 /* ============================================================
    SECCIÓN: RESEÑAS
    ============================================================ */
-function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
-    // Reseñas traídas de Firestore, con su estado de carga y error.
 function SeccionResenas({ cuenta, sesionCargando, coleccion, catalogo }) {
+    // Reseñas traídas de Firestore, con su estado de carga y error.
     const { datos: resenas, cargando, error } = coleccion
+    // Productos traídos de Firestore (para el formulario, el filtro y las tarjetas).
     const { datos: productos, cargando: productosCargando, error: productosError } = catalogo
 
+    // Busca un producto por id (para mostrar su nombre e imagen en cada reseña).
     const buscarProducto = (id) => productos.find((p) => mismoProducto(p.id, id))
 
     const [productoFiltro, setProductoFiltro] = useState(null) // null = todos
@@ -418,7 +400,6 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion, catalogo }) {
     }, [resenasFiltradas, orden])
 
     // Cuántas reseñas tiene un producto (número que se ve en el filtro).
-    const cantidadPorProducto = (id) => resenas.filter((r) => r.productoId === id).length
     const cantidadPorProducto = (id) => resenas.filter((r) => mismoProducto(r.productoId, id)).length
 
     // Guarda la reseña en Firestore (la llama el formulario).
@@ -503,6 +484,7 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion, catalogo }) {
 
                 {/* Filtro por producto. */}
                 <h3 className="cm-filtro-titulo">Filtrar por producto</h3>
+                {/* La lista tiene scroll propio si hay muchos productos. */}
                 <ul className="cm-lista-filtros cm-lista-scroll">
                     <li>
                         {/* "Todos": quita el filtro. */}
@@ -959,9 +941,7 @@ function Comunidad() {
     const { cuenta, cargando: sesionCargando } = useUsuarioActual() // cuenta = null si no hay sesión
     const resenas = useColeccion(suscribirResenas)                  // reseñas en tiempo real
     const recomendaciones = useColeccion(suscribirRecomendaciones)  // recomendaciones en tiempo real
-    const resenas = useColeccion(suscribirResenas)
-    const recomendaciones = useColeccion(suscribirRecomendaciones)
-    const catalogo = useColeccion(suscribirProductos)
+    const catalogo = useColeccion(suscribirProductos)               // productos en tiempo real
 
     return (
         <div className="cm-page">
