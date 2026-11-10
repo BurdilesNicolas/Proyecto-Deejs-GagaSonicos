@@ -9,18 +9,18 @@ import {
   getDocs
 } from "firebase/firestore";
 
-// Guardar los datos del perfil
+// Guardar los datos del perfil en firestore
 export const guardarPerfil = async (uid, datos) => {
-  const referencia = doc(db, "usuarios", uid);
+  const referencia = doc(db, "usuarios", uid); //Hace referencia al documento usuario en firebase usando UID
 
-  await setDoc(referencia, {
+  await setDoc(referencia, { //Guarda los datos en firebase
     ...datos,
     actualizadoEn: serverTimestamp()
-  }, { merge: true });
+  }, { merge: true }); //Evita que se borren los campos ya existentes fusionandolos con los viejos
 };
 
 // Obtener los datos del perfil
-export const obtenerPerfil = async (uid) => {
+export const obtenerPerfil = async (uid) => { //Define la referencia al documento del usuario mediante su ID
   const referencia = doc(db, "usuarios", uid);
   const documento = await getDoc(referencia);
 
@@ -30,13 +30,13 @@ export const obtenerPerfil = async (uid) => {
 
   return null;
 };
-// Obtener todos los usuarios registrados
+// Obtiene la lista de completa de todos los usuarios
 export const obtenerUsuarios = async () => {
-  const referencia = collection(db, "usuarios");
-  const consulta = await getDocs(referencia);
+  const referencia = collection(db, "usuarios"); // referencia a la colección llamada Usuarios
+  const consulta = await getDocs(referencia); //Trae todos los usuarios
 
   return consulta.docs.map((documento) => ({
     id: documento.id,
-    ...documento.data()
+    ...documento.data() //Copia todos los campos internos del usuario
   }));
 };
