@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import '../estilos/Comunidad.css'
-import { productos } from '../data/Productos'
 import { useUsuarioActual, nombrePublico } from '../utils/sesion'
 import {
     suscribirResenas,
@@ -12,18 +11,18 @@ import {
     crearRecomendacion,
     eliminarRecomendacion,
     alternarVotoRecomendacion,
+    TIPOS_RECOMENDACION as TIPOS,
 } from '../services/comunidadService'
+import { suscribirProductos } from '../services/productosService'
 
 /* ============================================================
    DATOS
    ------------------------------------------------------------
-   Los productos salen de src/data/Productos.js (la misma lista
-   que usan el catálogo y la ficha), así las reseñas nunca quedan
-   desfasadas. Las reseñas y recomendaciones viven en Firestore.
+   Los productos salen de la colección "productos" de Firestore
+   (la misma que administra AdminProductos y muestra el catálogo),
+   así que la lista del formulario siempre está al día. Las
+   reseñas y recomendaciones también viven en Firestore.
    ============================================================ */
-
-// Tipos de recomendación (se usan en el filtro y en el formulario).
-const TIPOS = ['Vinilo', 'Cassette', 'CD', 'Artista', 'Equipo']
 
 const TEXTO_ESTRELLAS = { 1: 'Malo', 2: 'Regular', 3: 'Bueno', 4: 'Muy bueno', 5: 'Excelente' }
 
@@ -35,8 +34,10 @@ function formatearFecha(fecha) {
     return fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function buscarProducto(id) {
-    return productos.find((p) => p.id === id)
+// Los ids de producto pueden ser números (catálogo original) o texto (productos
+// nuevos): se comparan siempre como texto para que funcionen los dos.
+function mismoProducto(a, b) {
+    return String(a) === String(b)
 }
 
 // Carga una colección de Firestore en tiempo real: { datos, cargando, error }.
@@ -208,8 +209,10 @@ function Aviso({ aviso }) {
 /* ============================================================
    FORMULARIO DE RESEÑA
    ============================================================ */
-function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
+function FormularioResena({ cuenta, productos, productosCargando, productosError, productoInicial, onPublicar, onCancelar }) {
     const [productoId, setProductoId] = useState(productoInicial ? String(productoInicial) : '')
+    const productoElegido = productos.find((p) => mismoProducto(p.id, productoId))
+    const sinProductos = !productosCargando && productos.length === 0
     const [calificacion, setCalificacion] = useState(0)
     const [comentario, setComentario] = useState('')
     const [errores, setErrores] = useState({})
@@ -220,7 +223,7 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
         e.preventDefault()
 
         const nuevos = {}
-        if (!productoId) nuevos.productoId = 'Elegí un producto.'
+        if (!productoElegido) nuevos.productoId = 'Elegí un producto.'
         if (calificacion < 1) nuevos.calificacion = 'Elegí una calificación.'
         if (comentario.trim().length < 10) nuevos.comentario = 'Contanos un poco más (mínimo 10 caracteres).'
 
@@ -232,7 +235,7 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
 
         try {
             await onPublicar({
-                productoId: Number(productoId),
+                productoId: productoElegido.id, // se guarda con su tipo original (número o texto)
                 calificacion,
                 comentario: comentario.trim(),
             })
@@ -253,15 +256,36 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
                 <Campo etiqueta="Producto" htmlFor="rs-producto" error={errores.productoId} ancho="completo">
                     <select
                         id="rs-producto"
-                        value={productoId}
+                        value={productoElegido ? productoId : ''}
                         onChange={(e) => setProductoId(e.target.value)}
                         aria-invalid={!!errores.productoId}
+                        disabled={productosCargando || sinProductos}
                     >
-                        <option value="">Seleccioná un producto</option>
+                        <option value="">
+                            {productosCargando
+                                ? 'Cargando productos...'
+                                : sinProductos
+                                    ? 'No hay productos disponibles'
+                                    : 'Seleccioná un producto'}
+                        </option>
                         {productos.map((p) => (
-                            <option key={p.id} value={p.id}>{p.nombre} · {p.artista}</option>
+                            <option key={p.id} value={p.id}>
+                                {p.nombre}{p.artista ? ` · ${p.artista}` : ''}
+                            </option>
                         ))}
                     </select>
+
+                    {productosError && <span className="cm-error" role="alert">{productosError}</span>}
+
+                    {productoElegido && (
+                        <div className="cm-producto-elegido">
+                            {productoElegido.imagen && <img src={productoElegido.imagen} alt="" />}
+                            <div>
+                                <strong>{productoElegido.nombre}</strong>
+                                {productoElegido.artista && <span>{productoElegido.artista}</span>}
+                            </div>
+                        </div>
+                    )}
                 </Campo>
 
                 <Campo etiqueta="Calificación" error={errores.calificacion} ancho="completo">
@@ -297,8 +321,11 @@ function FormularioResena({ cuenta, productoInicial, onPublicar, onCancelar }) {
 /* ============================================================
    SECCIÓN: RESEÑAS
    ============================================================ */
-function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
+function SeccionResenas({ cuenta, sesionCargando, coleccion, catalogo }) {
     const { datos: resenas, cargando, error } = coleccion
+    const { datos: productos, cargando: productosCargando, error: productosError } = catalogo
+
+    const buscarProducto = (id) => productos.find((p) => mismoProducto(p.id, id))
 
     const [productoFiltro, setProductoFiltro] = useState(null) // null = todos
     const [orden, setOrden] = useState('recientes')
@@ -306,7 +333,7 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
     const [aviso, mostrarAviso] = useAviso()
 
     const resenasFiltradas = useMemo(
-        () => (productoFiltro ? resenas.filter((r) => r.productoId === productoFiltro) : resenas),
+        () => (productoFiltro ? resenas.filter((r) => mismoProducto(r.productoId, productoFiltro)) : resenas),
         [resenas, productoFiltro],
     )
 
@@ -330,7 +357,7 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
         return copia.sort(masNueva)
     }, [resenasFiltradas, orden])
 
-    const cantidadPorProducto = (id) => resenas.filter((r) => r.productoId === id).length
+    const cantidadPorProducto = (id) => resenas.filter((r) => mismoProducto(r.productoId, id)).length
 
     const publicar = async (datos) => {
         if (!cuenta) return // solo usuarios con cuenta pueden publicar
@@ -404,7 +431,7 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
                 </div>
 
                 <h3 className="cm-filtro-titulo">Filtrar por producto</h3>
-                <ul className="cm-lista-filtros">
+                <ul className="cm-lista-filtros cm-lista-scroll">
                     <li>
                         <button
                             className={productoFiltro === null ? 'cm-filtro activo' : 'cm-filtro'}
@@ -417,8 +444,8 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
                     {productos.map((p) => (
                         <li key={p.id}>
                             <button
-                                className={productoFiltro === p.id ? 'cm-filtro activo' : 'cm-filtro'}
-                                onClick={() => setProductoFiltro(p.id)}
+                                className={productoFiltro !== null && mismoProducto(productoFiltro, p.id) ? 'cm-filtro activo' : 'cm-filtro'}
+                                onClick={() => setProductoFiltro(String(p.id))}
                             >
                                 <span className="cm-filtro-nombre">{p.nombre}</span>
                                 <span className="cm-filtro-cant">{cantidadPorProducto(p.id)}</span>
@@ -459,6 +486,9 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
                 {formAbierto && (cuenta ? (
                     <FormularioResena
                         cuenta={cuenta}
+                        productos={productos}
+                        productosCargando={productosCargando}
+                        productosError={productosError}
                         productoInicial={productoFiltro}
                         onPublicar={publicar}
                         onCancelar={() => setFormAbierto(false)}
@@ -485,6 +515,8 @@ function SeccionResenas({ cuenta, sesionCargando, coleccion }) {
                                             <h3 className="cm-card-titulo">
                                                 {producto ? (
                                                     <Link to={`/Productos/${producto.id}`}>{producto.nombre}</Link>
+                                                ) : productosCargando ? (
+                                                    'Cargando...'
                                                 ) : (
                                                     'Producto no disponible'
                                                 )}
@@ -813,6 +845,7 @@ function Comunidad() {
     const { cuenta, cargando: sesionCargando } = useUsuarioActual() // cuenta = null si no hay sesión
     const resenas = useColeccion(suscribirResenas)
     const recomendaciones = useColeccion(suscribirRecomendaciones)
+    const catalogo = useColeccion(suscribirProductos)
 
     return (
         <div className="cm-page">
@@ -854,7 +887,7 @@ function Comunidad() {
                 </header>
 
                 {pestana === 'resenas' ? (
-                    <SeccionResenas cuenta={cuenta} sesionCargando={sesionCargando} coleccion={resenas} />
+                    <SeccionResenas cuenta={cuenta} sesionCargando={sesionCargando} coleccion={resenas} catalogo={catalogo} />
                 ) : (
                     <SeccionComunidad cuenta={cuenta} sesionCargando={sesionCargando} coleccion={recomendaciones} />
                 )}

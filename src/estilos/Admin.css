@@ -90,11 +90,19 @@
   margin: 0 auto;
 }
 
-/* Pantallas grandes: tres en horizontal */
+/* Pantallas grandes: tres en horizontal. Las tarjetas que sobran en la última
+   fila quedan centradas, sin importar cuántas secciones tenga el panel. */
 @media (min-width: 900px) {
   .admin-grid {
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     max-width: none;
+  }
+
+  .admin-grid > .admin-card {
+    flex: 0 0 calc((100% - 48px) / 3);
+    min-width: 0;
   }
 }
 

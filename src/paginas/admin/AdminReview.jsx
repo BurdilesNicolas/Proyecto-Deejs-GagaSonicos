@@ -1,8 +1,11 @@
 //Panel de admin dedicado a la gestión de reseñas. Muestra una tabla con todas las reseñas publicadas en la comunidad (guardadas en Firestore), con filtros, ordenamiento y la opción de eliminarlas. Se accede desde Admin.jsx.
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { suscribirResenas, eliminarResena } from "../../services/comunidadService";
-import { productos, normalizar } from "../../data/Productos";
+import { suscribirProductos } from "../../services/productosService";
+import { normalizar } from "../../data/Productos";
+import ModalEliminar from "../../componentes/admin/ModalEliminar";
+import ComentarioExpandible from "../../componentes/admin/ComentarioExpandible";
 import "../../estilos/Admin.css";
 import "../../estilos/AdminReview.css";
 
@@ -15,8 +18,6 @@ const ORDENES = [
 
 const formatearFecha = (fecha) =>
   fecha.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" });
-
-const buscarProducto = (id) => productos.find((p) => p.id === id);
 
 // Estrellas de solo lectura
 function Estrellas({ valor }) {
@@ -33,104 +34,13 @@ function Estrellas({ valor }) {
   );
 }
 
-// Comentario recortado a 3 líneas, con "Ver más" cuando es largo
-function Comentario({ texto }) {
-  const [abierto, setAbierto] = useState(false);
-  const esLargo = texto.length > 140;
-
-  return (
-    <div>
-      <p className={`rv-comentario ${esLargo && !abierto ? "rv-comentario--corto" : ""}`}>{texto}</p>
-      {esLargo && (
-        <button type="button" className="rv-ver-mas" onClick={() => setAbierto(!abierto)}>
-          {abierto ? "Ver menos" : "Ver más"}
-        </button>
-      )}
-    </div>
-  );
-}
-
-// Ventana para confirmar la eliminación (muestra qué reseña se va a borrar)
-function ModalEliminar({ resena, eliminando, error, onCancelar, onConfirmar }) {
-  const botonCancelar = useRef(null);
-  const producto = buscarProducto(resena.productoId);
-
-  // El foco empieza en "Cancelar" (la opción segura) y Esc cierra la ventana
-  useEffect(() => {
-    botonCancelar.current?.focus();
-
-    const alTeclear = (e) => {
-      if (e.key === "Escape" && !eliminando) onCancelar();
-    };
-
-    window.addEventListener("keydown", alTeclear);
-    return () => window.removeEventListener("keydown", alTeclear);
-  }, [eliminando, onCancelar]);
-
-  return (
-    <div
-      className="rv-modal-fondo"
-      onClick={() => !eliminando && onCancelar()} //Cierra la ventana al hacer click fuera de ella
-    >
-      <div
-        className="rv-modal"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="rv-modal-titulo"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="rv-modal-icono">
-          <i className="bi bi-trash3"></i>
-        </div>
-
-        <h2 id="rv-modal-titulo" className="rv-modal-titulo">Eliminar reseña</h2>
-        <p className="rv-modal-texto">
-          Esta acción no se puede deshacer. La reseña desaparecerá de la comunidad para siempre.
-        </p>
-
-        <div className="rv-modal-detalle">
-          <div className="rv-modal-detalle-cab">
-            <strong>{producto ? producto.nombre : `Producto #${resena.productoId}`}</strong>
-            <Estrellas valor={resena.calificacion} />
-          </div>
-          <p>{resena.comentario}</p>
-          <small>Por {resena.autorNombre || "usuario desconocido"}</small>
-        </div>
-
-        {error && (
-          <p className="rv-modal-error" role="alert">
-            <i className="bi bi-exclamation-triangle"></i> {error}
-          </p>
-        )}
-
-        <div className="rv-modal-acciones">
-          <button
-            type="button"
-            ref={botonCancelar}
-            className="rv-btn"
-            onClick={onCancelar}
-            disabled={eliminando}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="rv-btn rv-btn--peligro-solido"
-            onClick={onConfirmar}
-            disabled={eliminando}
-          >
-            {eliminando ? "Eliminando..." : "Sí, eliminar"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function AdminReview() { //Muestra la página de administración de reseñas, con filtros, ordenamiento y eliminación. Se accede desde Admin.jsx.
   const [resenas, setResenas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+
+  //Catálogo de productos (Firestore): sirve para mostrar el nombre y la portada de cada reseña y para el filtro
+  const [productos, setProductos] = useState([]);
 
   //Filtros
   const [busqueda, setBusqueda] = useState("");
@@ -166,6 +76,20 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
     return cancelar; //Cuando el componente se desmonta, deja de escuchar los cambios
   }, []);
 
+  //Escucha en tiempo real la colección "productos" de Firestore. Si falla, la tabla igual funciona (muestra "Producto no disponible").
+  useEffect(() => {
+    return suscribirProductos(
+      (datos) => setProductos(datos),
+      (err) => console.error("Error al cargar productos:", err)
+    );
+  }, []);
+
+  //Los ids numéricos y de texto se comparan como texto, así funcionan los dos
+  const buscarProducto = useCallback(
+    (id) => productos.find((p) => String(p.id) === String(id)),
+    [productos]
+  );
+
   //El aviso de "reseña eliminada" se borra solo
   useEffect(() => {
     if (!aviso) return;
@@ -178,7 +102,7 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
     const texto = normalizar(busqueda.trim());
 
     const filtradas = resenas.filter((r) => {
-      if (filtroProducto !== "todos" && r.productoId !== Number(filtroProducto)) return false;
+      if (filtroProducto !== "todos" && String(r.productoId) !== filtroProducto) return false;
       if (filtroEstrellas !== "todas" && r.calificacion !== Number(filtroEstrellas)) return false;
       if (!texto) return true;
 
@@ -199,7 +123,7 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
       if (orden === "peor") return a.calificacion - b.calificacion || b.fecha - a.fecha;
       return b.fecha - a.fecha;
     });
-  }, [resenas, busqueda, filtroProducto, filtroEstrellas, orden]);
+  }, [resenas, busqueda, filtroProducto, filtroEstrellas, orden, buscarProducto]);
 
   const promedio = useMemo(
     () => (resenas.length ? resenas.reduce((acc, r) => acc + r.calificacion, 0) / resenas.length : 0),
@@ -389,7 +313,7 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
                                   {producto?.imagen && <img src={producto.imagen} alt="" />}
                                 </span>
                                 <span className="rv-producto-datos">
-                                  <strong>{producto ? producto.nombre : `Producto #${resena.productoId}`}</strong>
+                                  <strong>{producto ? producto.nombre : "Producto no disponible"}</strong>
                                   {producto && <small>{producto.artista}</small>}
                                 </span>
                               </div>
@@ -407,7 +331,7 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
                             </td>
 
                             <td data-label="Reseña">
-                              <Comentario texto={resena.comentario || ""} />
+                              <ComentarioExpandible texto={resena.comentario || ""} />
                             </td>
 
                             <td data-label="Fecha" className="rv-fecha">
@@ -439,12 +363,20 @@ function AdminReview() { //Muestra la página de administración de reseñas, co
 
       {aEliminar && (
         <ModalEliminar
-          resena={aEliminar}
+          titulo="Eliminar reseña"
+          texto="Esta acción no se puede deshacer. La reseña desaparecerá de la comunidad para siempre."
           eliminando={eliminando}
           error={errorEliminar}
           onCancelar={cerrarModal}
           onConfirmar={confirmarEliminar}
-        />
+        >
+          <div className="rv-modal-detalle-cab">
+            <strong>{buscarProducto(aEliminar.productoId)?.nombre || "Producto no disponible"}</strong>
+            <Estrellas valor={aEliminar.calificacion} />
+          </div>
+          <p>{aEliminar.comentario}</p>
+          <small>Por {aEliminar.autorNombre || "usuario desconocido"}</small>
+        </ModalEliminar>
       )}
     </div>
   );

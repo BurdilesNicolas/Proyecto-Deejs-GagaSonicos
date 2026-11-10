@@ -36,6 +36,14 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     boton: "Administrar reseñas",
     ruta: "/Admin/Review",
   },
+  {//Seccion de recomendaciones
+    clave: "recomendaciones",
+    icono: "bi-music-note-list",
+    titulo: "Recomendaciones",
+    descripcion: "Consultá y administrá las recomendaciones de la comunidad",
+    boton: "Moderar recomendaciones",
+    ruta: "/Admin/Recomendacion",
+  },
   {//Seccion de usuarios
     clave: "usuarios",
     icono: "bi-people",
