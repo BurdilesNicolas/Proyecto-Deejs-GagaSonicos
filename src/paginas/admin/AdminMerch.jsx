@@ -16,17 +16,24 @@ function precio(numero) {
 }
 
 function AdminMerch() {
+  // articulos almacena la colección merch recibida desde Firestore.
   const [articulos, setArticulos] = useState([]);
+  // Se separan los estados de carga y error para explicar si el catálogo no responde.
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  // Los controles de texto y categoría refinan el listado sin volver a consultar Firestore.
   const [busqueda, setBusqueda] = useState("");
   const [categoriaActiva, setCategoriaActiva] = useState("todas");
+  // El elemento seleccionado determina si el formulario crea un artículo o edita uno existente.
   const [articuloEditando, setArticuloEditando] = useState(null);
+  // Mantiene el artículo pendiente de eliminación hasta que se confirme la acción.
   const [articuloAEliminar, setArticuloAEliminar] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [aviso, setAviso] = useState("");
 
+  // Escucha la colección separada de merch. Los cambios hechos desde otra sesión
+  // también llegan automáticamente; la suscripción se cancela al salir de la página.
   useEffect(() => suscribirMerch(
     (datos) => {
       setArticulos(datos);
@@ -42,16 +49,20 @@ function AdminMerch() {
     }
   ), []);
 
+  // El aviso de operación exitosa se oculta después de unos segundos.
   useEffect(() => {
     if (!aviso) return undefined;
     const temporizador = setTimeout(() => setAviso(""), 3500);
     return () => clearTimeout(temporizador);
   }, [aviso]);
 
+  // Genera las opciones del filtro desde las categorías que realmente existen.
   const categorias = useMemo(
     () => [...new Set(articulos.map((articulo) => articulo.categoria).filter(Boolean))].sort(),
     [articulos]
   );
+
+  // Busca en nombre, categoría y descripción, y luego exige que coincida la categoría seleccionada.
   const articulosVisibles = useMemo(() => {
     const texto = normalizar(busqueda.trim());
     return articulos.filter((articulo) => {
@@ -63,6 +74,7 @@ function AdminMerch() {
     });
   }, [articulos, busqueda, categoriaActiva]);
 
+  // Recibe los datos ya validados y decide si crea un documento o actualiza el existente.
   async function guardarArticulo(datos) {
     setGuardando(true);
     setError("");
@@ -87,6 +99,7 @@ function AdminMerch() {
   }
 
   async function confirmarEliminacion() {
+    // No se intenta borrar si el administrador todavía no eligió un artículo.
     if (!articuloAEliminar) return;
     setGuardando(true);
     setError("");
@@ -105,15 +118,19 @@ function AdminMerch() {
   }
 
   function abrirCrear() {
+    // Al crear, se quita cualquier selección previa para mostrar campos vacíos.
     setArticuloEditando(null);
     setMostrarFormulario(true);
   }
 
   function abrirEditar(articulo) {
+    // La tarjeta elegida se convierte en los valores iniciales del formulario.
     setArticuloEditando(articulo);
     setMostrarFormulario(true);
   }
 
+  // La pantalla reúne el resumen de inventario, las herramientas de búsqueda,
+  // la tabla de variantes y los modales para crear, editar o eliminar merch.
   return (
     <div className="admin-page">
       <div className="admin-contenedor">
@@ -155,6 +172,7 @@ function AdminMerch() {
             </select>
           </div>
 
+          {/* El stock de cada artículo se obtiene sumando las cantidades de todas sus variantes. */}
           <div className="ap-tabla-contenedor">
             {cargando ? (
               <div className="ap-estado"><div className="ap-spinner"></div>Cargando merch...</div>
@@ -194,6 +212,7 @@ function AdminMerch() {
         </section>
       </div>
 
+      {/* La clave fuerza un formulario nuevo al alternar entre creación y edición. */}
       {mostrarFormulario && (
         <div className="ap-modal-fondo" onMouseDown={(e) => { if (e.target === e.currentTarget && !guardando) setMostrarFormulario(false); }}>
           <section className="ap-modal ap-modal-grande" role="dialog" aria-modal="true" aria-labelledby="am-form-titulo">
@@ -212,6 +231,7 @@ function AdminMerch() {
         </div>
       )}
 
+      {/* El modal de confirmación evita borrar un artículo por un clic accidental. */}
       {articuloAEliminar && (
         <div className="ap-modal-fondo" onMouseDown={(e) => { if (e.target === e.currentTarget && !guardando) setArticuloAEliminar(null); }}>
           <section className="ap-modal ap-modal-confirmacion" role="alertdialog" aria-modal="true" aria-labelledby="am-eliminar-titulo">

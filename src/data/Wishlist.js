@@ -4,28 +4,43 @@ const CLAVE = 'wishlist-deejs'
 const wishlistStore = crearCuentaStore({
   claveLocal: CLAVE,
   documento: 'wishlist',
-  normalizar: (ids) => Array.isArray(ids) ? [...new Set(ids)] : [],
+  normalizar: (favoritos) => {
+    if (!Array.isArray(favoritos)) return []
+    const normalizados = favoritos
+      .filter((favorito) => favorito !== null && favorito !== undefined)
+      .map((favorito) => typeof favorito === 'object'
+        ? { id: favorito.id, tipo: favorito.tipo === 'merch' ? 'merch' : 'producto' }
+        : { id: favorito, tipo: 'producto' })
+      .filter((favorito) => favorito.id !== null && favorito.id !== undefined)
+    return normalizados.filter((favorito, indice) =>
+      normalizados.findIndex((otro) =>
+        otro.tipo === favorito.tipo && String(otro.id) === String(favorito.id)
+      ) === indice
+    )
+  },
 })
 
 // Si el producto está en la wishlist lo saca; si no está, lo agrega
-export async function alternarWishlist(id) {
-  await wishlistStore.modificar((ids) =>
-    ids.some((valor) => String(valor) === String(id))
-      ? ids.filter((valor) => String(valor) !== String(id))
-      : [...ids, id]
+export async function alternarWishlist(id, tipo = 'producto') {
+  await wishlistStore.modificar((favoritos) =>
+    favoritos.some((favorito) => favorito.tipo === tipo && String(favorito.id) === String(id))
+      ? favoritos.filter((favorito) => !(favorito.tipo === tipo && String(favorito.id) === String(id)))
+      : [...favoritos, { id, tipo }]
   )
 }
 
 // Hook para usar en cualquier componente: se vuelve a dibujar solo cuando cambia la wishlist
 export function useWishlist() {
   const estado = wishlistStore.useStore()
-  const ids = estado.items
+  const favoritos = estado.items
 
   return {
-    ids,
+    favoritos,
     cargando: estado.cargando,
     error: estado.error,
-    estaEnWishlist: (id) => ids.some((x) => String(x) === String(id)),
+    estaEnWishlist: (id, tipo = 'producto') => favoritos.some(
+      (favorito) => favorito.tipo === tipo && String(favorito.id) === String(id)
+    ),
     alternar: alternarWishlist,
   }
 }

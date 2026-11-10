@@ -2,6 +2,8 @@ import { useState } from "react";
 
 const CATEGORIAS = ["Indumentaria", "Accesorios", "Hogar"];
 
+// Al editar, convierte las variantes existentes a texto para los inputs.
+// En un artículo nuevo propone "Único", opción habitual para accesorios sin talle.
 function variantesIniciales(merch) {
   return merch?.variantes?.length
     ? merch.variantes.map((variante) => ({
@@ -13,6 +15,7 @@ function variantesIniciales(merch) {
 }
 
 function datosIniciales(merch) {
+  // El formulario reutiliza los datos guardados o establece valores iniciales para el alta.
   return {
     nombre: merch?.nombre ?? "",
     categoria: merch?.categoria ?? CATEGORIAS[0],
@@ -24,15 +27,19 @@ function datosIniciales(merch) {
 }
 
 function FormularioMerch({ merch, onGuardar, onCancelar, guardando }) {
+  // formulario guarda todos los campos editables; errorFormulario contiene
+  // validaciones que deben resolverse antes de enviar al administrador.
   const [formulario, setFormulario] = useState(() => datosIniciales(merch));
   const [errorFormulario, setErrorFormulario] = useState("");
 
   function cambiarCampo(e) {
     const { name, value } = e.target;
+    // El atributo name permite actualizar cualquier campo simple con un solo manejador.
     setFormulario((actual) => ({ ...actual, [name]: value }));
   }
 
   function cambiarVariante(indice, campo, valor) {
+    // Actualiza solo la variante y propiedad editada, conservando el resto del formulario.
     setFormulario((actual) => ({
       ...actual,
       variantes: actual.variantes.map((variante, i) =>
@@ -41,6 +48,8 @@ function FormularioMerch({ merch, onGuardar, onCancelar, guardando }) {
     }));
   }
 
+  // Valida los datos comerciales y que no se repita ninguna combinación de talle/color.
+  // Luego convierte precio y stock a números antes de entregar el objeto al CRUD.
   function enviar(e) {
     e.preventDefault();
     setErrorFormulario("");
@@ -90,6 +99,8 @@ function FormularioMerch({ merch, onGuardar, onCancelar, guardando }) {
     });
   }
 
+  // El formulario agrupa información general del artículo y filas de variantes.
+  // Cada variante se vende de forma independiente y lleva su propio stock.
   return (
     <form className="ap-formulario" onSubmit={enviar}>
       <div className="ap-campos-grid">
@@ -111,6 +122,7 @@ function FormularioMerch({ merch, onGuardar, onCancelar, guardando }) {
           <span>URL de imagen *</span>
           <input className="ap-input" type="url" name="imagen" value={formulario.imagen} onChange={cambiarCampo} placeholder="https://..." required />
         </label>
+        {/* La vista previa ayuda a comprobar que la URL ingresada apunta a la imagen correcta. */}
         {formulario.imagen && (
           <div className="ap-portada-preview ap-campo-completo">
             <img src={formulario.imagen} alt="Vista previa del artículo" />
@@ -123,6 +135,7 @@ function FormularioMerch({ merch, onGuardar, onCancelar, guardando }) {
         </label>
       </div>
 
+      {/* El administrador puede agregar y quitar combinaciones de talle, color y stock. */}
       <div className="ap-formatos">
         <h3>Talles, colores y stock</h3>
         {formulario.variantes.map((variante, indice) => (

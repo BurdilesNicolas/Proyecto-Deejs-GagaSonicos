@@ -8,19 +8,24 @@ import { suscribirProductos } from '../services/productosService'
 import { agregarAlCarrito, LIMITE_POR_PRODUCTO } from '../data/Carrito'
 import { useUsuarioActual } from '../utils/sesion'
 import SeccionMerch from '../componentes/SeccionMerch'
+import ArtistasCatalogo from '../componentes/ArtistasCatalogo'
 
 function formatearPrecio(numero) {
   return Number(numero || 0).toLocaleString('es-AR')
 }
 
+const PRODUCTOS_INICIALES = 8
+
 function Productos() {
+  // Los favoritos se reflejan desde el store de la cuenta; sesión se usa para
+  // dirigir al acceso de Perfil cuando alguien intenta guardar o comprar sin entrar.
   const { estaEnWishlist, alternar, error: errorWishlist } = useWishlist()
   const { cuenta, cargando: cargandoSesion } = useUsuarioActual()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const busqueda = searchParams.get('buscar') || ''
 
-  // Los productos ahora se obtienen de Firestore y se actualizan en tiempo real.
+  // Guarda el catálogo recibido, el estado de carga y el error de conexión con Firestore.
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
@@ -29,7 +34,10 @@ function Productos() {
   const [precioDesde, setPrecioDesde] = useState('')
   const [precioHasta, setPrecioHasta] = useState('')
   const [orden, setOrden] = useState('relevancia')
+  const [mostrarMasPara, setMostrarMasPara] = useState('')
 
+  // Se suscribe al catálogo al montar la página; la limpieza detiene las actualizaciones
+  // al navegar a otra ruta y los cambios de Administración aparecen en vivo.
   useEffect(() => {
     const cancelar = suscribirProductos(
       (datos) => {
@@ -47,12 +55,13 @@ function Productos() {
     return cancelar
   }, [])
 
-  // Las categorías se generan a partir de los productos que llegan de Firestore.
+  // Las categorías salen del propio catálogo, así el filtro coincide con los datos publicados.
   const categorias = useMemo(
     () => [...new Set(productos.map((p) => p.categoria).filter(Boolean))].sort(),
     [productos]
   )
 
+  // Comprueba la sesión antes de cualquier acción personal y deriva a Perfil si falta.
   function exigirSesion() {
     if (cargandoSesion) return false
     if (!cuenta) {
@@ -90,6 +99,8 @@ function Productos() {
     }
   }
 
+  // Primero aplica categoría, rango de precios y búsqueda; después ordena el resultado
+  // por precio cuando el usuario elige menor o mayor precio.
   const productosFiltrados = useMemo(() => {
     let resultado = productos.filter((producto) => {
       const pasaCategoria = !categoriaActiva || producto.categoria === categoriaActiva
@@ -110,7 +121,14 @@ function Productos() {
 
     return resultado
   }, [productos, categoriaActiva, precioDesde, precioHasta, orden, busqueda])
+  const claveFiltros = JSON.stringify([categoriaActiva, precioDesde, precioHasta, orden, busqueda])
+  const mostrarTodos = mostrarMasPara === claveFiltros
+  const productosVisibles = mostrarTodos
+    ? productosFiltrados
+    : productosFiltrados.slice(0, PRODUCTOS_INICIALES)
 
+  // La página combina filtros, ordenamiento, tarjetas de discos y un acceso directo
+  // a merch para evitar que el visitante tenga que recorrer todo el catálogo.
   return (
     <div className="pagina-productos">
       {/* BREADCRUMB */}
@@ -120,6 +138,7 @@ function Productos() {
         <span>Productos</span>
       </div>
 
+      {/* Este ancla salta directamente a la sección de merch al final del catálogo. */}
       <div className="acceso-merch">
         <a className="boton-acceso-merch" href="#merch">
           <i className="bi bi-bag" aria-hidden="true"></i>
@@ -130,7 +149,7 @@ function Productos() {
       {errorWishlist && <p className="sin-resultados" role="alert">{errorWishlist}</p>}
 
       <div className="layout-productos">
-        {/* SIDEBAR DE FILTROS */}
+        {/* El panel lateral cambia categoría y rango de precios del catálogo musical. */}
         <aside className="sidebar-filtros">
           <h2 className="sidebar-titulo">Productos</h2>
 
@@ -186,9 +205,14 @@ function Productos() {
               </div>
             </div>
           </div>
+          <ArtistasCatalogo
+            productos={productos}
+            cargandoCatalogo={cargando}
+            errorCatalogo={Boolean(error)}
+          />
         </aside>
 
-        {/* CONTENIDO: orden + grilla */}
+        {/* El contenido principal muestra el orden elegido y las tarjetas coincidentes. */}
         <div className="contenido-productos">
           <div className="barra-orden">
             <select
@@ -207,7 +231,7 @@ function Productos() {
 
           {!cargando && !error && (
             <div className="grilla">
-              {productosFiltrados.map((producto) => (
+              {productosVisibles.map((producto) => (
                 <article className="card" key={producto.id}>
                   <button
                     className={estaEnWishlist(producto.id) ? 'btn-wishlist activo' : 'btn-wishlist'}
@@ -237,8 +261,20 @@ function Productos() {
               )}
             </div>
           )}
+          {!cargando && !error && productosFiltrados.length > PRODUCTOS_INICIALES && (
+            <button
+              type="button"
+              className="productos-ver-mas"
+              aria-expanded={mostrarTodos}
+              onClick={() => setMostrarMasPara(mostrarTodos ? '' : claveFiltros)}
+            >
+              {mostrarTodos ? 'Ver menos' : `Ver más (${productosFiltrados.length - PRODUCTOS_INICIALES})`}
+              <i className={`bi ${mostrarTodos ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden="true"></i>
+            </button>
+          )}
         </div>
       </div>
+      {/* Merch es un catálogo independiente, pero comparte la consulta del buscador global. */}
       <SeccionMerch busqueda={busqueda} />
     </div>
   )
