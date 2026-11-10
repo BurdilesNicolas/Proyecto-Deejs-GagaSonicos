@@ -325,7 +325,7 @@ function Politicas() {
 
   const documento = DOCUMENTOS.find((d) => d.id === docActual) || DOCUMENTOS[0];
 
-  return (
+  return ( //Muestra la vista de politicas
     <div className="pol-page">
         
       <div className="pol-contenedor">
@@ -343,7 +343,7 @@ function Politicas() {
             <h2 className="pol-menu-titulo">Documentos</h2>
 
             <div className="pol-opciones">
-              {DOCUMENTOS.map((doc) => (
+              {DOCUMENTOS.map((doc) => ( // Genera los botones del menú dependiendo de cuantos documentos estén definidos
                 <button
                   key={doc.id}
                   type="button"
@@ -358,7 +358,7 @@ function Politicas() {
             </div>
           </nav>
 
-          {/* Tarjeta de lectura con scroll propio */}
+          {/* Tarjeta de lectura con scroll que carga cada el documento seleccionado*/}
           <article className="pol-tarjeta">
             <div
               className="pol-scroll"

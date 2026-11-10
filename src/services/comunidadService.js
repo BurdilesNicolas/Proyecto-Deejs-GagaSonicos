@@ -24,6 +24,9 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 
+// Tipos de recomendación (los usan el formulario, el filtro y el panel de administración).
+export const TIPOS_RECOMENDACION = ["Vinilo", "Cassette", "CD", "Artista", "Equipo"];
+
 const COLECCION_RESENAS = "resenas";
 const COLECCION_RECOMENDACIONES = "recomendaciones";
 

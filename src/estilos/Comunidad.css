@@ -183,6 +183,15 @@
     gap: 2px;
 }
 
+/* Lista de productos del filtro: si hay muchos, se desplaza dentro de su caja */
+.cm-lista-scroll {
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
 .cm-filtro {
     display: flex;
     align-items: center;
@@ -778,6 +787,44 @@
     color: #ffffff;
 }
 
+/* Vista previa del producto elegido en el formulario */
+.cm-producto-elegido {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border: 1px solid var(--cm-borde);
+    border-radius: 12px;
+    background: var(--cm-panel-2);
+}
+
+.cm-producto-elegido img {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #e8e8f2;
+}
+
+.cm-producto-elegido div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 14px;
+}
+
+.cm-producto-elegido span {
+    font-size: 12.5px;
+    color: var(--cm-suave);
+}
+
+.cm-campo select:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 .cm-error {
     font-size: 12.5px;
     color: var(--cm-error);
@@ -906,6 +953,12 @@
         flex-direction: row;
         flex-wrap: wrap;
         gap: 8px;
+    }
+
+    .cm-lista-scroll {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
     }
 
     .cm-filtro {

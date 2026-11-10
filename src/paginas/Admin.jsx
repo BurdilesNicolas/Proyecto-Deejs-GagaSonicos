@@ -1,4 +1,4 @@
-//Página de admin. Desde aca se puede acceder a los paneles de productos, reseñas y usuarios
+//Página de admin. Desde aca se puede acceder a los paneles de productos, merch, recomendaciones, reseñas y usuarios
 //Solo funciona si el usuario logueado es un administrador. AdminRoute verifica que el usuario logueado sea un administrador. En caso de no serlo te redirige a la página de perfil.  
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -8,9 +8,7 @@ import { obtenerPerfil } from "../services/userService";
 import "../estilos/Admin.css";
 
 // Secciones del panel.
-// Cuando una sección tenga su página, completa su "ruta" (y agrega la <Route>
-// en App.jsx). Mientras la ruta sea null, el botón queda deshabilitado para
-// no enviar al administrador a una página que no existe.
+// El botón queda deshabilitado si no posee ruta definida y muestra cartel de próximanente.
 const SECCIONES = [ //Secciones del panel de administración para después renderizar las tarjetas de acceso a cada sección
   { //Seccion de productos
     clave: "productos",
@@ -20,7 +18,7 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     boton: "Administrar productos",
     ruta: "/Admin/Productos",
   },
-  {
+  {//Seccion de merch
     clave: "merch",
     icono: "bi-bag",
     titulo: "Merch",
@@ -35,6 +33,14 @@ const SECCIONES = [ //Secciones del panel de administración para después rende
     descripcion: "Consultá y administrá las reseñas publicadas",
     boton: "Administrar reseñas",
     ruta: "/Admin/Review",
+  },
+  {//Seccion de recomendaciones
+    clave: "recomendaciones",
+    icono: "bi-music-note-list",
+    titulo: "Recomendaciones",
+    descripcion: "Consultá y administrá las recomendaciones de la comunidad",
+    boton: "Moderar recomendaciones",
+    ruta: "/Admin/Recomendacion",
   },
   {//Seccion de usuarios
     clave: "usuarios",
@@ -119,7 +125,7 @@ function Admin() { //Página de administración principal
                 className={`admin-card ${disponible ? "admin-card--activa" : ""}`}
               >
                 {!disponible && (
-                  <span className="admin-proximamente">Próximamente</span> //Muestra un mensaje de "Próximamente" porque la sección no tiene ruta definida.
+                  <span className="admin-proximamente">Próximamente</span> //Muestra un mensaje de "Próximamente" si la sección no tiene ruta definida.
                 )}
 
                 <div className="admin-card-icono">

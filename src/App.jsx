@@ -11,6 +11,7 @@ import audioGato from "./assets/audio/Gatomeme.mp3";
 import Inicio from "./paginas/Inicio";
 import Productos from "./paginas/Productos";
 import ProductoDetalle from "./paginas/ProductoDetalle";
+import MerchDetalle from "./paginas/MerchDetalle";
 import Carrito from "./paginas/Carrito";
 import Wishlist from "./paginas/Wishlist";
 
@@ -24,6 +25,7 @@ const ProductoSpotifyDetalle = lazy(() => import("./paginas/ProductoSpotifyDetal
 const Admin = lazy(() => import("./paginas/Admin"));
 const AdminUsuarios = lazy(() => import("./paginas/admin/AdminUsuarios"));
 const AdminReview = lazy(() => import("./paginas/admin/AdminReview"));
+const AdminRecomendacion = lazy(() => import("./paginas/admin/AdminRecomendacion"));
 const AdminProductos = lazy(() => import("./paginas/admin/AdminProductos"));
 const AdminMerch = lazy(() => import("./paginas/admin/AdminMerch"));
 
@@ -78,11 +80,13 @@ function ContenidoApp() {
           {/*Spotify*/}
           <Route path="/Productos/spotify/:spotifyAlbumId" element={<ProductoSpotifyDetalle />} />
           <Route path="/Productos/:id" element={<ProductoDetalle />} />
+          <Route path="/Merch/:id" element={<MerchDetalle />} />
 
           {/* Administración */}
           <Route path="/Admin" element={<AdminRoute> <Admin /> </AdminRoute>} />
           <Route path="/Admin/Usuarios" element={<AdminRoute> <AdminUsuarios /> </AdminRoute>} />
           <Route path="/Admin/Review" element={<AdminRoute> <AdminReview /> </AdminRoute>} />
+          <Route path="/Admin/Recomendacion" element={<AdminRoute> <AdminRecomendacion /> </AdminRoute>} />
           <Route path="/Admin/Productos" element={<AdminRoute> <AdminProductos /> </AdminRoute>} />
           <Route path="/Admin/Merch" element={<AdminRoute> <AdminMerch /> </AdminRoute>} />
           <Route path="*" element={<RutaInexistente pathname={pathname} />} />

@@ -17,18 +17,26 @@ function precio(numero) {
 }
 
 function AdminProductos() {
+  // productos contiene la copia de Firestore que se dibuja en la tabla.
   const [productos, setProductos] = useState([]);
+  // Los estados de carga y error permiten mostrar respuestas claras si Firestore tarda o rechaza la consulta.
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  // Búsqueda y categoría se aplican localmente sobre los productos ya descargados.
   const [busqueda, setBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("todas");
+  // productoEditando distingue el modo edición del modo creación del formulario compartido.
   const [productoEditando, setProductoEditando] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  // Se guarda el producto elegido para pedir confirmación antes de eliminarlo.
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [aviso, setAviso] = useState("");
   const [importando, setImportando] = useState(false);
 
+  // Al entrar, se escucha el catálogo en tiempo real; Firestore devuelve una función
+  // para cancelar la escucha cuando se abandona esta pantalla.
+  // Los avisos de éxito desaparecen solos y se limpia el temporizador al salir de la página.
   useEffect(() => {
     const cancelar = suscribirProductos(
       (datos) => {
@@ -53,11 +61,14 @@ function AdminProductos() {
     return () => clearTimeout(temporizador);
   }, [aviso]);
 
+  // Las categorías disponibles salen de los datos actuales para no mostrar filtros vacíos.
   const categorias = useMemo(
     () => [...new Set(productos.map((p) => p.categoria).filter(Boolean))].sort(),
     [productos]
   );
 
+  // La normalización permite buscar sin distinguir mayúsculas ni tildes.
+  // Ambos filtros deben coincidir para que un producto aparezca en la tabla.
   const productosVisibles = useMemo(() => {
     const texto = normalizar(busqueda.trim());
     return productos.filter((producto) => {
@@ -67,6 +78,8 @@ function AdminProductos() {
     });
   }, [productos, busqueda, filtroCategoria]);
 
+  // El mismo formulario sirve para crear y editar: si hay producto seleccionado,
+  // se actualiza su documento; de lo contrario se agrega uno nuevo a Firestore.
   async function guardarProducto(datos) {
     setGuardando(true);
     try {
@@ -90,6 +103,7 @@ function AdminProductos() {
   }
 
   async function confirmarEliminacion() {
+    // La eliminación solo continúa después de que el administrador eligió un producto.
     if (!productoAEliminar) return;
     setGuardando(true);
     try {
@@ -106,6 +120,8 @@ function AdminProductos() {
     }
   }
 
+  // Importa el catálogo estático inicial y conserva los IDs para no romper
+  // referencias existentes, como las reseñas asociadas a esos productos.
   async function importarCatalogo() {
     if (!window.confirm("Se copiarán los productos actuales a Firestore. ¿Querés continuar?")) return;
     setImportando(true);
@@ -122,15 +138,19 @@ function AdminProductos() {
   }
 
   function abrirCrear() {
+    // Limpia la selección anterior para que el formulario se abra vacío.
     setProductoEditando(null);
     setMostrarFormulario(true);
   }
 
   function abrirEditar(producto) {
+    // Pasa al formulario la información actual del producto que se eligió en la tabla.
     setProductoEditando(producto);
     setMostrarFormulario(true);
   }
 
+  // La vista combina el resumen del catálogo, filtros y tabla; los formularios
+  // y la confirmación de borrado aparecen en modales para mantener el contexto.
   return (
     <div className="admin-page">
       <div className="admin-contenedor">
@@ -168,6 +188,7 @@ function AdminProductos() {
             </select>
           </div>
 
+          {/* La tabla calcula el stock sumando las existencias de cada formato físico. */}
           <div className="ap-tabla-contenedor">
             {cargando ? (
               <div className="ap-estado"><div className="ap-spinner"></div>Cargando productos...</div>
@@ -198,6 +219,7 @@ function AdminProductos() {
         </section>
       </div>
 
+      {/* El modal reutiliza FormularioProducto tanto para altas como para modificaciones. */}
       {mostrarFormulario && (
         <div className="ap-modal-fondo" onMouseDown={(e) => { if (e.target === e.currentTarget && !guardando) setMostrarFormulario(false); }}>
           <section className="ap-modal ap-modal-grande" role="dialog" aria-modal="true" aria-labelledby="ap-form-titulo">
@@ -207,6 +229,7 @@ function AdminProductos() {
         </div>
       )}
 
+      {/* Se solicita confirmación explícita antes de borrar definitivamente en Firestore. */}
       {productoAEliminar && (
         <div className="ap-modal-fondo" onMouseDown={(e) => { if (e.target === e.currentTarget && !guardando) setProductoAEliminar(null); }}>
           <section className="ap-modal ap-modal-confirmacion" role="alertdialog" aria-modal="true" aria-labelledby="ap-eliminar-titulo">
