@@ -1,3 +1,4 @@
+// Archivo que contiene los servicios relacionados con el usuario, como guardar y obtener el perfil, así como obtener todos los usuarios registrados.
 import { db } from "./firebase";
 import {
   doc,
